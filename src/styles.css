@@ -1,1 +1,513 @@
 /* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/* Variables */
+:root {
+  --primary-color: #3f51b5;
+  --secondary-color: #ff4081;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --info-color: #2196f3;
+  --background-color: #f5f5f5;
+  --text-color: #333333;
+  --light-text-color: #ffffff;
+  --border-color: #e0e0e0;
+  --hover-color: rgba(0, 0, 0, 0.04);
+  
+  --font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  --font-size-small: 12px;
+  --font-size-normal: 14px;
+  --font-size-medium: 16px;
+  --font-size-large: 18px;
+  --font-size-xlarge: 24px;
+  --font-size-xxlarge: 32px;
+  
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Base styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-normal);
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--spacing-md) 0;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--font-size-xxlarge);
+}
+
+h2 {
+  font-size: var(--font-size-xlarge);
+}
+
+h3 {
+  font-size: var(--font-size-large);
+}
+
+p {
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #303f9f; /* Darker shade of primary color */
+  text-decoration: underline;
+}
+
+/* Utility classes */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-1 {
+  margin-bottom: var(--spacing-xs);
+}
+
+.mb-2 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.mb-3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-4 {
+  margin-bottom: var(--spacing-lg);
+}
+
+.mt-1 {
+  margin-top: var(--spacing-xs);
+}
+
+.mt-2 {
+  margin-top: var(--spacing-sm);
+}
+
+.mt-3 {
+  margin-top: var(--spacing-md);
+}
+
+.mt-4 {
+  margin-top: var(--spacing-lg);
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 48%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Loading spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+}
+
+.spinner {
+  margin-right: var(--spacing-sm);
+}
+
+/* Form styles */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-field {
+  margin-bottom: var(--spacing-md);
+}
+
+.name-fields {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.button-container {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+/* Card styles */
+.auth-container, .login-container, .register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 160px);
+  padding: var(--spacing-xl);
+}
+
+.login-card, .register-card {
+  width: 100%;
+  max-width: 500px;
+  padding: var(--spacing-lg);
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--spacing-md);
+}
+
+/* Status indicators */
+.status {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+}
+
+.status.active {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: var(--success-color);
+}
+
+.status.inactive {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: var(--warn-color);
+}
+
+/* Placeholder styles */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius-md);
+}
+
+.placeholder .mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.placeholder p {
+  margin-bottom: 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Empty state styles */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius-md);
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Layout styles */
+.main-layout, .auth-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content, .auth-content {
+  flex: 1;
+}
+
+/* Header styles */
+.header .logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.header .logo-container a {
+  display: flex;
+  align-items: center;
+  color: var(--light-text-color);
+  text-decoration: none;
+}
+
+.header .logo-container a:hover {
+  text-decoration: none;
+}
+
+.header .logo-container .logo {
+  height: 40px;
+  margin-right: var(--spacing-sm);
+}
+
+.header .logo-container .school-name {
+  font-size: var(--font-size-medium);
+  font-weight: 500;
+}
+
+.header .nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Auth layout specific styles */
+.auth-layout .auth-header {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg);
+}
+
+.auth-layout .auth-header .logo {
+  height: 60px;
+}
+
+/* Footer styles */
+.footer {
+  background-color: #f5f5f5;
+  padding: var(--spacing-md) 0;
+  margin-top: auto;
+}
+
+.footer .footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.footer .links {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .footer .footer-content {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .footer .links {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Home page styles */
+.home-container .hero-section {
+  position: relative;
+  height: 70vh;
+  background-image: url('/assets/images/school-hero.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.home-container .hero-section .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-container .hero-section .overlay .content {
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: var(--spacing-xl);
+}
+
+.home-container .hero-section .overlay .content .school-logo {
+  height: 100px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.home-container .hero-section .overlay .content h1 {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+}
+
+.home-container .hero-section .overlay .content .motto {
+  font-size: var(--font-size-large);
+  margin-bottom: var(--spacing-xl);
+}
+
+.home-container .hero-section .overlay .content .buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.home-container .school-info {
+  padding: var(--spacing-xxl) 0;
+}
+
+.home-container .school-info h2 {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.home-container .school-info .school-features {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+}
+
+.home-container .school-info .school-features .feature {
+  flex: 1;
+  text-align: center;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-container .school-info .school-features .feature:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.home-container .school-info .school-features .feature .mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.home-container .school-info .school-features .feature h3 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.home-container .school-info .contact-info {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius-md);
+}
+
+.home-container .school-info .contact-info h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.home-container .school-info .contact-info p {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.home-container .school-info .contact-info p .mat-icon {
+  margin-right: var(--spacing-sm);
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .home-container .school-info .school-features {
+    flex-direction: column;
+  }
+}
+
+/* Dashboard styles */
+.dashboard-home, .principal-dashboard, .teacher-dashboard, .student-dashboard {
+  padding: var(--spacing-xl);
+}
+
+.dashboard-home .welcome-card, .principal-dashboard .welcome-card, 
+.teacher-dashboard .welcome-card, .student-dashboard .welcome-card,
+.dashboard-home .dashboard-card, .principal-dashboard .dashboard-card,
+.teacher-dashboard .dashboard-card, .student-dashboard .dashboard-card {
+  margin-bottom: var(--spacing-lg);
+}
+
+.dashboard-home .dashboard-links, .principal-dashboard .dashboard-links,
+.teacher-dashboard .dashboard-links, .student-dashboard .dashboard-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.dashboard-home .tab-content, .principal-dashboard .tab-content,
+.teacher-dashboard .tab-content, .student-dashboard .tab-content {
+  padding: var(--spacing-lg) 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .name-fields {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .name-fields .half-width {
+    width: 100%;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}

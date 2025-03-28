@@ -12,6 +12,7 @@ import { SharedModule } from './shared/shared.module'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { RouterModule } from '@angular/router'
 import { AuthModule } from './features/auth/auth.module'
+import { routes } from './app.routes'
 
 @NgModule({
   declarations: [],
@@ -23,11 +24,11 @@ import { AuthModule } from './features/auth/auth.module'
     LayoutsModule,
     SharedModule,
     MatSnackBarModule,
-    RouterModule.forRoot([]),
+    RouterModule.forRoot(routes, { enableTracing: true }),
     AuthModule,
-    AppComponent,
+    AppComponent
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class AppModule {}

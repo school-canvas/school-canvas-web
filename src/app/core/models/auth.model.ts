@@ -6,9 +6,13 @@ export interface AuthRequest {
   }
   
   export interface AuthResponse {
-    accessToken: string;
+    token: string;
     tokenType: string;
-    user?: User;
+    username: string;
+    roles: string[];
+    permissions: string[];
+    tenantId: string;
+    user?:User
   }
   
   export interface PrincipalRegistrationRequest {

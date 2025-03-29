@@ -10,14 +10,13 @@ import { ApplicationConfig } from '../../../../../application-config'
 @Component({
   selector: 'app-login',
   imports: [SharedModule],
-  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup
   isLoading = false
-  hidePassword : boolean = true
+  hidePassword: boolean = true
   redirectUrl: string | null = null
   appConfig = ApplicationConfig
 
@@ -33,7 +32,7 @@ export class LoginComponent implements OnInit {
     this.initForm()
 
     this.redirectUrl =
-      this.route.snapshot.queryParams['redirectTo'] || '/dashboard'
+      this.route.snapshot.queryParams['redirectUrl'] || '/dashboard'
   }
 
   private initForm() {
@@ -54,22 +53,29 @@ export class LoginComponent implements OnInit {
 
     this.isLoading = true
 
-    this.authService.login(this.loginForm.value).subscribe({
-      next: (response) => {
-        console.log('Login response:', response)
-        this.router.navigateByUrl(this.redirectUrl || '/dashboard')
-      },
-      error: (error) => {
-        this.isLoading = false
-        this.snackBar.open(
-          error.message || 'Login failed. Please check your credentials.',
-          'Close',
-          {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          },
-        )
-      },
-    })
+    this.authService
+      .login(this.loginForm.value)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          setTimeout(() => {
+            console.log(
+              this.authService.isLoggedIn(),
+            )
+            this.router.navigateByUrl(this.redirectUrl || '/dashboard')
+          }, 100)
+        },
+        error: (error) => {
+          this.isLoading = false
+          this.snackBar.open(
+            error.message || 'Login failed. Please check your credentials.',
+            'Close',
+            {
+              duration: 5000,
+              panelClass: ['error-snackbar'],
+            },
+          )
+        },
+      })
   }
 }

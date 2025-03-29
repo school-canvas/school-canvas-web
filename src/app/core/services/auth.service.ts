@@ -62,7 +62,6 @@ export class AuthService {
     console.log('Attempting Login...')
     return this.http.post<AuthResponse>(`${this.USERS_API}/auth/login`, credentials).pipe(
       tap(response => {
-        console.log('Login response received: ', response);
         this.handleAuthResponse(response)}),
       catchError(error => {
         console.error('Login error:', error);
@@ -104,19 +103,20 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.TOKEN_KEY);
     this.isLoggedInSubject.next(false);
     this.currentUserSubject.next(null);
     this.userRoleSubject.next('');
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    if (response && response.accessToken) {
-      localStorage.setItem('token', response.accessToken);
+    if (response && response.token) {
+      localStorage.setItem('token', response.token);
+
       this.isLoggedInSubject.next(true);
       
       try {
-        const decoded = jwtDecode<DecodedToken>(response.accessToken);
+        const decoded = jwtDecode<DecodedToken>(response.token);
         if (decoded.roles && decoded.roles.length > 0) {
           // Assuming the first role is the primary role
           this.userRoleSubject.next(decoded.roles[0]);
@@ -140,7 +140,9 @@ export class AuthService {
       const decoded = jwtDecode<DecodedToken>(token);
       const currentTime = Date.now() / 1000;
       return decoded.exp > currentTime;
+      
     } catch (error) {
+      console.error('Error decoding token:', error);
       return false;
     }
   }

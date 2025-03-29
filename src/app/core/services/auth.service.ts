@@ -58,9 +58,12 @@ export class AuthService {
   }
 
 
-  login(credentials: AuthRequest): Observable<AuthResponse> {
+  login(credentials: AuthRequest): Observable<any> {
+    console.log('Attempting Login...')
     return this.http.post<AuthResponse>(`${this.USERS_API}/auth/login`, credentials).pipe(
-      tap(response => this.handleAuthResponse(response)),
+      tap(response => {
+        console.log('Login response received: ', response);
+        this.handleAuthResponse(response)}),
       catchError(error => {
         console.error('Login error:', error);
         return throwError(() => new Error(error?.message || 'Login failed'));
@@ -70,7 +73,7 @@ export class AuthService {
 
   registerPrincipal(request:PrincipalRegistrationRequest):Observable<User>{
     const headers = {'X-Tenant-ID':request.tenantId};
-    return this.http.post<User>(`${this.USERS_API}/register/principal`,request, {headers})
+    return this.http.post<User>(`${this.USERS_API}/auth/register/principal`,request, {headers})
     .pipe(
       catchError(error => {
         return throwError(() => new Error(error.error?.message || 'Principal registration failed'));
@@ -79,7 +82,7 @@ export class AuthService {
   }
 
   registerUser(request: UserRegistrationRequest): Observable<User> {
-    return this.http.post<User>(`${this.USERS_API}/register/user`, request)
+    return this.http.post<User>(`${this.USERS_API}/auth/register/user`, request)
       .pipe(
         catchError(error => {
           return throwError(() => new Error(error.error?.message || 'User registration failed'));
@@ -92,7 +95,7 @@ export class AuthService {
       'X-Tenant-ID': tenantId
     });
     
-    return this.http.patch<User>(`${this.USERS_API}/${userId}/approve`, {}, { headers })
+    return this.http.patch<User>(`${this.USERS_API}/auth/${userId}/approve`, {}, { headers })
       .pipe(
         catchError(error => {
           return throwError(() => new Error(error.error?.message || 'Failed to approve user'));

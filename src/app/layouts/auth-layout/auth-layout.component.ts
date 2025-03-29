@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { ApplicationConfig } from '../../../application-config';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-auth-layout',
-  imports: [],
+  imports: [SharedModule],
   templateUrl: './auth-layout.component.html',
   styleUrl: './auth-layout.component.css'
 })
-export class AuthLayoutComponent implements OnInit {
-  constructor() { }
-
-  ngOnInit(): void {
-    console.log("Auth Layout Component Initialized");
-  }
-
+export class AuthLayoutComponent {
+  appConfig = ApplicationConfig;
+  currentYear = new Date().getFullYear();
 }

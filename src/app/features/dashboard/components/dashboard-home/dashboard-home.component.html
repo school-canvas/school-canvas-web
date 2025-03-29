@@ -1,1 +1,16 @@
-<p>dashboard-home works!</p>
+<div class="dashboard-home">
+  <div class="container">
+    <mat-card class="welcome-card">
+      <mat-card-content>
+        <div class="welcome-content">
+          <mat-icon class="welcome-icon">dashboard</mat-icon>
+          <div class="welcome-text">
+            <h1>Welcome to {{ appConfig.shortName }}, {{userName}}</h1>
+            <p>You're being redirected to your role-specific dashboard...</p>
+          </div>
+        </div>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

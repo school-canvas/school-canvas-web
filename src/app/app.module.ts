@@ -23,7 +23,7 @@ import { routes } from './app.routes'
     MatSnackBarModule,
     RouterModule.forRoot(routes, { enableTracing: true }),
     AuthModule,
-    AppComponent
+    AppComponent,
   ],
   providers: [],
   bootstrap: [],

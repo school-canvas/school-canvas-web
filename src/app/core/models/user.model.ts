@@ -7,6 +7,12 @@ export interface User {
   roles: string[]
   active: boolean
   tenantId: string
+  userRoles?: UserRole[];
+}
+
+export interface UserRole {
+  id: string
+  role: string
 }
 
 export interface Permission {

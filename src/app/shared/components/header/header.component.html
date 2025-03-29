@@ -1,1 +1,44 @@
-<p>header works!</p>
+<mat-toolbar color="primary">
+<div class="container">
+    <div class = "logo-container">
+        <a routerLink="/">
+            <!--- Todo: Replace with [src]=appConfig.logoPath-->
+            <img src="" alt="School Logo" class="logo">
+        </a>
+    </div>
+    <div>
+        <h1 class="app-name">{{ appConfig.shortName }}</h1>
+    </div>
+</div>
+<span class="spacer"></span>
+    
+    <div class="nav-links">
+      <ng-container *ngIf="!isLoggedIn">
+        <a mat-button routerLink="/auth/login">Login</a>
+        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
+      </ng-container>
+      
+      <ng-container *ngIf="isLoggedIn">
+        <button mat-button [matMenuTriggerFor]="dashboardMenu">Dashboard</button>
+        <mat-menu #dashboardMenu="matMenu">
+          <a mat-menu-item routerLink="/dashboard/home">Home</a>
+          <a mat-menu-item routerLink="/dashboard/profile">Profile</a>
+          
+          <ng-container *ngIf="userRole === appConfig.roles.PRINCIPAL">
+            <a mat-menu-item routerLink="/dashboard/principal">Principal Dashboard</a>
+            <a mat-menu-item routerLink="/dashboard/users">Manage Users</a>
+          </ng-container>
+          
+          <ng-container *ngIf="userRole === appConfig.roles.TEACHER">
+            <a mat-menu-item routerLink="/dashboard/teacher">Teacher Dashboard</a>
+          </ng-container>
+          
+          <ng-container *ngIf="userRole === appConfig.roles.STUDENT">
+            <a mat-menu-item routerLink="/dashboard/student">Student Dashboard</a>
+          </ng-container>
+        </mat-menu>
+        
+        <button mat-button (click)="logout()">Logout</button>
+      </ng-container>
+    </div>
+</mat-toolbar>

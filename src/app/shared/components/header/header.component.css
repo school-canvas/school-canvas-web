@@ -1,0 +1,55 @@
+/* src/app/shared/components/header/header.component.css */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .header .container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    height: 40px;
+    margin-right: var(--spacing-sm);
+  }
+  
+  .school-name {
+    font-size: var(--font-size-medium);
+    font-weight: 500;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  @media (max-width: 768px) {
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    
+    .nav-links a {
+      margin-left: 0;
+      margin-top: var(--spacing-xs);
+    }
+  }

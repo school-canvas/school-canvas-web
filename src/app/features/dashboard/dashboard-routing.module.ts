@@ -4,13 +4,13 @@ import { DashboardHomeComponent } from './components/dashboard-home/dashboard-ho
 import { PrincipalDashboardComponent } from './components/principal-dashboard/principal-dashboard.component';
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
-import { AuthGuard } from '../../core/gaurds/auth.guard';
+import { authGuard } from '../../core/gaurds/auth.guard';
 
 const routes: Routes = [
   { 
     path: '', 
     component: DashboardHomeComponent,
-    canActivate: [AuthGuard]
+    canActivate: [authGuard]
   },
   { 
     path: 'principal', 

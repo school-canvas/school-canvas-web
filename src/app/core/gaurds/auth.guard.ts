@@ -1,37 +1,27 @@
-import { Injectable } from '@angular/core'
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  GuardResult,
-  MaybeAsync,
-  Router,
-  RouterStateSnapshot,
-} from '@angular/router'
-import { AuthService } from '../services/auth.service'
+import { inject } from '@angular/core';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): MaybeAsync<GuardResult> {
-    if (this.authService.isLoggedIn()) {
-      //check for specific role requirement
-      const requiredRole = route.data['role'] as string
-
-      if (requiredRole && !this.authService.hasRole(requiredRole)) {
-        this.router.navigate(['/dashboard'])
-        return false
+export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+  
+  return authService.isLoggedIn$.pipe(
+    map(isLoggedIn => {
+      if (isLoggedIn) {
+        return true;
       }
-      return true
-    }
-    this.router.navigate(['/auth/login'], {
-      queryParams: { returnUrl: state.url },
+      
+      // Store the attempted URL for redirecting
+      const redirectUrl = state.url;
+      
+      // Navigate to the login page with extras
+      router.navigate(['/auth/login'], { 
+        queryParams: { redirectUrl } 
+      });
+      
+      return false;
     })
-    return false
-  }
-}
+  );
+};

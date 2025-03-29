@@ -15,7 +15,7 @@
     <div class="nav-links">
       <ng-container *ngIf="!isLoggedIn">
         <a mat-button routerLink="/auth/login">Login</a>
-        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
+        <a mat-raised-button color="accent" (click)="navigateToLogin()">Register</a>
       </ng-container>
       
       <ng-container *ngIf="isLoggedIn">

@@ -9,7 +9,7 @@ export const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
-    providers: [importProvidersFrom(CoreModule)],
+    // providers: [importProvidersFrom(CoreModule)],
     children: [
       {
         path: '',

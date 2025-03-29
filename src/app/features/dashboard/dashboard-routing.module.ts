@@ -5,6 +5,7 @@ import { PrincipalDashboardComponent } from './components/principal-dashboard/pr
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
 import { authGuard } from '../../core/gaurds/auth.guard';
+import { principalGuard } from '../../core/gaurds/principal.guard';
 
 const routes: Routes = [
   { 
@@ -14,15 +15,18 @@ const routes: Routes = [
   },
   { 
     path: 'principal', 
-    component: PrincipalDashboardComponent 
+    component: PrincipalDashboardComponent,
+    canActivate: [authGuard, principalGuard]
   },
   { 
     path: 'teacher', 
-    component: TeacherDashboardComponent 
+    component: TeacherDashboardComponent,
+    canActivate: [authGuard]
   },
   { 
     path: 'student', 
-    component: StudentDashboardComponent 
+    component: StudentDashboardComponent,
+    canActivate: [authGuard]
   }
 ];
 

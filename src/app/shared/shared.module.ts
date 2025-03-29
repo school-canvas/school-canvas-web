@@ -30,6 +30,7 @@ import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
     MaterialModule,
     MatMenuModule,
     RouterModule,
+    FormsModule
   ]
 })
 export class SharedModule { }

@@ -1,0 +1,108 @@
+/* src/app/shared/components/footer/footer.component.css */
+
+.footer {
+    background-color: #303f9f;
+    color: white;
+    padding-top: var(--spacing-xl);
+    margin-top: auto;
+  }
+  
+  .footer a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer a:hover {
+    color: white;
+    text-decoration: underline;
+  }
+  
+  .school-info {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+  }
+  
+  .social-links a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease;
+  }
+  
+  .social-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+  }
+  
+  .footer-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .footer-column {
+    flex: 1;
+  }
+  
+  .footer-column h4 {
+    font-size: var(--font-size-medium);
+    font-weight: 500;
+    margin-bottom: var(--spacing-md);
+    color: white;
+  }
+  
+  .footer-column p, 
+  .footer-column a {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .contact-link {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.3s ease;
+  }
+  
+  .contact-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .copyright {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: var(--spacing-md) 0;
+    text-align: center;
+    font-size: var(--font-size-small);
+  }
+  
+  @media (max-width: 768px) {
+    .footer-columns {
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+  }

@@ -1,0 +1,80 @@
+/* src/app/features/auth/components/login/login.component.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 160px);
+    padding: var(--spacing-xl);
+    background-color: #f8f9fa;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow-md);
+  }
+  
+  mat-card-header {
+    justify-content: center;
+    padding: var(--spacing-lg) 0;
+  }
+  
+  mat-card-title {
+    font-size: var(--font-size-large);
+    text-align: center;
+    color: var(--primary-color);
+  }
+  
+  mat-card-content {
+    padding: var(--spacing-lg);
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+  }
+  
+  .form-actions button {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .forgot-password {
+    margin-top: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+    background-color: #f5f5f5;
+  }
+  
+  .card-actions p {
+    margin-bottom: var(--spacing-xs);
+    color: #555;
+  }
+  
+  .loading-footer {
+    margin-top: var(--spacing-md);
+  }
+  
+  mat-spinner {
+    margin-right: 8px;
+  }

@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatProgressBarModule,
   ]
 })
 export class MaterialModule { }

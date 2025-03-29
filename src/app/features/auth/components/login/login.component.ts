@@ -5,71 +5,71 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { AuthService } from '../../../../core/services/auth.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { first } from 'rxjs'
+import { ApplicationConfig } from '../../../../../application-config'
 
 @Component({
   selector: 'app-login',
   imports: [SharedModule],
-  providers : [AuthService],
+  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup
-  loading = false
-  submitted = false
-  error = ''
-  returnUrl: string = '/dashboard'
+  isLoading = false
+  hidePassword : boolean = true
+  redirectUrl: string | null = null
+  appConfig = ApplicationConfig
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private snackBar : MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
-    this.loginForm = this.formBuilder.group({
-      username: ['',Validators.required],
-      password: ['',Validators.required]
-    });
+    this.initForm()
 
-    //Get return url from route parameters or default to /dashboard
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-
-    //Redirect if already logged in
-    if(this.authService.isLoggedIn()){
-      this.router.navigate([this.returnUrl]);
-    }
+    this.redirectUrl =
+      this.route.snapshot.queryParams['redirectTo'] || '/dashboard'
   }
 
-  get f(){
-    return this.loginForm.controls;
+  private initForm() {
+    this.loginForm = this.formBuilder.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    })
+  }
+
+  get f() {
+    return this.loginForm.controls
   }
 
   onSubmit(): void {
-    this.submitted = true;
-    if(this.loginForm.invalid){
-      return;
+    if (this.loginForm.invalid) {
+      return
     }
-    this.loading = true;
-    this.authService.login({
-      username : this.f['username'].value,
-      password : this.f['password'].value
-    }).pipe(first())
-    .subscribe({
+
+    this.isLoading = true
+
+    this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.router.navigate([this.returnUrl]);
+        this.isLoading = false
+        this.router.navigateByUrl(this.redirectUrl || '/dashboard')
       },
-      error : error => {
-        this.error = error.error?.message || 'Invalid Credentials';
-        this.snackBar.open(this.error, 'Close', {
-          duration : 5000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom'
-        });
-        this.loading = false;
-      }
+      error: (error) => {
+        this.isLoading = false
+        this.snackBar.open(
+          error.message || 'Login failed. Please check your credentials.',
+          'Close',
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar'],
+          },
+        )
+      },
     })
   }
 }

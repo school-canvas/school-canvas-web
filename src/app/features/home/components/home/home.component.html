@@ -1,1 +1,91 @@
-<p>home works!</p>
+<!-- src/app/features/home/components/home/home.component.html -->
+
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="overlay">
+      <div class="content">
+        <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
+        <h1>{{ appConfig.schoolName }}</h1>
+        <p class="motto">Empowering Students for a Brighter Future</p>
+        <div class="buttons">
+          <a mat-raised-button color="primary" routerLink="/auth/login">Login</a>
+          <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
+        </div>
+      </div>
+    </div>
+    <div class="canvas-label">
+      <h2>Canvas at {{ appConfig.shortName }}</h2>
+    </div>
+  </section>
+
+  <!-- School Info Section -->
+  <section class="school-info">
+    <div class="container">
+      <h2>About {{ appConfig.schoolName }}</h2>
+      
+      <div class="about-content">
+        <div class="about-text">
+          <p>
+            {{ appConfig.schoolName }} is dedicated to providing exceptional education with a focus on technology, 
+            innovation, and character development. Our state-of-the-art campus and dedicated faculty ensure 
+            that students receive the best possible education in a nurturing environment.
+          </p>
+          <p>
+            Our Canvas Tech platform provides students, teachers, and parents with the tools they need 
+            to collaborate, learn, and grow in the digital age. With Canvas Tech, education extends 
+            beyond the classroom, empowering our community with advanced educational technology.
+          </p>
+        </div>
+        
+        <div class="location-map">
+          <h3>Find Us</h3>
+          <iframe [src]="safeMapUrl" 
+                  width="100%" 
+                  height="300" 
+                  style="border:0;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="school-features">
+        <div class="feature">
+          <mat-icon>school</mat-icon>
+          <h3>Excellence in Education</h3>
+          <p>Comprehensive curriculum designed to foster academic growth and critical thinking skills.</p>
+        </div>
+        
+        <div class="feature">
+          <mat-icon>computer</mat-icon>
+          <h3>Technology Integration</h3>
+          <p>State-of-the-art technology integrated into every aspect of the learning experience.</p>
+        </div>
+        
+        <div class="feature">
+          <mat-icon>groups</mat-icon>
+          <h3>Supportive Community</h3>
+          <p>A collaborative environment where students, teachers, and parents work together.</p>
+        </div>
+      </div>
+
+      <!-- Help Info -->
+      <div class="help-info">
+        <h3>Need Help?</h3>
+        <mat-card>
+          <mat-card-content>
+            <p>If you have School Tech Id visit <a routerLink="/password-management">Password Management</a>.</p>
+            <p>
+              To reset your password, email 
+              <a href="mailto:{{ appConfig.supportEmail }}">{{ appConfig.supportEmail }}</a> 
+              and write "Canvas Password Reset" in the subject line.
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+</div>

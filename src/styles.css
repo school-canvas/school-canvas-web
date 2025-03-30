@@ -464,6 +464,13 @@ a:hover {
   color: var(--primary-color);
 }
 
+.mat-toolbar.mat-primary {
+  background-color: var(--primary-color);
+  color: white;
+  position: relative;
+  z-index: 1000;
+}
+
 @media (max-width: 768px) {
   .home-container .school-info .school-features {
     flex-direction: column;

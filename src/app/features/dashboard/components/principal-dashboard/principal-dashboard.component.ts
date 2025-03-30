@@ -32,27 +32,15 @@ export class PrincipalDashboardComponent {
   }
 
   loadUsers(): void {
-    console.log('loadUsers method called');
   this.isLoadingUsers = true;
-  
-  // Log authentication state
-  console.log('Auth token exists:', !!localStorage.getItem('token'));
-  console.log('Tenant ID:', localStorage.getItem('tenantId'));
   
   this.userService.getAllUsers().subscribe({
     next: (users) => {
-      console.log('Users received successfully:', users);
-      console.log('Number of users:', users.length);
-      console.log('First user sample:', users.length > 0 ? JSON.stringify(users[0], null, 2) : 'No users');
       this.allUsers = users;
       this.pendingUsers = this.allUsers.filter(user => !user.active);
-      console.log('Pending users count:', this.pendingUsers.length);
       this.isLoadingUsers = false;
     },
     error: (error) => {
-      console.error('Error in component when loading users:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
       this.isLoadingUsers = false;
       this.snackBar.open('Failed to load users: ' + error.message, 'Close', {
         duration: 5000,

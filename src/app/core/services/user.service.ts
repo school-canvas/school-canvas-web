@@ -14,24 +14,15 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getAllUsers() : Observable<User[]>{
-    console.log('getAllUsers called');
     const tenantId = localStorage.getItem('tenantId');
-    console.log('Tenant ID from localStorage:', tenantId);
     const headers = new HttpHeaders({
       'X-Tenant-ID': tenantId || ''
     });
-
-    console.log('Request headers:', headers);
-  console.log('Making API request to:', `${this.USERS_API}/user/fetchAllUsers`);
 
 return this.http.get<User[]>(`${this.USERS_API}/user/fetchAllUsers`, {headers})
 .pipe(
   tap(response => console.log('API response received:', response)),
   catchError(error => {
-    console.error('API error details:', error);
-        console.error('Status:', error.status);
-        console.error('Status text:', error.statusText);
-        console.error('Error body:', error.error);
       return throwError(() => new Error(error.error?.message||'Failed to fetch users'));
     })
   )

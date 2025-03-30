@@ -115,13 +115,11 @@ export class AuthService {
       //Store tenantId if available
     if (response.tenantId) {
       localStorage.setItem('tenantId', response.tenantId);
-      console.log('Tenant ID stored:', response.tenantId);
     }
       this.isLoggedInSubject.next(true);
       
       try {
         const decoded = jwtDecode<DecodedToken>(response.token);
-        console.log('Decoded token roles:', decoded.roles);
         if (decoded.roles && decoded.roles.length > 0) {
           // Assuming the first role is the primary role
           this.userRoleSubject.next(decoded.roles[0]);

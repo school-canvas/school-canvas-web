@@ -1,0 +1,182 @@
+/* src/app/features/dashboard/components/student-dashboard/student-dashboard.component.css */
+
+.student-dashboard {
+    padding: var(--spacing-xl) 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 160px);
+  }
+  
+  .dashboard-title {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+    font-size: var(--font-size-xxlarge);
+    text-align: center;
+  }
+  
+  .dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+  
+  .welcome-card {
+    text-align: center;
+    padding: var(--spacing-lg);
+  }
+  
+  .welcome-card h2 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .courses-card,
+  .assignments-card,
+  .announcements-card {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .mat-mdc-card-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: rgba(63, 81, 181, 0.05);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .course-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .course-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    background-color: white;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .course-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .course-info {
+    flex: 1;
+  }
+  
+  .course-info h3 {
+    margin-bottom: var(--spacing-xs);
+    color: var(--primary-color);
+  }
+  
+  .course-info p {
+    margin-bottom: var(--spacing-sm);
+    color: #666;
+  }
+  
+  .progress-label {
+    font-size: var(--font-size-small);
+    text-align: right;
+    margin-top: var(--spacing-xs);
+    color: #666;
+  }
+  
+  .assignment-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .assignment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    background-color: white;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid #ccc;
+  }
+  
+  .assignment-item.pending {
+    border-left-color: var(--primary-color);
+  }
+  
+  .assignment-item.completed {
+    border-left-color: var(--success-color);
+  }
+  
+  .assignment-item.overdue {
+    border-left-color: var(--warn-color);
+  }
+  
+  .assignment-info {
+    flex: 1;
+  }
+  
+  .assignment-info h3 {
+    margin-bottom: var(--spacing-xs);
+    color: var(--primary-color);
+  }
+  
+  .assignment-info p {
+    margin-bottom: var(--spacing-xs);
+    color: #666;
+  }
+  
+  .due-date {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-small);
+  }
+  
+  .due-date mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+  }
+  
+  .status-badge.pending {
+    background-color: rgba(63, 81, 181, 0.1);
+    color: var(--primary-color);
+  }
+  
+  .status-badge.completed {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success-color);
+  }
+  
+  .status-badge.overdue {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--warn-color);
+  }
+  
+  .announcement-list {
+    padding: var(--spacing-md);
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-row {
+      grid-template-columns: 1fr;
+    }
+  }

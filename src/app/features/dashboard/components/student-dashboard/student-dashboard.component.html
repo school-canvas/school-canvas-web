@@ -1,1 +1,90 @@
-<p>student-dashboard works!</p>
+<!-- src/app/features/dashboard/components/student-dashboard/student-dashboard.component.html -->
+
+<div class="student-dashboard">
+  <div class="container">
+    <h1 class="dashboard-title">Student Dashboard</h1>
+    
+    <div class="dashboard-content">
+      <mat-card class="welcome-card">
+        <mat-card-content>
+          <h2>Welcome, {{ userName || 'Student' }}</h2>
+          <p>Your learning journey at {{ appConfig.schoolName }} continues here.</p>
+        </mat-card-content>
+      </mat-card>
+      
+      <div class="dashboard-row">
+        <!-- Courses Section -->
+        <mat-card class="courses-card">
+          <mat-card-header>
+            <mat-card-title>My Courses</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="course-list">
+              <div class="course-item" *ngFor="let course of courses">
+                <div class="course-info">
+                  <h3>{{ course.name }}</h3>
+                  <p>Teacher: {{ course.teacher }}</p>
+                  <mat-progress-bar mode="determinate" [value]="course.progress"></mat-progress-bar>
+                  <p class="progress-label">{{ course.progress }}% complete</p>
+                </div>
+                <button mat-icon-button color="primary">
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        
+        <!-- Assignments Section -->
+        <mat-card class="assignments-card">
+          <mat-card-header>
+            <mat-card-title>Upcoming Assignments</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="assignment-list">
+              <div class="assignment-item" *ngFor="let assignment of assignments" [ngClass]="assignment.status">
+                <div class="assignment-info">
+                  <h3>{{ assignment.title }}</h3>
+                  <p>{{ assignment.course }}</p>
+                  <p class="due-date">
+                    <mat-icon>event</mat-icon>
+                    Due: {{ assignment.dueDate | date:'mediumDate' }}
+                  </p>
+                </div>
+                <div class="assignment-status">
+                  <span class="status-badge {{ assignment.status }}">
+                    {{ assignment.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      
+      <!-- Announcements Section -->
+      <mat-card class="announcements-card">
+        <mat-card-header>
+          <mat-card-title>School Announcements</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="announcement-list">
+            <mat-accordion>
+              <mat-expansion-panel *ngFor="let announcement of announcements">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{ announcement.title }}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{ announcement.date | date:'mediumDate' }}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>{{ announcement.content }}</p>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -37,7 +37,9 @@ export interface AuthRequest {
   export interface DecodedToken{
     sub: string;
     roles: string[];
-    // tenantId: string;
+    permissions: string[];
+    tenantId: string;
+    userId: string;
     exp: number;
-    [key: string]: any;
+    iat: number;
   }

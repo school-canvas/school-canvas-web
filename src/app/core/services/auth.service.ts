@@ -112,11 +112,16 @@ export class AuthService {
   private handleAuthResponse(response: AuthResponse): void {
     if (response && response.token) {
       localStorage.setItem('token', response.token);
-
+      //Store tenantId if available
+    if (response.tenantId) {
+      localStorage.setItem('tenantId', response.tenantId);
+      console.log('Tenant ID stored:', response.tenantId);
+    }
       this.isLoggedInSubject.next(true);
       
       try {
         const decoded = jwtDecode<DecodedToken>(response.token);
+        console.log('Decoded token roles:', decoded.roles);
         if (decoded.roles && decoded.roles.length > 0) {
           // Assuming the first role is the primary role
           this.userRoleSubject.next(decoded.roles[0]);
@@ -163,9 +168,9 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  hasRole(role:string) : boolean{
+  hasRole(roleName:string) : boolean{
     const user = this.getCurrentUser();
-    return user ? user.roles.includes(role) : false
+  return user ? user.roles.some(role => role.name === roleName) : false;
   }
 
   isPrincipal():boolean{

@@ -8,6 +8,7 @@ import { routes } from '../app.routes';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
+import { MatTableModule } from '@angular/material/table';
 
 
 
@@ -21,6 +22,7 @@ import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
     ReactiveFormsModule,
     FormsModule,
     MaterialModule,
+    MatTableModule
   ],
   exports: [
     SafeResourceUrlPipe,
@@ -30,7 +32,8 @@ import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
     MaterialModule,
     MatMenuModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    MatTableModule,
   ]
 })
 export class SharedModule { }

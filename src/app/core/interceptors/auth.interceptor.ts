@@ -1,33 +1,35 @@
-import { Injectable } from "@angular/core";
-import { AuthService } from "../services/auth.service";
-import { HttpHandler, HttpRequest, HttpEvent, HttpInterceptor, HttpErrorResponse } from "@angular/common/http";
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs'
-import { Router } from "@angular/router";
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+import { HttpInterceptorFn } from "@angular/common/http";
 
-    constructor(private authService : AuthService, private router:Router){}
 
-    intercept(request : HttpRequest<unknown>, next:HttpHandler): Observable<HttpEvent<unknown>>{
-        const token = this.authService.getToken();
-        if(token) {
-            const authReq = request.clone({
-                setHeaders:{
-                    Authorization: `Bearer ${token}`
-                }
-            });
-        }
-        return next.handle(request)
-        .pipe(
-            catchError((error: HttpErrorResponse) => {
-              if (error.status === 401) {
-                // Token expired or invalid
-                this.authService.logout();
-                this.router.navigate(['/auth/login']);
-              }
-              return throwError(() => error);
-            })
-          );;
+// auth.interceptor.ts
+
+export const authInterceptor: HttpInterceptorFn = (req,next) => {
+  const token = localStorage.getItem('token');
+  const tenantId = localStorage.getItem('tenantId');
+  
+  console.log('Interceptor called for:', req.url);
+  console.log('Token exists:', !!token);
+  console.log('Tenant ID:', tenantId);
+  
+  // Clone the request with new headers
+  if (token || tenantId) {
+    let headers = req.headers;
+    
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
     }
+    
+    if (tenantId) {
+      headers = headers.set('X-Tenant-ID', tenantId);
+    }
+    
+    const authReq = req.clone({ headers });
+    console.log('Final headers:', authReq.headers.keys());
+    
+    return next(authReq);
+  }
+  
+  return next(req);
 }
+

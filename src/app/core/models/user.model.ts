@@ -4,8 +4,10 @@ export interface User {
   firstName: string
   lastName: string
   email: string
-  roles: string[]
+  roles: Role[]
+  groups?: any[]
   active: boolean
+  status: UserStatus
   tenantId: string
   userRoles?: UserRole[];
 }
@@ -24,12 +26,23 @@ export interface Permission {
 }
 
 export interface Role {
-  id: string
-  name: string
-  description?: string
+  id: string;
+  name: string;
+  description: string;
+  predefined: boolean;
+  createdAt: string;
+  updatedAt: string;
   permissions: Permission[];
 }
 
 export interface UserWithRoles extends User{
     detailedRoles: Role[];
+}
+
+export enum UserStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  ARCHIVED = 'ARCHIVED'
 }

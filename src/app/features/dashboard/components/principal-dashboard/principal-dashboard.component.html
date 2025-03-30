@@ -1,1 +1,215 @@
-<p>principal-dashboard works!</p>
+<!-- src/app/features/dashboard/components/principal-dashboard/principal-dashboard.component.html -->
+
+<div class="principal-dashboard">
+  <div class="container">
+    <h1 class="dashboard-title">Principal Dashboard</h1>
+    
+    <div class="dashboard-content">
+      <mat-card class="welcome-card">
+        <mat-card-content>
+          <h2>Welcome to the Principal Dashboard</h2>
+          <p>
+            As a principal, you can manage users, approve registrations, and oversee
+            school activities from this dashboard.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stats-card">
+        <mat-card-header>
+          <mat-card-title>Quick Stats</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <mat-icon color="primary">person</mat-icon>
+              <div class="stat-content">
+                <p class="stat-value">{{ allUsers.length }}</p>
+                <p class="stat-label">Total Users</p>
+              </div>
+            </div>
+            <div class="stat-box">
+              <mat-icon color="warn">person_add</mat-icon>
+              <div class="stat-content">
+                <p class="stat-value">{{ pendingUsers.length }}</p>
+                <p class="stat-label">Pending Approvals</p>
+              </div>
+            </div>
+            <div class="stat-box">
+              <mat-icon color="accent">school</mat-icon>
+              <div class="stat-content">
+                <p class="stat-value">{{ studentCount }}</p>
+                <p class="stat-label">Students</p>
+              </div>
+            </div>
+            <div class="stat-box">
+              <mat-icon color="accent">supervisor_account</mat-icon>
+              <div class="stat-content">
+                <p class="stat-value">{{ teacherCount }}</p>
+                <p class="stat-label">Teachers</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Pending Approvals Section -->
+      <mat-card class="users-card" *ngIf="pendingUsers.length > 0">
+        <mat-card-header>
+          <mat-card-title>
+            <div class="card-title-with-badge">
+              Pending Approvals
+              <span class="badge">{{ pendingUsers.length }}</span>
+            </div>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="pendingUsers" class="mat-elevation-z1">
+              <!-- Username Column -->
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>Username</th>
+                <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let user">{{ user.firstName }} {{ user.lastName }}</td>
+              </ng-container>
+
+              <!-- Email Column -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+              </ng-container>
+
+              <!-- Roles Column -->
+              <ng-container matColumnDef="roles">
+                <th mat-header-cell *matHeaderCellDef>Roles</th>
+                <td mat-cell *matCellDef="let user">
+                  <div class="roles-list">
+                    <span class="role-chip" *ngFor="let userRole of user.roles">
+                      {{ userRole.name }}
+                    </span>
+                    <span *ngIf="!user.userRoles || user.userRoles.length === 0">No roles</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="status" [class.active]="user.active" [class.inactive]="!user.active">
+                    {{ user.active ? 'Active' : 'Pending' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user">
+                  <button mat-icon-button color="primary" (click)="approveUser(user.id)" matTooltip="Approve User">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <div class="loading-container" *ngIf="isLoadingUsers">
+              <mat-spinner diameter="40" class="spinner"></mat-spinner>
+              <span>Loading users...</span>
+            </div>
+
+            <div class="empty-state" *ngIf="!isLoadingUsers && pendingUsers.length === 0">
+              No pending approvals at this time.
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- All Users Section -->
+      <mat-card class="users-card">
+        <mat-card-header>
+          <mat-card-title>All Users</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="allUsers" class="mat-elevation-z1">
+              <!-- Username Column -->
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>Username</th>
+                <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let user">{{ user.firstName }} {{ user.lastName }}</td>
+              </ng-container>
+
+              <!-- Email Column -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+              </ng-container>
+
+              <!-- Roles Column -->
+              <ng-container matColumnDef="roles">
+                <th mat-header-cell *matHeaderCellDef>Roles</th>
+                <td mat-cell *matCellDef="let user">
+                  <div class="roles-list">
+                    <span class="role-chip" *ngFor="let userRole of user.userRoles">
+                      {{ userRole.role.name }}
+                    </span>
+                    <span *ngIf="!user.userRoles || user.userRoles.length === 0">No roles</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="status" [class.active]="user.active" [class.inactive]="!user.active">
+                    {{ user.active ? 'Active' : 'Pending' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user">
+                  <button mat-icon-button color="primary" [disabled]="user.active" (click)="approveUser(user.id)" matTooltip="Approve User" *ngIf="!user.active">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button color="primary" matTooltip="View Details">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <div class="loading-container" *ngIf="isLoadingUsers">
+              <mat-spinner diameter="40" class="spinner"></mat-spinner>
+              <span>Loading users...</span>
+            </div>
+
+            <div class="empty-state" *ngIf="!isLoadingUsers && allUsers.length === 0">
+              No users found.
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

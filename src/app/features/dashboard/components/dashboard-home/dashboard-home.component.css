@@ -1,0 +1,54 @@
+/* src/app/features/dashboard/components/dashboard-home/dashboard-home.component.css */
+
+.dashboard-home {
+    padding: var(--spacing-xl) 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 160px);
+  }
+  
+  .welcome-card {
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-md);
+  }
+  
+  .welcome-content {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xl);
+    text-align: center;
+  }
+  
+  .welcome-icon {
+    font-size: 64px;
+    height: 64px;
+    width: 64px;
+    color: var(--primary-color);
+    margin-right: var(--spacing-xl);
+  }
+  
+  .welcome-text {
+    flex: 1;
+  }
+  
+  .welcome-text h1 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+  }
+  
+  .welcome-text p {
+    color: #666;
+    font-size: var(--font-size-medium);
+  }
+  
+  @media (max-width: 768px) {
+    .welcome-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .welcome-icon {
+      margin-right: 0;
+      margin-bottom: var(--spacing-lg);
+    }
+  }

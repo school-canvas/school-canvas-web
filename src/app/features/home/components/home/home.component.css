@@ -10,9 +10,9 @@
     position: relative;
     height: 70vh;
     min-height: 500px;
-    background-image: url('/assets/images/school-hero.jpg');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;;
   }
   
   .hero-section .overlay {
@@ -21,7 +21,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,7 +36,10 @@
   
   .hero-section .school-logo {
     height: 100px;
-    margin-bottom: var(--spacing-lg);
+    width: 100px;
+    border-radius: 10%;;
+    object-fit:contain;
+    /* margin-bottom: var(--spacing-lg); */
   }
   
   .hero-section h1 {

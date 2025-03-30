@@ -1,12 +1,13 @@
 export const ApplicationConfig = {
   // Application basics
   appName: 'Canvas Tech',
-  schoolName: 'Nawal English Boarding School',
+  schoolName: ' New Nawal English Boarding School',
   shortName: 'Nawal Tech',
-  footerName: 'Nawal English Boarding School',
+  footerName: 'New Nawal English Boarding School',
 
   // Logo settings
-  logoPath: '/assets/images/logo.png',
+  logoPath: '/assets/images/school-logo.png',
+  schoolImagePath: '/assets/images/school-image.png',
 
   // Contact information
   address: '123 Education Street, Kathmandu, Nepal',

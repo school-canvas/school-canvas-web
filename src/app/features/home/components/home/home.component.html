@@ -2,22 +2,23 @@
 
 <div class="home-container">
   <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="overlay">
-      <div class="content">
+<section class="hero-section" [ngStyle]="{'background-image': 'url(' + appConfig.schoolImagePath + ')'}">
+  <div class="overlay">
+    <div class="content">
         <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
-        <h1>{{ appConfig.schoolName }}</h1>
-        <p class="motto">Empowering Students for a Brighter Future</p>
-        <div class="buttons">
-          <a mat-raised-button color="primary" routerLink="/auth/login">Login</a>
-          <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
-        </div>
+      <h1>{{ appConfig.schoolName }}</h1>
+      <p class="motto">Empowering Students for a Brighter Future</p>
+      <div class="buttons">
+        <a mat-raised-button color="primary" routerLink="/auth/login">Login</a>
+        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
       </div>
     </div>
-    <div class="canvas-label">
-      <h2>Canvas at {{ appConfig.shortName }}</h2>
-    </div>
-  </section>
+  </div>
+  <div class="canvas-label">
+    <h2>Canvas at {{ appConfig.shortName }}</h2>
+  </div>
+</section>
+
 
   <!-- School Info Section -->
   <section class="school-info">

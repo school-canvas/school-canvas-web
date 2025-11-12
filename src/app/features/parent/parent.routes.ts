@@ -4,6 +4,7 @@ import { ParentDashboardComponent } from './components/parent-dashboard/parent-d
 import { MyChildrenComponent } from './pages/my-children/my-children.component';
 import { ChildProgressComponent } from './pages/child-progress/child-progress.component';
 import { FeeManagementComponent } from './pages/fee-management/fee-management.component';
+import { CommunicationComponent } from './pages/communication/communication.component';
 
 export const PARENT_ROUTES: Routes = [
   {
@@ -15,6 +16,7 @@ export const PARENT_ROUTES: Routes = [
       { path: 'children', component: MyChildrenComponent },
       { path: 'child-progress/:id', component: ChildProgressComponent },
       { path: 'fees', component: FeeManagementComponent },
+      { path: 'communication', component: CommunicationComponent },
     ]
   }
 ];

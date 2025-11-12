@@ -1,0 +1,142 @@
+
+/* ========================================
+   ANGULAR MATERIAL SNACKBAR CUSTOMIZATION
+   ======================================== */
+.success-snackbar {
+  background-color: var(--success-color) !important;
+  color: var(--success-contrast) !important;
+}
+
+.error-snackbar {
+  background-color: var(--error-color) !important;
+  color: var(--error-contrast) !important;
+}
+
+.warning-snackbar {
+  background-color: var(--warning-color) !important;
+  color: var(--warning-contrast) !important;
+}
+
+.info-snackbar {
+  background-color: var(--info-color) !important;
+  color: var(--info-contrast) !important;
+}
+
+/* ========================================
+   BUTTON CUSTOMIZATION - Apply theme colors to all buttons
+   ======================================== */
+.mat-mdc-raised-button.mat-primary {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-contrast) !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  background-color: var(--primary-dark) !important;
+}
+
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-contrast) !important;
+}
+
+.mat-mdc-button.mat-primary {
+  color: var(--primary-color) !important;
+}
+
+.mat-mdc-raised-button.mat-accent {
+  background-color: var(--secondary-color) !important;
+  color: var(--secondary-contrast) !important;
+}
+
+.mat-mdc-raised-button.mat-warn {
+  background-color: var(--error-color) !important;
+  color: var(--error-contrast) !important;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+/* Text Colors */
+.text-primary { color: var(--text-primary) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+.text-success { color: var(--success-color) !important; }
+.text-warning { color: var(--warning-color) !important; }
+.text-error { color: var(--error-color) !important; }
+.text-info { color: var(--info-color) !important; }
+
+/* Background Colors */
+.bg-primary { background-color: var(--primary-color) !important; }
+.bg-secondary { background-color: var(--secondary-color) !important; }
+.bg-success { background-color: var(--success-color) !important; }
+.bg-warning { background-color: var(--warning-color) !important; }
+.bg-error { background-color: var(--error-color) !important; }
+.bg-surface { background-color: var(--surface-color) !important; }
+
+/* Spacing Utilities */
+.m-0 { margin: 0 !important; }
+.mt-xs { margin-top: var(--spacing-xs) !important; }
+.mt-sm { margin-top: var(--spacing-sm) !important; }
+.mt-md { margin-top: var(--spacing-md) !important; }
+.mt-lg { margin-top: var(--spacing-lg) !important; }
+.mt-xl { margin-top: var(--spacing-xl) !important; }
+
+.mb-xs { margin-bottom: var(--spacing-xs) !important; }
+.mb-sm { margin-bottom: var(--spacing-sm) !important; }
+.mb-md { margin-bottom: var(--spacing-md) !important; }
+.mb-lg { margin-bottom: var(--spacing-lg) !important; }
+.mb-xl { margin-bottom: var(--spacing-xl) !important; }
+
+.p-0 { padding: 0 !important; }
+.pt-xs { padding-top: var(--spacing-xs) !important; }
+.pt-sm { padding-top: var(--spacing-sm) !important; }
+.pt-md { padding-top: var(--spacing-md) !important; }
+.pt-lg { padding-top: var(--spacing-lg) !important; }
+
+.pb-xs { padding-bottom: var(--spacing-xs) !important; }
+.pb-sm { padding-bottom: var(--spacing-sm) !important; }
+.pb-md { padding-bottom: var(--spacing-md) !important; }
+.pb-lg { padding-bottom: var(--spacing-lg) !important; }
+
+/* Flexbox Utilities */
+.d-flex { display: flex !important; }
+.flex-column { flex-direction: column !important; }
+.flex-row { flex-direction: row !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-end { justify-content: flex-end !important; }
+.align-center { align-items: center !important; }
+.align-start { align-items: flex-start !important; }
+.gap-xs { gap: var(--spacing-xs) !important; }
+.gap-sm { gap: var(--spacing-sm) !important; }
+.gap-md { gap: var(--spacing-md) !important; }
+.gap-lg { gap: var(--spacing-lg) !important; }
+
+/* Width & Height */
+.w-100 { width: 100% !important; }
+.h-100 { height: 100% !important; }
+
+/* Text Alignment */
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+
+/* Font Weights */
+.font-bold { font-weight: 700 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-normal { font-weight: 400 !important; }
+.font-light { font-weight: 300 !important; }
+
+/* Cursor */
+.cursor-pointer { cursor: pointer !important; }
+
+/* Border Radius */
+.rounded-sm { border-radius: var(--border-radius-sm) !important; }
+.rounded-md { border-radius: var(--border-radius-md) !important; }
+.rounded-lg { border-radius: var(--border-radius-lg) !important; }
+.rounded-full { border-radius: var(--border-radius-full) !important; }
+
+/* Shadows */
+.shadow-sm { box-shadow: var(--shadow-sm) !important; }
+.shadow-md { box-shadow: var(--shadow-md) !important; }
+.shadow-lg { box-shadow: var(--shadow-lg) !important; }

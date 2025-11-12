@@ -1,0 +1,239 @@
+<div class="child-progress-container">
+  <!-- Page Header -->
+  <app-page-header 
+    *ngIf="student"
+    [title]="student.firstName + ' ' + student.lastName + '\'s Progress'" 
+    [subtitle]="'Academic performance and attendance tracking'">
+    <button mat-raised-button color="primary" (click)="downloadReportCard()">
+      <mat-icon>download</mat-icon>
+      Download Report Card
+    </button>
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to My Children
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading progress data...</p>
+  </div>
+
+  <!-- Content -->
+  <div class="progress-content" *ngIf="!loading && student">
+    <!-- Student Overview Card -->
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <div class="student-avatar" mat-card-avatar>
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <mat-card-title>{{ student.firstName }} {{ student.lastName }}</mat-card-title>
+        <mat-card-subtitle>
+          Grade {{ student.gradeLevel }} • 
+          <mat-chip [color]="student.status === 'ACTIVE' ? 'primary' : 'warn'" selected size="small">
+            {{ student.status }}
+          </mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="student-details">
+          <div class="detail-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ student.email }}</span>
+          </div>
+          <div class="detail-item" *ngIf="student.phoneNumber">
+            <mat-icon>phone</mat-icon>
+            <span>{{ student.phoneNumber }}</span>
+          </div>
+          <div class="detail-item" *ngIf="student.dateOfBirth">
+            <mat-icon>cake</mat-icon>
+            <span>{{ formatDate(student.dateOfBirth) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stats Cards Row -->
+    <div class="stats-row">
+      <app-stats-card
+        [title]="'Attendance Rate'"
+        [value]="getAttendanceRate() + '%'"
+        [icon]="'fact_check'"
+        [color]="getAttendanceRate() >= 90 ? 'success' : getAttendanceRate() >= 75 ? 'warning' : 'error'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Average Grade'"
+        [value]="averageGrade.toString()"
+        [icon]="'grade'"
+        [color]="'primary'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Total Assessments'"
+        [value]="totalAssessments.toString()"
+        [icon]="'assignment'"
+        [color]="'primary'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Completed'"
+        [value]="completedAssessments.toString()"
+        [icon]="'check_circle'"
+        [color]="'success'">
+      </app-stats-card>
+    </div>
+
+    <!-- Tabbed Content -->
+    <mat-tab-group class="progress-tabs">
+      <!-- Attendance Tab -->
+      <mat-tab label="Attendance">
+        <div class="tab-content">
+          <!-- Attendance Summary -->
+          <mat-card *ngIf="attendanceSummary">
+            <mat-card-header>
+              <mat-card-title>Attendance Summary</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span class="label">Total Days:</span>
+                  <span class="value">{{ attendanceSummary.totalDays || 0 }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="label">Present:</span>
+                  <span class="value text-success">{{ attendanceSummary.presentDays || 0 }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="label">Absent:</span>
+                  <span class="value text-danger">{{ attendanceSummary.absentDays || 0 }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="label">Late:</span>
+                  <span class="value text-warning">{{ attendanceSummary.lateDays || 0 }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Recent Attendance Records -->
+          <mat-card class="data-table-card">
+            <mat-card-header>
+              <mat-card-title>Recent Attendance</mat-card-title>
+              <button mat-button color="primary" (click)="viewAllAttendance()">View All</button>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="table-container" *ngIf="recentAttendance.length > 0">
+                <table mat-table [dataSource]="recentAttendance" class="attendance-table">
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let record">{{ formatDate(record.date) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let record">
+                      <mat-chip [ngClass]="getAttendanceStatusClass(record.status)" size="small">
+                        {{ record.status }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="remarks">
+                    <th mat-header-cell *matHeaderCellDef>Remarks</th>
+                    <td mat-cell *matCellDef="let record">{{ record.remarks || 'N/A' }}</td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="attendanceDisplayColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: attendanceDisplayColumns;"></tr>
+                </table>
+              </div>
+              <app-empty-state
+                *ngIf="recentAttendance.length === 0"
+                [icon]="'calendar_today'"
+                [title]="'No Attendance Records'"
+                [message]="'No attendance records found for this student.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Assessments/Grades Tab -->
+      <mat-tab label="Assessments & Grades">
+        <div class="tab-content">
+          <mat-card class="data-table-card">
+            <mat-card-header>
+              <mat-card-title>Recent Assessments</mat-card-title>
+              <button mat-button color="primary" (click)="viewAllAssessments()">View All</button>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="table-container" *ngIf="recentSubmissions.length > 0">
+                <table mat-table [dataSource]="recentSubmissions" class="submissions-table">
+                  <ng-container matColumnDef="assessmentTitle">
+                    <th mat-header-cell *matHeaderCellDef>Assessment</th>
+                    <td mat-cell *matCellDef="let submission">{{ submission.assessmentTitle || 'N/A' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="submittedDate">
+                    <th mat-header-cell *matHeaderCellDef>Submitted</th>
+                    <td mat-cell *matCellDef="let submission">{{ formatDate(submission.submittedDate) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="marksObtained">
+                    <th mat-header-cell *matHeaderCellDef>Grade</th>
+                    <td mat-cell *matCellDef="let submission">
+                      <span *ngIf="submission.marksObtained !== null && submission.marksObtained !== undefined">
+                        {{ submission.marksObtained }}
+                      </span>
+                      <span *ngIf="submission.marksObtained === null || submission.marksObtained === undefined">
+                        Pending
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let submission">
+                      <mat-chip [ngClass]="getSubmissionStatusClass(submission.status)" size="small">
+                        {{ submission.status }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="submissionsDisplayColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: submissionsDisplayColumns;"></tr>
+                </table>
+              </div>
+              <app-empty-state
+                *ngIf="recentSubmissions.length === 0"
+                [icon]="'assignment'"
+                [title]="'No Assessments'"
+                [message]="'No assessment submissions found for this student.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Performance Chart Tab (Placeholder) -->
+      <mat-tab label="Performance Charts">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Academic Performance Over Time</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="chart-placeholder">
+                <mat-icon>insert_chart</mat-icon>
+                <p>Charts will be displayed here</p>
+                <p class="hint">Integration with Chart.js coming soon</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
+import { ChartComponent, ChartData } from '../../../../shared/components/chart/chart.component';
 
 import { StudentService } from '../../../../core/services/api/student.service';
 import { TeacherService } from '../../../../core/services/api/teacher.service';
@@ -35,7 +36,8 @@ import { takeUntil } from 'rxjs/operators';
     MatTabsModule,
     MatSnackBarModule,
     PageHeaderComponent,
-    StatsCardComponent
+    StatsCardComponent,
+    ChartComponent
   ],
   templateUrl: './reports-analytics.component.html',
   styleUrl: './reports-analytics.component.css'
@@ -84,6 +86,12 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
     { value: 'last-year', label: 'Last Year' },
     { value: 'all-time', label: 'All Time' }
   ];
+
+  // Chart Data
+  studentsByGradeChart!: ChartData;
+  enrollmentTrendChart!: ChartData;
+  teachersByDepartmentChart!: ChartData;
+  revenueChart!: ChartData;
 
   constructor(
     private router: Router,
@@ -145,6 +153,33 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {});
+
+    // Prepare chart data
+    this.studentsByGradeChart = {
+      labels: Object.keys(this.studentsByGrade),
+      datasets: [{
+        label: 'Students by Grade',
+        data: Object.values(this.studentsByGrade),
+        backgroundColor: [
+          '#3f51b5', '#2196F3', '#00BCD4', '#009688', '#4CAF50',
+          '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    // Mock enrollment trend data
+    this.enrollmentTrendChart = {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [{
+        label: 'Total Students',
+        data: [950, 965, 980, 1020, 1050, 1080, 1100, 1150, 1200, 1180, 1190, this.totalStudents],
+        borderColor: '#3f51b5',
+        backgroundColor: 'rgba(63, 81, 181, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    };
   }
 
   processTeacherData(teachers: any[]): void {
@@ -163,6 +198,20 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {});
+
+    // Prepare chart data
+    this.teachersByDepartmentChart = {
+      labels: Object.keys(this.teachersByDepartment),
+      datasets: [{
+        label: 'Teachers by Department',
+        data: Object.values(this.teachersByDepartment),
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+          '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+        ],
+        borderWidth: 1
+      }]
+    };
   }
 
   processClassData(classes: any[]): void {
@@ -216,6 +265,19 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
       { month: 'Nov', amount: this.totalRevenue * 0.07 },
       { month: 'Dec', amount: this.totalRevenue * 0.06 }
     ];
+
+    // Prepare revenue chart
+    this.revenueChart = {
+      labels: this.revenueByMonth.map(r => r.month),
+      datasets: [{
+        label: 'Monthly Revenue',
+        data: this.revenueByMonth.map(r => r.amount),
+        borderColor: '#4CAF50',
+        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    };
   }
 
   onPeriodChange(): void {

@@ -69,25 +69,18 @@
               <!-- Students by Grade -->
               <mat-card class="chart-card">
                 <mat-card-header>
-                  <mat-card-title>Students by Grade Level</mat-card-title>
+                  <mat-card-title>
+                    <mat-icon>bar_chart</mat-icon>
+                    Students by Grade Level
+                  </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <div class="data-list">
-                    <div class="data-item" *ngFor="let grade of getObjectKeys(studentsByGrade)">
-                      <span class="label">{{ grade }}</span>
-                      <span class="value">{{ studentsByGrade[grade] }}</span>
-                      <div class="bar-container">
-                        <div class="bar" [style.width.%]="(studentsByGrade[grade] / totalStudents) * 100"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="chart-placeholder">
-                    <!-- TODO: Add Chart.js bar chart here -->
-                    <p class="placeholder-text">
-                      <mat-icon>bar_chart</mat-icon>
-                      Chart visualization (Chart.js integration needed)
-                    </p>
-                  </div>
+                  <app-chart 
+                    *ngIf="studentsByGradeChart"
+                    [type]="'bar'"
+                    [data]="studentsByGradeChart"
+                    [height]="300">
+                  </app-chart>
                 </mat-card-content>
                 <mat-card-actions>
                   <button mat-button (click)="viewDetailedReport('students-by-grade')">
@@ -95,6 +88,34 @@
                     View Details
                   </button>
                   <button mat-button (click)="exportReport('students-by-grade')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+
+              <!-- Enrollment Trend -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>trending_up</mat-icon>
+                    Enrollment Trend
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <app-chart 
+                    *ngIf="enrollmentTrendChart"
+                    [type]="'line'"
+                    [data]="enrollmentTrendChart"
+                    [height]="300">
+                  </app-chart>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('enrollment-trend')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('enrollment-trend')">
                     <mat-icon>download</mat-icon>
                     Export
                   </button>
@@ -146,24 +167,18 @@
               <!-- Teachers by Department -->
               <mat-card class="chart-card">
                 <mat-card-header>
-                  <mat-card-title>Teachers by Department</mat-card-title>
+                  <mat-card-title>
+                    <mat-icon>donut_large</mat-icon>
+                    Teachers by Department
+                  </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <div class="data-list">
-                    <div class="data-item" *ngFor="let dept of getObjectKeys(teachersByDepartment)">
-                      <span class="label">{{ dept }}</span>
-                      <span class="value">{{ teachersByDepartment[dept] }}</span>
-                      <div class="bar-container">
-                        <div class="bar" [style.width.%]="(teachersByDepartment[dept] / totalTeachers) * 100"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="chart-placeholder">
-                    <p class="placeholder-text">
-                      <mat-icon>donut_large</mat-icon>
-                      Donut chart visualization (Chart.js integration needed)
-                    </p>
-                  </div>
+                  <app-chart 
+                    *ngIf="teachersByDepartmentChart"
+                    [type]="'doughnut'"
+                    [data]="teachersByDepartmentChart"
+                    [height]="300">
+                  </app-chart>
                 </mat-card-content>
                 <mat-card-actions>
                   <button mat-button (click)="viewDetailedReport('teachers-by-department')">
@@ -355,24 +370,18 @@
             <!-- Revenue Trend -->
             <mat-card class="chart-card full-width">
               <mat-card-header>
-                <mat-card-title>Monthly Revenue Trend</mat-card-title>
+                <mat-card-title>
+                  <mat-icon>show_chart</mat-icon>
+                  Monthly Revenue Trend
+                </mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <div class="data-list horizontal">
-                  <div class="data-item vertical" *ngFor="let item of revenueByMonth">
-                    <div class="bar-container vertical">
-                      <div class="bar" [style.height.%]="(item.amount / totalRevenue) * 100"></div>
-                    </div>
-                    <span class="label">{{ item.month }}</span>
-                    <span class="value">${{ item.amount.toFixed(0) }}</span>
-                  </div>
-                </div>
-                <div class="chart-placeholder">
-                  <p class="placeholder-text">
-                    <mat-icon>show_chart</mat-icon>
-                    Line chart with trend analysis (Chart.js integration needed)
-                  </p>
-                </div>
+                <app-chart 
+                  *ngIf="revenueChart"
+                  [type]="'line'"
+                  [data]="revenueChart"
+                  [height]="350">
+                </app-chart>
               </mat-card-content>
               <mat-card-actions>
                 <button mat-button (click)="viewDetailedReport('revenue-trend')">

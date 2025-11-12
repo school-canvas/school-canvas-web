@@ -3,6 +3,7 @@ import { ApplicationConfig } from '../../../../../application-config';
 import { SharedModule } from '../../../../shared/shared.module';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,4 @@ export class HomeComponent implements OnInit {
       this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
 
   }
-
-
 }

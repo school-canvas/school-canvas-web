@@ -10,13 +10,16 @@ import { FooterComponent } from './components/footer/footer.component';
 import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
+import { BrowserModule } from '@angular/platform-browser';
 
 
 
 
 @NgModule({
   declarations: [
-    SafeResourceUrlPipe
+    SafeResourceUrlPipe,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MaterialModule,
     MatTableModule,
     MatExpansionModule,
+    SidebarComponent,
+    MainLayoutComponent,
   ],
   exports: [
     SafeResourceUrlPipe,
@@ -37,7 +42,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
     RouterModule,
     FormsModule,
     MatTableModule,
-    MatExpansionModule
+    MatExpansionModule,
+    SidebarComponent,
+    MainLayoutComponent,
   ]
 })
 export class SharedModule { }

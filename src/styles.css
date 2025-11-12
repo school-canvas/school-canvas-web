@@ -5,42 +5,156 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
-/* Variables */
+/* ========================================
+   LIGHT THEME VARIABLES (Default)
+   Change these colors for each school
+   ======================================== */
 :root {
-  --primary-color: #3f51b5;
-  --secondary-color: #ff4081;
-  --accent-color: #ff4081;
-  --warn-color: #f44336;
+  /* Primary Brand Colors - CUSTOMIZE PER SCHOOL */
+  --primary-color: #3f51b5;        /* Main brand color */
+  --primary-light: #5c6bc0;        /* Lighter shade */
+  --primary-dark: #303f9f;         /* Darker shade */
+  --primary-contrast: #ffffff;     /* Text on primary background */
+  
+  /* Secondary Colors */
+  --secondary-color: #ff4081;      /* Accent color */
+  --secondary-light: #ff5fa2;
+  --secondary-dark: #f50057;
+  --secondary-contrast: #ffffff;
+  
+  /* Semantic Colors */
   --success-color: #4caf50;
+  --success-light: #66bb6a;
+  --success-dark: #388e3c;
+  --success-contrast: #ffffff;
+  
+  --warning-color: #ff9800;
+  --warning-light: #ffb74d;
+  --warning-dark: #f57c00;
+  --warning-contrast: #ffffff;
+  
+  --error-color: #f44336;
+  --error-light: #e57373;
+  --error-dark: #d32f2f;
+  --error-contrast: #ffffff;
+  
   --info-color: #2196f3;
-  --background-color: #f5f5f5;
-  --text-color: #333333;
-  --light-text-color: #ffffff;
+  --info-light: #64b5f6;
+  --info-dark: #1976d2;
+  --info-contrast: #ffffff;
+  
+  /* Background Colors */
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --card-background: #ffffff;
+  --sidebar-background: #263238;
+  --header-background: #ffffff;
+  
+  /* Text Colors */
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-disabled: #bdbdbd;
+  --text-on-primary: #ffffff;
+  --text-on-secondary: #ffffff;
+  
+  /* Border & Divider Colors */
   --border-color: #e0e0e0;
+  --divider-color: #e0e0e0;
+  
+  /* Interactive States */
   --hover-color: rgba(0, 0, 0, 0.04);
+  --active-color: rgba(0, 0, 0, 0.08);
+  --focus-color: rgba(63, 81, 181, 0.12);
   
+  /* Typography */
   --font-family: 'Roboto', 'Helvetica Neue', sans-serif;
-  --font-size-small: 12px;
-  --font-size-normal: 14px;
-  --font-size-medium: 16px;
-  --font-size-large: 18px;
-  --font-size-xlarge: 24px;
-  --font-size-xxlarge: 32px;
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+  --font-size-xxxl: 48px;
   
+  /* Spacing System */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-xxl: 48px;
+  --spacing-xxxl: 64px;
   
+  /* Border Radius */
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
-  --border-radius-lg: 16px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
   
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-xl: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  
+  /* Z-index Layers */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* ========================================
+   DARK THEME VARIABLES
+   ======================================== */
+[data-theme="dark"] {
+  /* Primary Brand Colors (Same as light for brand consistency) */
+  --primary-color: #5c6bc0;
+  --primary-light: #7986cb;
+  --primary-dark: #3f51b5;
+  --primary-contrast: #ffffff;
+  
+  --secondary-color: #ff5fa2;
+  --secondary-light: #ff80ab;
+  --secondary-dark: #ff4081;
+  --secondary-contrast: #ffffff;
+  
+  /* Semantic Colors (Adjusted for dark background) */
+  --success-color: #66bb6a;
+  --warning-color: #ffb74d;
+  --error-color: #ef5350;
+  --info-color: #64b5f6;
+  
+  /* Background Colors */
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --card-background: #2d2d2d;
+  --sidebar-background: #1a1a1a;
+  --header-background: #212121;
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-disabled: #666666;
+  
+  /* Border & Divider Colors */
+  --border-color: #3f3f3f;
+  --divider-color: #3f3f3f;
+  
+  /* Interactive States */
+  --hover-color: rgba(255, 255, 255, 0.08);
+  --active-color: rgba(255, 255, 255, 0.12);
+  
+  /* Shadows (More subtle in dark theme) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.7);
 }
 
 /* Base styles */

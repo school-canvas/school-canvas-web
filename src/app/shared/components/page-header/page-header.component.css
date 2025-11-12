@@ -1,0 +1,41 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.page-header__content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header__back {
+  flex-shrink: 0;
+}
+
+.page-header__text {
+  flex: 1;
+}
+
+.page-header__title {
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.page-header__subtitle {
+  font-size: 14px;
+  margin: 4px 0 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.page-header__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

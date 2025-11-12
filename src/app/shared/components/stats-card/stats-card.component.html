@@ -1,1 +1,13 @@
-<p>stats-card works!</p>
+<mat-card class="stats-card" [class]="'stats-card--' + color">
+  <mat-card-content>
+    <div class="stats-card__header">
+      <mat-icon class="stats-card__icon">{{ icon }}</mat-icon>
+      <h3 class="stats-card__title">{{ title }}</h3>
+    </div>
+    <div class="stats-card__value">{{ value }}</div>
+    <div *ngIf="change !== undefined" class="stats-card__change" [class.positive]="change > 0" [class.negative]="change < 0">
+      <mat-icon>{{ change > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+      {{ Math.abs(change) }}%
+    </div>
+  </mat-card-content>
+</mat-card>

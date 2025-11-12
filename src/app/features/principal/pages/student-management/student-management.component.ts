@@ -22,6 +22,7 @@ import { StatsCardComponent } from '../../../../shared/components/stats-card/sta
 import { StudentDialogComponent } from '../../components/student-dialog/student-dialog.component';
 
 import { StudentService } from '../../../../core/services/api/student.service';
+import { ExportService } from '../../../../core/services/export.service';
 import { Student } from '../../../../core/models/student.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -127,7 +128,8 @@ export class StudentManagementComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
@@ -273,10 +275,27 @@ export class StudentManagementComponent implements OnInit, OnDestroy {
   }
 
   exportStudents(): void {
-    // TODO: Future Implementation - Export to CSV/Excel
-    // Library: xlsx (npm install xlsx)
-    // Export this.filteredStudents to CSV/Excel file
-    this.snackBar.open(`Export ${this.filteredStudents.length} students - Feature needed`, 'Close', { duration: 3000 });
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    this.exportService.exportToExcel({
+      title: 'Student List',
+      subtitle: this.selectedGrade !== 'all' ? `Grade: ${this.selectedGrade}` : 'All Grades',
+      filename: `students-${timestamp}`,
+      columns: [
+        { header: 'Student ID', field: 'studentId', width: 15 },
+        { header: 'First Name', field: 'firstName', width: 15 },
+        { header: 'Last Name', field: 'lastName', width: 15 },
+        { header: 'Grade', field: 'gradeLevel', width: 10 },
+        { header: 'Email', field: 'email', width: 25 },
+        { header: 'Phone', field: 'phoneNumber', width: 15 },
+        { header: 'Status', field: 'status', width: 12 },
+        { header: 'Gender', field: 'gender', width: 10 },
+        { header: 'Date of Birth', field: 'dateOfBirth', width: 15 }
+      ],
+      data: this.filteredStudents
+    });
+
+    this.snackBar.open(`Exported ${this.filteredStudents.length} students to Excel`, 'Close', { duration: 3000 });
   }
 
   importStudents(): void {

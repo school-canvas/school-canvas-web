@@ -22,6 +22,7 @@ import { StatsCardComponent } from '../../../../shared/components/stats-card/sta
 import { ClassService } from '../../../../core/services/api/class.service';
 import { StudentService } from '../../../../core/services/api/student.service';
 import { AssessmentService } from '../../../../core/services/api/assessment.service';
+import { ExportService } from '../../../../core/services/export.service';
 
 interface ClassInfo {
   id: string;
@@ -99,7 +100,8 @@ export class GradebookComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private classService: ClassService,
     private studentService: StudentService,
-    private assessmentService: AssessmentService
+    private assessmentService: AssessmentService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
@@ -319,8 +321,62 @@ export class GradebookComponent implements OnInit, OnDestroy {
   }
 
   exportGrades(): void {
-    this.snackBar.open('Exporting grades to CSV...', 'Close', { duration: 2000 });
-    // Implement CSV export logic
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    // Prepare columns: Student info + each assignment
+    const columns: any[] = [
+      { header: 'Roll No', field: 'rollNumber', width: 12 },
+      { header: 'First Name', field: 'firstName', width: 15 },
+      { header: 'Last Name', field: 'lastName', width: 15 },
+      { header: 'Email', field: 'email', width: 25 }
+    ];
+
+    // Add assignment columns
+    this.assignments.forEach(assignment => {
+      columns.push({
+        header: `${assignment.title} (${assignment.totalPoints}pts)`,
+        field: `assignment_${assignment.id}`,
+        width: 15
+      });
+    });
+
+    // Add summary columns
+    columns.push(
+      { header: 'Average', field: 'average', width: 12 },
+      { header: 'Letter Grade', field: 'letterGrade', width: 12 }
+    );
+
+    // Prepare data: flatten grades into columns
+    const exportData = this.studentGrades.map(student => {
+      const row: any = {
+        rollNumber: student.rollNumber,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        email: student.email,
+        average: student.average.toFixed(2),
+        letterGrade: student.letterGrade
+      };
+
+      // Add grade for each assignment
+      this.assignments.forEach(assignment => {
+        const grade = student.grades[assignment.id];
+        row[`assignment_${assignment.id}`] = grade !== null && grade !== undefined 
+          ? grade.toString() 
+          : 'Not Graded';
+      });
+
+      return row;
+    });
+
+    this.exportService.exportToExcel({
+      title: `Gradebook - ${this.classInfo?.name || 'Class'}`,
+      subtitle: `${this.classInfo?.subject || 'Subject'} - Section ${this.classInfo?.section || ''}`,
+      filename: `gradebook-${this.classInfo?.name?.replace(/\s+/g, '-').toLowerCase() || 'class'}-${timestamp}`,
+      columns,
+      data: exportData
+    });
+
+    this.snackBar.open('Gradebook exported to Excel successfully', 'Close', { duration: 3000 });
   }
 
   // Statistics

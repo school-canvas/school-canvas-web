@@ -19,6 +19,7 @@ import { StudentService } from '../../../../core/services/api/student.service';
 import { TeacherService } from '../../../../core/services/api/teacher.service';
 import { ClassService } from '../../../../core/services/api/class.service';
 import { FinanceService } from '../../../../core/services/api/finance.service';
+import { ExportService } from '../../../../core/services/export.service';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -99,7 +100,8 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
     private studentService: StudentService,
     private teacherService: TeacherService,
     private classService: ClassService,
-    private financeService: FinanceService
+    private financeService: FinanceService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
@@ -291,14 +293,111 @@ export class ReportsAnalyticsComponent implements OnInit, OnDestroy {
   }
 
   exportReport(type: string): void {
-    // TODO: Future Implementation - Export Reports
-    // Library: xlsx for Excel, jspdf for PDF
-    // Options:
-    //   - Export current view as PDF
-    //   - Export data as Excel spreadsheet
-    //   - Include charts as images
-    //   - Customizable report templates
-    this.snackBar.open(`Export ${type} Report - Feature needed`, 'Close', { duration: 3000 });
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    if (type === 'pdf') {
+      this.exportToPDF(timestamp);
+    } else if (type === 'excel') {
+      this.exportToExcel(timestamp);
+    }
+  }
+
+  private exportToPDF(timestamp: string): void {
+    // Prepare data based on current tab
+    let title = '';
+    let data: any[] = [];
+    let columns: any[] = [];
+
+    switch (this.selectedTab) {
+      case 0: // Overview
+        title = 'School Overview Report';
+        data = [
+          { metric: 'Total Students', value: this.totalStudents },
+          { metric: 'Total Teachers', value: this.totalTeachers },
+          { metric: 'Total Classes', value: this.totalClasses },
+          { metric: 'Total Revenue', value: `$${this.totalRevenue.toFixed(2)}` }
+        ];
+        columns = [
+          { header: 'Metric', field: 'metric' },
+          { header: 'Value', field: 'value' }
+        ];
+        break;
+
+      case 1: // Student Analytics
+        title = 'Student Analytics Report';
+        data = Object.entries(this.studentsByGrade).map(([grade, count]) => ({
+          grade,
+          count
+        }));
+        columns = [
+          { header: 'Grade Level', field: 'grade' },
+          { header: 'Number of Students', field: 'count' }
+        ];
+        break;
+
+      case 2: // Teacher Analytics
+        title = 'Teacher Analytics Report';
+        data = Object.entries(this.teachersByDepartment).map(([department, count]) => ({
+          department,
+          count
+        }));
+        columns = [
+          { header: 'Department', field: 'department' },
+          { header: 'Number of Teachers', field: 'count' }
+        ];
+        break;
+
+      case 3: // Financial Analytics
+        title = 'Financial Analytics Report';
+        data = this.revenueByMonth;
+        columns = [
+          { header: 'Month', field: 'month' },
+          { header: 'Revenue', field: 'amount' }
+        ];
+        break;
+    }
+
+    this.exportService.exportToPDF({
+      title,
+      subtitle: `Period: ${this.getPeriodLabel()}`,
+      filename: `${title.replace(/\s+/g, '-').toLowerCase()}-${timestamp}`,
+      columns,
+      data,
+      orientation: 'portrait'
+    });
+
+    this.snackBar.open('PDF exported successfully', 'Close', { duration: 3000 });
+  }
+
+  private exportToExcel(timestamp: string): void {
+    // Create comprehensive Excel export with multiple sheets
+    const periodLabel = this.getPeriodLabel();
+    
+    // Overview data
+    const overviewData = [
+      { metric: 'Total Students', value: this.totalStudents },
+      { metric: 'Total Teachers', value: this.totalTeachers },
+      { metric: 'Total Classes', value: this.totalClasses },
+      { metric: 'Total Revenue', value: this.totalRevenue }
+    ];
+
+    // Export overview
+    this.exportService.exportToExcel({
+      title: `School Analytics Report - ${periodLabel}`,
+      filename: `school-analytics-${timestamp}`,
+      columns: [
+        { header: 'Metric', field: 'metric', width: 20 },
+        { header: 'Value', field: 'value', width: 15 }
+      ],
+      data: overviewData
+    });
+
+    this.snackBar.open('Excel exported successfully', 'Close', { duration: 3000 });
+  }
+
+  private getPeriodLabel(): string {
+    const period = this.periods.find(p => p.value === this.selectedPeriod);
+    return period?.label || 'Unknown Period';
   }
 
   generateCustomReport(): void {

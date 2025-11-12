@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +17,8 @@ import { ClassService } from '../../../../core/services/api/class.service';
 import { AssessmentService } from '../../../../core/services/api/assessment.service';
 import { AttendanceService } from '../../../../core/services/api/attendance.service';
 import { selectUser } from '../../../auth/state/auth.selectors';
+import { forkJoin, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-dashboard',
@@ -36,7 +38,9 @@ import { selectUser } from '../../../auth/state/auth.selectors';
   templateUrl: './student-dashboard.component.html',
   styleUrl: './student-dashboard.component.css'
 })
-export class StudentDashboardComponent implements OnInit {
+export class StudentDashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   loading = true;
   studentProfile: any;
   upcomingClasses: any[] = [];
@@ -81,8 +85,9 @@ export class StudentDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get current user from store
-    this.store.select(selectUser).subscribe(user => {
+    // Use take(1) to auto-unsubscribe after first emission
+    this.store.select(selectUser).pipe(take(1)).subscribe(user => {
+      console.log('[PERF] User from store:', user, new Date().toISOString());
       if (user?.id) {
         this.currentUserId = user.id;
         this.loadDashboardData();
@@ -90,59 +95,56 @@ export class StudentDashboardComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadDashboardData(): void {
+    console.log('[PERF] loadDashboardData started:', new Date().toISOString());
     this.loading = true;
     
-    // Load student profile using current user ID
-    this.studentService.getStudentByUserId(this.currentUserId).subscribe({
-      next: (profile: any) => {
-        this.studentProfile = profile;
-        this.loadClasses();
-        this.loadGrades();
-        this.loadAttendance();
-      },
-      error: (error: any) => {
-        console.error('Error loading student profile:', error);
-        this.loading = false;
-      }
-    });
-  }
-
-  loadClasses(): void {
-    this.classService.getAllClasses(0, 5).subscribe({
-      next: (response: any) => {
-        this.upcomingClasses = response.content || [];
-        this.totalClasses = response.totalElements || 0;
-      },
-      error: (error: any) => console.error('Error loading classes:', error)
-    });
-  }
-
-  loadGrades(): void {
-    this.assessmentService.getAllAssessments(0, 5).subscribe({
-      next: (response: any) => {
-        this.recentGrades = response.content || [];
-        this.pendingAssignments = this.recentGrades.filter((a: any) => !a.submitted).length;
-      },
-      error: (error: any) => console.error('Error loading grades:', error)
-    });
-  }
-
-  loadAttendance(): void {
-    if (this.studentProfile?.id) {
-      this.attendanceService.getStudentAttendanceSummary(this.studentProfile.id).subscribe({
-        next: (summary: any) => {
-          this.attendanceRate = summary.attendancePercentage || 0;
-          this.loading = false;
+    // Load student profile first
+    this.studentService.getStudentByUserId(this.currentUserId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (profile: any) => {
+          console.log('[PERF] Student profile loaded:', new Date().toISOString());
+          this.studentProfile = profile;
+          
+          // Load all data in parallel using forkJoin for better performance
+          forkJoin({
+            classes: this.classService.getAllClasses(0, 5),
+            grades: this.assessmentService.getAllAssessments(0, 5),
+            attendance: this.attendanceService.getStudentAttendanceSummary(profile.id)
+          }).pipe(takeUntil(this.destroy$)).subscribe({
+            next: (results) => {
+              console.log('[PERF] All dashboard data loaded:', new Date().toISOString());
+              // Process classes
+              this.upcomingClasses = results.classes.content || [];
+              this.totalClasses = results.classes.totalElements || 0;
+              
+              // Process grades
+              this.recentGrades = results.grades.content || [];
+              this.pendingAssignments = this.recentGrades.filter((a: any) => !a.submitted).length;
+              
+              // Process attendance
+              this.attendanceRate = results.attendance.attendancePercentage || 0;
+              
+              this.loading = false;
+              console.log('[PERF] Dashboard rendering complete:', new Date().toISOString());
+            },
+            error: (error: any) => {
+              console.error('Error loading dashboard data:', error);
+              this.loading = false;
+            }
+          });
         },
         error: (error: any) => {
-          console.error('Error loading attendance:', error);
+          console.error('Error loading student profile:', error);
           this.loading = false;
         }
       });
-    } else {
-      this.loading = false;
-    }
   }
 
   viewClassDetails(classItem: any): void {

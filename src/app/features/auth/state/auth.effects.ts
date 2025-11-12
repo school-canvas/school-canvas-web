@@ -7,7 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TokenService } from '../../../core/services/token.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { getPrimaryRole } from '../../../core/models/user.model';
+import { User, getPrimaryRole } from '../../../core/models/user.model';
 import * as AuthActions from './auth.actions';
 
 @Injectable()
@@ -22,71 +22,77 @@ export class AuthEffects {
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.login),
+      tap(() => console.log('[PERF] Login action received:', new Date().toISOString())),
       switchMap(({ credentials }) =>
         this.authService.login(credentials).pipe(
+          tap(() => console.log('[PERF] Login response received:', new Date().toISOString())),
           map((response) => {
-            console.log('Auth Effects - Login Response:', response);
-            
-            // Store token and tenant ID
+            console.log('Login Response:', response);
+
+            // Store token and tenantId
             this.tokenService.saveToken(response.token);
-            if (response.tenantId) {
-              this.tokenService.saveTenantId(response.tenantId);
-            }
-            
-            // Build user object from response or token
-            let user = response.user;
-            if (!user) {
-              // If user object not in response, decode from token
-              const decoded = this.tokenService.getDecodedToken();
+            this.tokenService.saveTenantId(response.tenantId);
+            console.log('[PERF] Token saved:', new Date().toISOString());
+
+            // Construct user object
+            let user: User;
+            if (response.user) {
+              user = response.user as User;
+            } else {
+              // Construct user from JWT token
+              const decodedToken = this.tokenService.decodeToken();
               user = {
-                id: decoded?.sub || '',
-                username: response.username || credentials.username,
-                email: decoded?.email || '',
-                roles: response.roles?.map((r: string) => ({ name: r, description: '' })) || [],
-                userRoles: response.roles?.map((r: string) => ({ role: r, userId: decoded?.sub || '' })) || [],
-                tenantId: response.tenantId || decoded?.tenantId || '',
-                firstName: '',
-                lastName: '',
-                isActive: true,
-                createdAt: new Date(),
-                updatedAt: new Date()
+                id: decodedToken?.sub || '',
+                username: credentials.username, // Use login username
+                email: decodedToken?.email || '',
+                firstName: '', // Will be loaded from profile API later
+                lastName: '', // Will be loaded from profile API later
+                roles: decodedToken?.roles?.map((roleName: string) => ({ 
+                  id: roleName, 
+                  name: roleName,
+                  description: '',
+                  predefined: true,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  permissions: []
+                })) || [],
+                active: true,
+                status: 'APPROVED' as any, // UserStatus.APPROVED
+                tenantId: decodedToken?.tenantId || response.tenantId
               };
             }
-            
-            console.log('Constructed user object:', user);
-            
-            // Connect to WebSocket with userId
-            if (user?.id) {
-              this.websocketService.connect(user.id);
-            }
-            
-            return AuthActions.loginSuccess({ 
-              token: response.token, 
-              user: user as any
+
+            console.log('Constructed User:', user);
+            console.log('[PERF] User constructed, dispatching loginSuccess:', new Date().toISOString());
+
+            // Don't connect to WebSocket here - it's done in separate effect
+            return AuthActions.loginSuccess({
+              token: response.token,
+              user: user
             });
           }),
           catchError((error) => {
-            console.error('Auth Effects - Login Error:', error);
-            return of(AuthActions.loginFailure({ 
-              error: error.error?.message || error.message || 'Login failed' 
+            console.error('Login Error:', error);
+            return of(AuthActions.loginFailure({
+              error: error.error?.message || 'Login failed'
             }));
           })
         )
       )
     )
-  );
-
-  loginSuccess$ = createEffect(
+  );  loginSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         tap(({ user }) => {
+          console.log('[PERF] loginSuccess$ effect triggered:', new Date().toISOString());
           console.log('Auth Effects - loginSuccess$ triggered with user:', user);
           this.notificationService.showSuccess('Login successful!');
           
           // Redirect based on role
           const role = getPrimaryRole(user);
           console.log('Detected role:', role);
+          console.log('[PERF] About to navigate to dashboard:', new Date().toISOString());
           
           if (role === 'PRINCIPAL' || role === 'ADMIN') {
             console.log('Navigating to /principal/dashboard');
@@ -104,11 +110,26 @@ export class AuthEffects {
             console.log('Navigating to /dashboard (default)');
             this.router.navigate(['/dashboard']);
           }
+          console.log('[PERF] Navigation called:', new Date().toISOString());
         })
       ),
     { dispatch: false }
   );
 
+  // Connect to WebSocket after successful login (non-blocking)
+  connectWebSocket$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        tap(({ user }) => {
+          if (user?.id) {
+            console.log('Connecting to WebSocket for user:', user.id);
+            this.websocketService.connect(user.id);
+          }
+        })
+      ),
+    { dispatch: false }
+  );
   loginFailure$ = createEffect(
     () =>
       this.actions$.pipe(

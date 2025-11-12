@@ -1,0 +1,138 @@
+<div class="teacher-management-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Teacher Management'" 
+    [subtitle]="'Manage all teachers in the system'">
+    <button mat-raised-button color="primary" class="add-teacher-btn" (click)="addTeacher()">
+      <mat-icon>add</mat-icon>
+      Add Teacher
+    </button>
+  </app-page-header>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <app-stats-card
+      [title]="'Total Teachers'"
+      [value]="totalTeachers"
+      [icon]="'group'"
+      [color]="'primary'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Active Teachers'"
+      [value]="activeCount"
+      [icon]="'check_circle'"
+      [color]="'success'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'On Leave'"
+      [value]="onLeaveCount"
+      [icon]="'pending'"
+      [color]="'warning'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Inactive'"
+      [value]="inactiveCount"
+      [icon]="'cancel'"
+      [color]="'error'">
+    </app-stats-card>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-container">
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Teachers</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearchChange()"
+            placeholder="Name, email, or employee ID">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Department Filter -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Department</mat-label>
+          <mat-select [(ngModel)]="selectedDepartment" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All Departments</mat-option>
+            <mat-option *ngFor="let dept of departments" [value]="dept">
+              {{ dept }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>business</mat-icon>
+        </mat-form-field>
+
+        <!-- Status Filter -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All Status</mat-option>
+            <mat-option *ngFor="let status of statuses" [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>info</mat-icon>
+        </mat-form-field>
+
+        <!-- Clear Filters Button -->
+        <button 
+          mat-stroked-button 
+          class="clear-btn" 
+          (click)="clearFilters()"
+          [disabled]="searchTerm === '' && selectedDepartment === 'all' && selectedStatus === 'all'">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Teachers Table -->
+  <mat-card class="table-card" *ngIf="!loading && filteredTeachers.length > 0">
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="filteredTeachers"
+        [actions]="actions">
+      </app-data-table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading State -->
+  <mat-card class="loading-card" *ngIf="loading">
+    <mat-card-content>
+      <div class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading teachers...</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="!loading && filteredTeachers.length === 0"
+    [icon]="searchTerm || selectedDepartment !== 'all' || selectedStatus !== 'all' ? 'search_off' : 'group'"
+    [title]="searchTerm || selectedDepartment !== 'all' || selectedStatus !== 'all' ? 'No Teachers Found' : 'No Teachers Yet'"
+    [message]="searchTerm || selectedDepartment !== 'all' || selectedStatus !== 'all' ? 'Try adjusting your filters or search criteria.' : 'Start by adding your first teacher to the system.'">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      *ngIf="!(searchTerm || selectedDepartment !== 'all' || selectedStatus !== 'all')"
+      (click)="addTeacher()">
+      <mat-icon>add</mat-icon>
+      Add First Teacher
+    </button>
+    <button 
+      mat-stroked-button 
+      *ngIf="searchTerm || selectedDepartment !== 'all' || selectedStatus !== 'all'"
+      (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+      Clear Filters
+    </button>
+  </app-empty-state>
+</div>

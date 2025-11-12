@@ -24,6 +24,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
+import { AssignmentDialogComponent } from '../../components/assignment-dialog/assignment-dialog.component';
 import { AssessmentService } from '../../../../core/services/api/assessment.service';
 import { ClassService } from '../../../../core/services/api/class.service';
 
@@ -230,31 +231,39 @@ export class ManageAssignmentsComponent implements OnInit, OnDestroy {
 
   // CRUD Operations
   openCreateForm(): void {
-    this.showForm = true;
-    this.isEditMode = false;
-    this.editingAssignment = null;
-    this.assignmentForm.reset({
-      type: 'HOMEWORK',
-      status: 'DRAFT',
-      totalPoints: 100
+    const dialogRef = this.dialog.open(AssignmentDialogComponent, {
+      width: '800px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Reload assignments or add to list
+        this.snackBar.open('Assignment created successfully!', 'Close', { duration: 3000 });
+        // Optionally reload the assignment list here
+      }
     });
   }
 
   openEditForm(assignment: Assignment): void {
-    this.showForm = true;
-    this.isEditMode = true;
-    this.editingAssignment = assignment;
-    
-    this.assignmentForm.patchValue({
-      title: assignment.title,
-      description: assignment.description,
-      type: assignment.type,
-      classId: assignment.classId,
-      subject: assignment.subject,
-      totalPoints: assignment.totalPoints,
-      dueDate: new Date(assignment.dueDate),
-      publishDate: assignment.publishDate ? new Date(assignment.publishDate) : null,
-      status: assignment.status
+    const dialogRef = this.dialog.open(AssignmentDialogComponent, {
+      width: '800px',
+      data: { 
+        mode: 'edit',
+        assessment: {
+          ...assignment,
+          assessmentTypeId: '1', // Map from assignment type
+          classId: assignment.classId,
+          totalMarks: assignment.totalPoints
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Assignment updated successfully!', 'Close', { duration: 3000 });
+        // Optionally reload the assignment list here
+      }
     });
   }
 

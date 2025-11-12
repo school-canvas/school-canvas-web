@@ -1,4 +1,224 @@
 <div class="parent-dashboard">
-  <h2>Parent Dashboard</h2>
-  <p>Welcome to the Parent Portal!</p>
+  <!-- Page Header -->
+  <app-page-header 
+    title="Parent Portal" 
+    subtitle="Monitor your children's academic progress">
+  </app-page-header>
+
+  <!-- Loading Indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="dashboard-content" *ngIf="!loading">
+    <!-- Overall Stats -->
+    <div class="stats-grid">
+      <app-stats-card
+        title="Total Children"
+        [value]="totalChildren"
+        icon="people"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Attendance Rate"
+        [value]="attendanceRate + '%'"
+        icon="check_circle"
+        color="success"
+        [change]="5"
+        changeLabel="vs last month">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Pending Fees"
+        [value]="'$' + pendingFees"
+        icon="payment"
+        color="warning">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Upcoming Events"
+        [value]="upcomingEvents"
+        icon="event"
+        color="primary">
+      </app-stats-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <mat-card class="quick-actions-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>flash_on</mat-icon>
+          Quick Actions
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="payFee(null)">
+            <mat-icon>payment</mat-icon>
+            Pay Fees
+          </button>
+          <button mat-raised-button color="accent" (click)="viewReportCard()">
+            <mat-icon>description</mat-icon>
+            View Report Cards
+          </button>
+          <button mat-raised-button (click)="contactTeacher()">
+            <mat-icon>email</mat-icon>
+            Contact Teacher
+          </button>
+          <button mat-raised-button (click)="viewCalendar()">
+            <mat-icon>calendar_today</mat-icon>
+            View Calendar
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Children Tabs -->
+    <mat-card class="children-card" *ngIf="children.length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>school</mat-icon>
+          My Children
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-tab-group (selectedIndexChange)="onChildTabChanged($event)" *ngIf="children.length > 1">
+          <mat-tab *ngFor="let child of children; let i = index" 
+                   [label]="child.firstName + ' ' + child.lastName">
+            <ng-container *ngTemplateOutlet="childDetails; context: { child: child }"></ng-container>
+          </mat-tab>
+        </mat-tab-group>
+
+        <!-- Single Child (No Tabs) -->
+        <div *ngIf="children.length === 1">
+          <ng-container *ngTemplateOutlet="childDetails; context: { child: children[0] }"></ng-container>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- No Children State -->
+    <app-empty-state
+      *ngIf="children.length === 0"
+      icon="people_outline"
+      title="No Children Found"
+      message="No student records are linked to your account.">
+    </app-empty-state>
+  </div>
 </div>
+
+<!-- Child Details Template -->
+<ng-template #childDetails let-child="child">
+  <div class="child-details">
+    <!-- Child Stats -->
+    <div class="child-stats">
+      <div class="stat-item">
+        <mat-icon>class</mat-icon>
+        <div class="stat-content">
+          <span class="stat-label">Total Classes</span>
+          <span class="stat-value">{{ totalClasses }}</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <mat-icon>grade</mat-icon>
+        <div class="stat-content">
+          <span class="stat-label">Average Grade</span>
+          <span class="stat-value">{{ averageGrade | number:'1.1-1' }}%</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <mat-icon>event_available</mat-icon>
+        <div class="stat-content">
+          <span class="stat-label">Attendance</span>
+          <span class="stat-value">{{ attendanceRate }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classes Section -->
+    <div class="section">
+      <div class="section-header">
+        <h3>
+          <mat-icon>class</mat-icon>
+          Current Classes
+        </h3>
+        <button mat-button color="primary" (click)="viewAllClasses()">
+          View All
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      
+      <app-data-table
+        *ngIf="childClasses.length > 0"
+        [data]="childClasses"
+        [columns]="classColumns"
+        [totalElements]="totalClasses">
+      </app-data-table>
+
+      <app-empty-state
+        *ngIf="childClasses.length === 0"
+        icon="class"
+        title="No Classes"
+        message="No class enrollment found."
+        size="small">
+      </app-empty-state>
+    </div>
+
+    <!-- Recent Grades Section -->
+    <div class="section">
+      <div class="section-header">
+        <h3>
+          <mat-icon>assessment</mat-icon>
+          Recent Grades
+        </h3>
+        <button mat-button color="primary" (click)="viewAllGrades()">
+          View All
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      
+      <app-data-table
+        *ngIf="recentGrades.length > 0"
+        [data]="recentGrades"
+        [columns]="gradeColumns"
+        [totalElements]="recentGrades.length">
+      </app-data-table>
+
+      <app-empty-state
+        *ngIf="recentGrades.length === 0"
+        icon="assessment"
+        title="No Grades Yet"
+        message="No assessment grades available."
+        size="small">
+      </app-empty-state>
+    </div>
+
+    <!-- Fee Invoices Section -->
+    <div class="section">
+      <div class="section-header">
+        <h3>
+          <mat-icon>receipt</mat-icon>
+          Fee Invoices
+        </h3>
+        <button mat-button color="primary" (click)="viewAllInvoices()">
+          View All
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      
+      <app-data-table
+        *ngIf="feeInvoices.length > 0"
+        [data]="feeInvoices"
+        [columns]="feeColumns"
+        [actions]="feeActions"
+        [totalElements]="feeInvoices.length">
+      </app-data-table>
+
+      <app-empty-state
+        *ngIf="feeInvoices.length === 0"
+        icon="receipt"
+        title="No Invoices"
+        message="No fee invoices found."
+        size="small">
+      </app-empty-state>
+    </div>
+  </div>
+</ng-template>

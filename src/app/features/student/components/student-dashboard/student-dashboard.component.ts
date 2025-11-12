@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
@@ -78,6 +78,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private router: Router,
     private studentService: StudentService,
     private classService: ClassService,
     private assessmentService: AssessmentService,
@@ -148,8 +149,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
   }
 
   viewClassDetails(classItem: any): void {
-    console.log('View class details:', classItem);
-    // Navigate to class details
+    this.router.navigate(['/student/classes', classItem.id]);
   }
 
   onPageChange(event: any): void {

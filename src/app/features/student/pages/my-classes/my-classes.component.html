@@ -1,0 +1,122 @@
+<div class="my-classes-page">
+  <!-- Page Header -->
+  <app-page-header 
+    title="My Classes" 
+    subtitle="View and manage your enrolled classes"
+    [showBackButton]="true"
+    (backClick)="goBack()">
+  </app-page-header>
+
+  <!-- Loading Indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="page-content" *ngIf="!loading">
+    <!-- Search and Filters Card -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-container">
+          <!-- Search -->
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search classes</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              placeholder="Search by class name or teacher...">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Semester Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Semester</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedSemester"
+              (selectionChange)="onSemesterChange()">
+              <mat-option *ngFor="let semester of semesters" [value]="semester.value">
+                {{ semester.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Status Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Status</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedStatus"
+              (selectionChange)="onStatusChange()">
+              <mat-option *ngFor="let status of statuses" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Clear Filters Button -->
+          <button 
+            mat-raised-button 
+            color="accent"
+            (click)="clearFilters()"
+            class="clear-filters-btn">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Active Filters Chips -->
+        <div class="active-filters" *ngIf="searchTerm || selectedSemester !== 'all' || selectedStatus !== 'all'">
+          <span class="filters-label">Active Filters:</span>
+          <mat-chip-set>
+            <mat-chip *ngIf="searchTerm" (removed)="searchTerm = ''; onSearchChange()">
+              Search: {{ searchTerm }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <mat-chip *ngIf="selectedSemester !== 'all'" (removed)="selectedSemester = 'all'; onSemesterChange()">
+              Semester: {{ getSemesterLabel(selectedSemester) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <mat-chip *ngIf="selectedStatus !== 'all'" (removed)="selectedStatus = 'all'; onStatusChange()">
+              Status: {{ getStatusLabel(selectedStatus) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Results Summary -->
+    <div class="results-summary">
+      <p>
+        <mat-icon>class</mat-icon>
+        Showing {{ filteredClasses.length }} of {{ totalClasses }} classes
+      </p>
+    </div>
+
+    <!-- Classes Table -->
+    <mat-card class="table-card" *ngIf="filteredClasses.length > 0">
+      <mat-card-content>
+        <app-data-table
+          [data]="filteredClasses"
+          [columns]="columns"
+          [actions]="actions"
+          [totalElements]="filteredClasses.length">
+        </app-data-table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Empty State -->
+    <app-empty-state
+      *ngIf="filteredClasses.length === 0 && !loading"
+      icon="class"
+      [title]="searchTerm || selectedSemester !== 'all' || selectedStatus !== 'all' ? 'No Classes Found' : 'No Classes Enrolled'"
+      [message]="searchTerm || selectedSemester !== 'all' || selectedStatus !== 'all' ? 'Try adjusting your filters to find classes.' : 'You are not enrolled in any classes yet.'">
+      <button mat-raised-button color="primary" (click)="clearFilters()" *ngIf="searchTerm || selectedSemester !== 'all' || selectedStatus !== 'all'">
+        Clear Filters
+      </button>
+    </app-empty-state>
+  </div>
+</div>

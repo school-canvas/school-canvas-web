@@ -1,0 +1,512 @@
+.gradebook-container {
+  padding: 24px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 16px;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+/* Controls Card */
+.controls-card {
+  margin-bottom: 24px;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.controls-row mat-form-field {
+  width: 300px;
+}
+
+.unsaved-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.unsaved-chip {
+  background-color: #fff3e0;
+  color: #f57c00;
+  font-weight: 500;
+}
+
+.unsaved-chip mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+/* Table Wrapper - Enables horizontal scroll */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.table-container {
+  min-width: 1200px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradebook Table */
+.gradebook-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Header Styles */
+.gradebook-table th {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 600;
+  padding: 16px 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.gradebook-table th:last-child {
+  border-right: none;
+}
+
+/* Student Header (Sticky Column) */
+.student-header {
+  min-width: 200px;
+  z-index: 3 !important;
+}
+
+/* Assignment Header */
+.assignment-header {
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+}
+
+.assignment-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.assignment-info mat-chip {
+  font-size: 10px;
+  height: 20px;
+  padding: 0 8px;
+  font-weight: 600;
+}
+
+.assignment-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.assignment-points {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.assignment-date {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.average-header {
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Cell Styles */
+.gradebook-table td {
+  padding: 12px;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: white;
+}
+
+.gradebook-table td:last-child {
+  border-right: none;
+}
+
+/* Student Cell (Sticky) */
+.student-cell {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: white !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  min-width: 200px;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+}
+
+/* Grade Cell */
+.grade-cell {
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+.grade-cell:hover {
+  background-color: #f5f5f5;
+}
+
+.grade-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  min-height: 50px;
+  justify-content: center;
+}
+
+.grade-display.empty {
+  background-color: #fafafa;
+  border: 1px dashed #ccc;
+}
+
+.grade-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.grade-percentage {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.no-grade {
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Grade Editor */
+.grade-editor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.grade-input {
+  width: 60px;
+  padding: 8px;
+  border: 2px solid #1976d2;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  background-color: #e3f2fd;
+}
+
+.grade-input:focus {
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.max-points {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Average Cell */
+.average-cell {
+  text-align: center;
+  background-color: #f5f5f5 !important;
+  font-weight: 600;
+}
+
+.average-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Letter Grade */
+.letter-grade-chip {
+  font-weight: 700;
+  font-size: 13px;
+  height: 28px;
+  min-width: 50px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+/* Actions Cell (Sticky End) */
+.actions-cell {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background-color: white !important;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+/* Footer Row */
+.gradebook-table tfoot td {
+  background-color: #f5f5f5 !important;
+  font-weight: 600;
+  padding: 16px 12px;
+  border-top: 2px solid #1976d2;
+}
+
+.footer-label {
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+}
+
+.footer-average {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.footer-percentage {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-left: 4px;
+}
+
+.graded-count {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+}
+
+/* Assignment Type Chips */
+.type-homework {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+.type-quiz {
+  background-color: #f3e5f5 !important;
+  color: #7b1fa2 !important;
+}
+
+.type-exam {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}
+
+.type-project {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+/* Legend Card */
+.legend-card {
+  margin-top: 24px;
+}
+
+.legend-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legend-grade {
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.legend-bar {
+  height: 8px;
+  flex: 1;
+  border-radius: 4px;
+}
+
+.legend-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 16px 0 0 0;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.legend-note mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #1976d2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gradebook-container {
+    padding: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls-row mat-form-field {
+    width: 100%;
+  }
+
+  .table-wrapper {
+    margin: 0 -16px;
+  }
+
+  .gradebook-table th,
+  .gradebook-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .student-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .student-name {
+    font-size: 13px;
+  }
+
+  .grade-value {
+    font-size: 16px;
+  }
+
+  .legend-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .header-actions,
+  .controls-card,
+  .actions-cell,
+  .legend-card {
+    display: none !important;
+  }
+
+  .table-wrapper {
+    overflow: visible !important;
+  }
+
+  .gradebook-table {
+    page-break-inside: avoid;
+  }
+
+  .gradebook-table th {
+    background-color: #1976d2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

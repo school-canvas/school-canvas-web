@@ -1,0 +1,252 @@
+<div class="gradebook-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading gradebook...</p>
+    </div>
+  } @else if (classInfo) {
+    <!-- Page Header -->
+    <app-page-header 
+      [title]="'Gradebook'"
+      [subtitle]="classInfo.name + ' • ' + classInfo.section"
+      [showBackButton]="true">
+      <div class="header-actions">
+        <button mat-stroked-button (click)="exportGrades()">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+        <button mat-raised-button color="primary" (click)="saveAllGrades()" 
+                [disabled]="!hasUnsavedChanges || saving">
+          @if (saving) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
+          Save All
+        </button>
+      </div>
+    </app-page-header>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <app-stats-card
+        [title]="'Total Students'"
+        [value]="studentGrades.length.toString()"
+        icon="people"
+        color="primary">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Total Assignments'"
+        [value]="assignments.length.toString()"
+        icon="assignment"
+        color="primary">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Class Average'"
+        [value]="getClassAverage() + '%'"
+        icon="assessment"
+        color="success">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Completion Rate'"
+        [value]="'85%'"
+        icon="task_alt"
+        color="warning">
+      </app-stats-card>
+    </div>
+
+    <!-- Filter and Controls -->
+    <mat-card class="controls-card">
+      <mat-card-content>
+        <div class="controls-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Type</mat-label>
+            <mat-select [(ngModel)]="filterType" (selectionChange)="onFilterChange()">
+              <mat-option value="all">All Assignments</mat-option>
+              <mat-option value="HOMEWORK">Homework</mat-option>
+              <mat-option value="QUIZ">Quizzes</mat-option>
+              <mat-option value="EXAM">Exams</mat-option>
+              <mat-option value="PROJECT">Projects</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (hasUnsavedChanges) {
+            <div class="unsaved-indicator">
+              <mat-chip class="unsaved-chip">
+                <mat-icon>edit</mat-icon>
+                Unsaved Changes
+              </mat-chip>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Gradebook Table -->
+    <div class="table-wrapper">
+      <div class="table-container">
+        <table mat-table [dataSource]="studentGrades" class="gradebook-table">
+          
+          <!-- Student Name Column (Sticky) -->
+          <ng-container matColumnDef="student" sticky>
+            <th mat-header-cell *matHeaderCellDef class="student-header">Student</th>
+            <td mat-cell *matCellDef="let student" class="student-cell">
+              <div class="student-info">
+                <div class="student-avatar">
+                  {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+                </div>
+                <span class="student-name">{{ getStudentName(student) }}</span>
+              </div>
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="footer-label">Class Average</td>
+          </ng-container>
+
+          <!-- Roll Number Column (Sticky) -->
+          <ng-container matColumnDef="rollNumber" sticky>
+            <th mat-header-cell *matHeaderCellDef>Roll No.</th>
+            <td mat-cell *matCellDef="let student">{{ student.rollNumber }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <!-- Assignment Columns (Dynamic) -->
+          @for (assignment of getFilteredAssignments(); track assignment.id) {
+            <ng-container [matColumnDef]="assignment.id">
+              <th mat-header-cell *matHeaderCellDef class="assignment-header">
+                <div class="assignment-info">
+                  <mat-chip [class]="getAssignmentTypeClass(assignment.type)">
+                    {{ assignment.type }}
+                  </mat-chip>
+                  <span class="assignment-title">{{ assignment.title }}</span>
+                  <span class="assignment-points">{{ assignment.totalPoints }} pts</span>
+                  <span class="assignment-date">{{ formatDate(assignment.dueDate) }}</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let student" class="grade-cell">
+                @if (isEditing(student.studentId, assignment.id)) {
+                  <div class="grade-editor">
+                    <input 
+                      type="number" 
+                      [(ngModel)]="editValue"
+                      (keyup.enter)="saveGrade(student.studentId, assignment.id)"
+                      (keyup.escape)="cancelEdit()"
+                      (blur)="saveGrade(student.studentId, assignment.id)"
+                      [max]="assignment.totalPoints"
+                      min="0"
+                      class="grade-input"
+                      autofocus>
+                    <span class="max-points">/ {{ assignment.totalPoints }}</span>
+                  </div>
+                } @else {
+                  <div class="grade-display" 
+                       (click)="startEdit(student.studentId, assignment.id, student.grades[assignment.id])"
+                       [class.empty]="student.grades[assignment.id] === null">
+                    @if (student.grades[assignment.id] !== null) {
+                      <span class="grade-value">{{ student.grades[assignment.id] }}</span>
+                      <span class="grade-percentage">
+                        {{ ((student.grades[assignment.id]! / assignment.totalPoints) * 100).toFixed(0) }}%
+                      </span>
+                    } @else {
+                      <span class="no-grade">—</span>
+                    }
+                  </div>
+                }
+              </td>
+              <td mat-footer-cell *matFooterCellDef class="footer-average">
+                {{ getAssignmentAverage(assignment.id) }} 
+                <span class="footer-percentage">({{ getAssignmentAveragePercentage(assignment.id) }}%)</span>
+                <div class="graded-count">{{ getGradedCount(assignment.id) }}/{{ studentGrades.length }}</div>
+              </td>
+            </ng-container>
+          }
+
+          <!-- Average Column -->
+          <ng-container matColumnDef="average">
+            <th mat-header-cell *matHeaderCellDef class="average-header">Average</th>
+            <td mat-cell *matCellDef="let student" class="average-cell">
+              <span class="average-value" [style.color]="getGradeColor(student.average)">
+                {{ student.average }}%
+              </span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="footer-average">
+              {{ getClassAverage() }}%
+            </td>
+          </ng-container>
+
+          <!-- Letter Grade Column -->
+          <ng-container matColumnDef="letterGrade">
+            <th mat-header-cell *matHeaderCellDef>Grade</th>
+            <td mat-cell *matCellDef="let student">
+              <mat-chip [style.background-color]="getGradeColor(student.average)" 
+                        [style.color]="'white'"
+                        class="letter-grade-chip">
+                {{ student.letterGrade }}
+              </mat-chip>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let student" class="actions-cell">
+              <button mat-icon-button [matMenuTriggerFor]="menu" [matTooltip]="'Actions'">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="viewStudentDetails(student)">
+                  <mat-icon>person</mat-icon>
+                  <span>View Details</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>email</mat-icon>
+                  <span>Send Email</span>
+                </button>
+              </mat-menu>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <mat-card class="legend-card">
+      <mat-card-content>
+        <h3>Grading Scale</h3>
+        <div class="legend-grid">
+          <div class="legend-item">
+            <span class="legend-grade">A (90-100%)</span>
+            <div class="legend-bar" style="background-color: #2e7d32;"></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-grade">B (80-89%)</span>
+            <div class="legend-bar" style="background-color: #1976d2;"></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-grade">C (70-79%)</span>
+            <div class="legend-bar" style="background-color: #f57c00;"></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-grade">D (60-69%)</span>
+            <div class="legend-bar" style="background-color: #d32f2f;"></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-grade">F (Below 60%)</span>
+            <div class="legend-bar" style="background-color: #c62828;"></div>
+          </div>
+        </div>
+        <p class="legend-note">
+          <mat-icon>info</mat-icon>
+          Click on any grade to edit. Press Enter to save or Escape to cancel.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

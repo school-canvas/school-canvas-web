@@ -1,0 +1,393 @@
+<div class="reports-analytics-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Reports & Analytics'" 
+    [subtitle]="'Comprehensive school-wide analytics and insights'">
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="period-select">
+        <mat-label>Period</mat-label>
+        <mat-select [(ngModel)]="selectedPeriod" (selectionChange)="onPeriodChange()">
+          <mat-option *ngFor="let period of periods" [value]="period.value">
+            {{ period.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <button mat-raised-button color="primary" (click)="generateCustomReport()">
+        <mat-icon>add</mat-icon>
+        Custom Report
+      </button>
+    </div>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading analytics data...</p>
+  </div>
+
+  <!-- Analytics Content -->
+  <div *ngIf="!loading">
+    <!-- Overview Statistics -->
+    <div class="stats-grid">
+      <app-stats-card
+        [title]="'Total Students'"
+        [value]="totalStudents"
+        [icon]="'school'"
+        [color]="'primary'">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Total Teachers'"
+        [value]="totalTeachers"
+        [icon]="'group'"
+        [color]="'success'">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Total Classes'"
+        [value]="totalClasses"
+        [icon]="'class'"
+        [color]="'warning'">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Total Revenue'"
+        [value]="'$' + totalRevenue.toFixed(2)"
+        [icon]="'attach_money'"
+        [color]="'error'">
+      </app-stats-card>
+    </div>
+
+    <!-- Tabs for Different Report Categories -->
+    <mat-card class="tabs-card">
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <!-- Student Analytics Tab -->
+        <mat-tab label="Student Analytics">
+          <div class="tab-content">
+            <div class="analytics-grid">
+              <!-- Students by Grade -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Students by Grade Level</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item" *ngFor="let grade of getObjectKeys(studentsByGrade)">
+                      <span class="label">{{ grade }}</span>
+                      <span class="value">{{ studentsByGrade[grade] }}</span>
+                      <div class="bar-container">
+                        <div class="bar" [style.width.%]="(studentsByGrade[grade] / totalStudents) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <!-- TODO: Add Chart.js bar chart here -->
+                    <p class="placeholder-text">
+                      <mat-icon>bar_chart</mat-icon>
+                      Chart visualization (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('students-by-grade')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('students-by-grade')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+
+              <!-- Students by Status -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Students by Status</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item" *ngFor="let status of getObjectKeys(studentsByStatus)">
+                      <span class="label">{{ status }}</span>
+                      <span class="value">{{ studentsByStatus[status] }}</span>
+                      <div class="bar-container">
+                        <div class="bar" [style.width.%]="(studentsByStatus[status] / totalStudents) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <!-- TODO: Add Chart.js pie chart here -->
+                    <p class="placeholder-text">
+                      <mat-icon>pie_chart</mat-icon>
+                      Pie chart visualization (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('students-by-status')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('students-by-status')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Teacher Analytics Tab -->
+        <mat-tab label="Teacher Analytics">
+          <div class="tab-content">
+            <div class="analytics-grid">
+              <!-- Teachers by Department -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Teachers by Department</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item" *ngFor="let dept of getObjectKeys(teachersByDepartment)">
+                      <span class="label">{{ dept }}</span>
+                      <span class="value">{{ teachersByDepartment[dept] }}</span>
+                      <div class="bar-container">
+                        <div class="bar" [style.width.%]="(teachersByDepartment[dept] / totalTeachers) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <p class="placeholder-text">
+                      <mat-icon>donut_large</mat-icon>
+                      Donut chart visualization (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('teachers-by-department')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('teachers-by-department')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+
+              <!-- Teachers by Status -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Teachers by Status</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item" *ngFor="let status of getObjectKeys(teachersByStatus)">
+                      <span class="label">{{ status }}</span>
+                      <span class="value">{{ teachersByStatus[status] }}</span>
+                      <div class="bar-container">
+                        <div class="bar" [style.width.%]="(teachersByStatus[status] / totalTeachers) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <p class="placeholder-text">
+                      <mat-icon>bar_chart</mat-icon>
+                      Bar chart visualization (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('teachers-by-status')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('teachers-by-status')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Class Analytics Tab -->
+        <mat-tab label="Class Analytics">
+          <div class="tab-content">
+            <div class="analytics-grid">
+              <!-- Classes by Subject -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Classes by Subject</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item" *ngFor="let subject of getObjectKeys(classesBySubject)">
+                      <span class="label">{{ subject }}</span>
+                      <span class="value">{{ classesBySubject[subject] }}</span>
+                      <div class="bar-container">
+                        <div class="bar" [style.width.%]="(classesBySubject[subject] / totalClasses) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <p class="placeholder-text">
+                      <mat-icon>bar_chart</mat-icon>
+                      Horizontal bar chart (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('classes-by-subject')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('classes-by-subject')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+
+              <!-- Class Enrollment Distribution -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>Class Enrollment Distribution</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="data-list">
+                    <div class="data-item">
+                      <span class="label">Under-Enrolled (&lt;50%)</span>
+                      <span class="value">{{ classEnrollmentStats.underEnrolled }}</span>
+                      <div class="bar-container">
+                        <div class="bar bar-warning" [style.width.%]="(classEnrollmentStats.underEnrolled / totalClasses) * 100"></div>
+                      </div>
+                    </div>
+                    <div class="data-item">
+                      <span class="label">Optimal (50-80%)</span>
+                      <span class="value">{{ classEnrollmentStats.optimal }}</span>
+                      <div class="bar-container">
+                        <div class="bar bar-success" [style.width.%]="(classEnrollmentStats.optimal / totalClasses) * 100"></div>
+                      </div>
+                    </div>
+                    <div class="data-item">
+                      <span class="label">Near Capacity (80-100%)</span>
+                      <span class="value">{{ classEnrollmentStats.nearCapacity }}</span>
+                      <div class="bar-container">
+                        <div class="bar bar-info" [style.width.%]="(classEnrollmentStats.nearCapacity / totalClasses) * 100"></div>
+                      </div>
+                    </div>
+                    <div class="data-item">
+                      <span class="label">Full Capacity (100%+)</span>
+                      <span class="value">{{ classEnrollmentStats.fullCapacity }}</span>
+                      <div class="bar-container">
+                        <div class="bar bar-danger" [style.width.%]="(classEnrollmentStats.fullCapacity / totalClasses) * 100"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chart-placeholder">
+                    <p class="placeholder-text">
+                      <mat-icon>donut_small</mat-icon>
+                      Stacked bar chart (Chart.js integration needed)
+                    </p>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="viewDetailedReport('class-enrollment')">
+                    <mat-icon>visibility</mat-icon>
+                    View Details
+                  </button>
+                  <button mat-button (click)="exportReport('class-enrollment')">
+                    <mat-icon>download</mat-icon>
+                    Export
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Financial Analytics Tab -->
+        <mat-tab label="Financial Analytics">
+          <div class="tab-content">
+            <!-- Financial Summary -->
+            <div class="financial-summary">
+              <mat-card class="summary-card">
+                <mat-card-content>
+                  <div class="summary-item">
+                    <mat-icon class="icon-pending">schedule</mat-icon>
+                    <div class="summary-details">
+                      <span class="summary-label">Pending Invoices</span>
+                      <span class="summary-value">{{ pendingInvoices }}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="summary-card">
+                <mat-card-content>
+                  <div class="summary-item">
+                    <mat-icon class="icon-paid">check_circle</mat-icon>
+                    <div class="summary-details">
+                      <span class="summary-label">Paid Invoices</span>
+                      <span class="summary-value">{{ paidInvoices }}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="summary-card">
+                <mat-card-content>
+                  <div class="summary-item">
+                    <mat-icon class="icon-overdue">warning</mat-icon>
+                    <div class="summary-details">
+                      <span class="summary-label">Overdue Invoices</span>
+                      <span class="summary-value">{{ overdueInvoices }}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Revenue Trend -->
+            <mat-card class="chart-card full-width">
+              <mat-card-header>
+                <mat-card-title>Monthly Revenue Trend</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="data-list horizontal">
+                  <div class="data-item vertical" *ngFor="let item of revenueByMonth">
+                    <div class="bar-container vertical">
+                      <div class="bar" [style.height.%]="(item.amount / totalRevenue) * 100"></div>
+                    </div>
+                    <span class="label">{{ item.month }}</span>
+                    <span class="value">${{ item.amount.toFixed(0) }}</span>
+                  </div>
+                </div>
+                <div class="chart-placeholder">
+                  <p class="placeholder-text">
+                    <mat-icon>show_chart</mat-icon>
+                    Line chart with trend analysis (Chart.js integration needed)
+                  </p>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button (click)="viewDetailedReport('revenue-trend')">
+                  <mat-icon>visibility</mat-icon>
+                  View Details
+                </button>
+                <button mat-button (click)="exportReport('revenue-trend')">
+                  <mat-icon>download</mat-icon>
+                  Export
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+</div>

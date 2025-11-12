@@ -90,6 +90,56 @@
       </button>
     </div>
 
+    <!-- Performance Charts -->
+    <div class="charts-section" *ngIf="filteredClasses.length > 0">
+      <div class="chart-grid">
+        <!-- Student Distribution -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Students per Class</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="studentDistributionChart"
+              [data]="studentDistributionChart"
+              [type]="'bar'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Attendance Comparison -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Attendance by Class</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="attendanceComparisonChart"
+              [data]="attendanceComparisonChart"
+              [type]="'bar'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Grading Progress -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Grading Progress</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="gradingProgressChart"
+              [data]="gradingProgressChart"
+              [type]="'doughnut'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
     <!-- Classes Count -->
     <div class="classes-count">
       Showing {{ filteredClasses.length }} class<span *ngIf="filteredClasses.length !== 1">es</span>

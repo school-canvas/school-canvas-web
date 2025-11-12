@@ -20,6 +20,7 @@ import { Store } from '@ngrx/store';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ChartComponent, ChartData } from '../../../../shared/components/chart/chart.component';
 import { ClassService } from '../../../../core/services/api/class.service';
 import { TeacherService } from '../../../../core/services/api/teacher.service';
 import { StudentService } from '../../../../core/services/api/student.service';
@@ -69,7 +70,8 @@ interface TeacherStats {
     MatMenuModule,
     PageHeaderComponent,
     StatsCardComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    ChartComponent
   ],
   templateUrl: './my-classes.component.html',
   styleUrl: './my-classes.component.css'
@@ -98,6 +100,11 @@ export class MyClassesComponent implements OnInit, OnDestroy {
     averageAttendance: 0,
     pendingGrading: 0
   };
+
+  // Chart data
+  studentDistributionChart!: ChartData;
+  attendanceComparisonChart!: ChartData;
+  gradingProgressChart!: ChartData;
 
   constructor(
     private classService: ClassService,
@@ -196,6 +203,55 @@ export class MyClassesComponent implements OnInit, OnDestroy {
       totalStudents,
       averageAttendance: Math.round(averageAttendance),
       pendingGrading
+    };
+    
+    this.generateCharts();
+  }
+
+  generateCharts(): void {
+    if (this.allClasses.length === 0) return;
+
+    // Student Distribution by Class
+    this.studentDistributionChart = {
+      labels: this.allClasses.map(cls => `${cls.name} - ${cls.section}`),
+      datasets: [{
+        label: 'Students',
+        data: this.allClasses.map(cls => cls.totalStudents),
+        backgroundColor: 'rgba(63, 81, 181, 0.6)',
+        borderColor: '#3f51b5',
+        borderWidth: 1
+      }]
+    };
+
+    // Attendance Comparison across Classes
+    this.attendanceComparisonChart = {
+      labels: this.allClasses.map(cls => `${cls.name} - ${cls.section}`),
+      datasets: [{
+        label: 'Attendance Rate (%)',
+        data: this.allClasses.map(cls => cls.averageAttendance),
+        backgroundColor: this.allClasses.map(cls => 
+          cls.averageAttendance >= 90 ? '#4caf50' : 
+          cls.averageAttendance >= 75 ? '#ff9800' : '#f44336'
+        ),
+        borderWidth: 0
+      }]
+    };
+
+    // Grading Progress
+    const totalAssignments = this.allClasses.reduce((sum, cls) => 
+      sum + cls.gradedAssignments + cls.pendingAssignments, 0);
+    const gradedAssignments = this.allClasses.reduce((sum, cls) => 
+      sum + cls.gradedAssignments, 0);
+    const pendingAssignments = this.allClasses.reduce((sum, cls) => 
+      sum + cls.pendingAssignments, 0);
+
+    this.gradingProgressChart = {
+      labels: ['Graded', 'Pending'],
+      datasets: [{
+        label: 'Assignments',
+        data: [gradedAssignments, pendingAssignments],
+        backgroundColor: ['#4caf50', '#ff9800']
+      }]
     };
   }
 

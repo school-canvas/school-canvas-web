@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { TeacherLayoutComponent } from './components/teacher-layout/teacher-layout.component';
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
+import { MyClassesComponent } from './pages/my-classes/my-classes.component';
 
 export const TEACHER_ROUTES: Routes = [
   {
@@ -9,6 +10,7 @@ export const TEACHER_ROUTES: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: TeacherDashboardComponent },
+      { path: 'classes', component: MyClassesComponent },
     ]
   }
 ];

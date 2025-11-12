@@ -1,72 +1,205 @@
+/* Header Container */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-.header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  .header .container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-  }
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+  height: 64px;
+}
 
-  .container {
-    display: flex;
-    align-items: center;
-    width: auto; 
-    max-width: 60%;
-  }
-  
-  .logo-container {
-    display: flex;
-    align-items: center;
-    margin-right: var(--spacing-lg);
-  }
-  
-  .logo {
-    height: 40px;
-    margin-right: var(--spacing-sm);
-  }
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
 
-  .school-logo {
-    height: 40px;
-    width: auto;;
-  }
-  
-  .school-name {
-    font-size: var(--font-size-medium);
-    font-weight: 500;
-  }
-  .app-name {
-    margin: 0;
-    white-space: nowrap;
-    font-size: 1.5rem;
-  }
-  
-  .spacer {
-    flex: 1 1 auto;
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  gap: 12px;
+}
+
+.school-logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: white;
+}
+
+/* Spacer */
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-links a,
+.nav-links button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.active-link {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* User Section */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 16px;
+}
+
+/* Login/Register Buttons */
+.user-section a {
+  white-space: nowrap;
+}
+
+.user-section a mat-icon {
+  margin-right: 4px;
+}
+
+/* User Menu Button */
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.user-role {
+  font-size: 11px;
+  opacity: 0.8;
+  line-height: 1.2;
+}
+
+/* User Menu Header */
+.user-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: -8px -8px 8px -8px;
+}
+
+.user-avatar-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-menu-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.user-menu-email {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .user-info {
+    display: none;
   }
   
   .nav-links {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    gap: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 8px;
+    height: 56px;
   }
   
-  @media (max-width: 768px) {
-    .nav-links {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    
-    .nav-links a {
-      margin-left: 0;
-      margin-top: var(--spacing-xs);
-    }
+  .school-logo {
+    height: 40px;
   }
+  
+  .app-name {
+    font-size: 1.2rem;
+  }
+  
+  .nav-links a span,
+  .nav-links button span {
+    display: none;
+  }
+  
+  .nav-links {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-name {
+    display: none;
+  }
+}

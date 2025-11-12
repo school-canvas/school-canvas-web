@@ -1,108 +1,319 @@
 /* src/app/shared/components/footer/footer.component.css */
 
 .footer {
-    background-color: #303f9f;
-    color: white;
-    padding-top: var(--spacing-xl);
-    margin-top: auto;
+  background: linear-gradient(135deg, #1a237e 0%, #303f9f 100%);
+  color: white;
+  padding-top: var(--spacing-xxl);
+  padding-bottom: 0;
+  margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--primary-color) 0%, 
+    var(--secondary-color) 50%, 
+    var(--primary-color) 100%);
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer a:hover {
+  color: white;
+  text-decoration: none;
+  transform: translateX(4px);
+}
+
+.footer-top {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.school-info {
+  text-align: center;
+}
+
+.school-info h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: 0.5px;
+}
+
+.tagline {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-bottom: var(--spacing-md);
+  font-style: italic;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.social-links a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.footer-column h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.footer-column h4 mat-icon {
+  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+}
+
+.footer-column p,
+.footer-column a {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.6;
+}
+
+.address-line {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.7;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.contact-item mat-icon {
+  font-size: 1.1rem;
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: var(--spacing-sm);
+  padding-left: var(--spacing-lg);
+  position: relative;
+  transition: padding-left 0.3s ease;
+}
+
+.footer-column ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  font-weight: bold;
+  transition: left 0.3s ease;
+}
+
+.footer-column ul li:hover::before {
+  left: 4px;
+}
+
+.footer-column ul li a:hover {
+  padding-left: 0;
+  color: var(--secondary-color);
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--border-radius-md);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-top: var(--spacing-sm);
+}
+
+.contact-link mat-icon {
+  font-size: 1.1rem;
+  width: 18px;
+  height: 18px;
+}
+
+.contact-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: translateX(0) scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Newsletter Section */
+.newsletter-section {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.newsletter-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.newsletter-content > mat-icon {
+  font-size: 3rem;
+  width: 48px;
+  height: 48px;
+  opacity: 0.9;
+  color: var(--secondary-color);
+}
+
+.newsletter-text {
+  flex: 1;
+  min-width: 250px;
+  text-align: left;
+}
+
+.newsletter-text h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: white;
+}
+
+.newsletter-text p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.subscribe-btn {
+  padding: 0 var(--spacing-xl);
+  height: 44px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.subscribe-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Copyright Section */
+.copyright {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-lg) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copyright-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-small);
+}
+
+.copyright-content p {
+  margin: 0;
+}
+
+.powered-by {
+  opacity: 0.8;
+  font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-columns {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
   }
-  
-  .footer a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .footer a:hover {
-    color: white;
-    text-decoration: underline;
-  }
-  
-  .school-info {
+
+  .newsletter-content {
+    flex-direction: column;
     text-align: center;
-    margin-bottom: var(--spacing-xl);
   }
-  
-  .social-links {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-md);
+
+  .newsletter-text {
+    min-width: 100%;
   }
-  
+
+  .copyright-content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+
+  .school-info h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    padding-top: var(--spacing-lg);
+  }
+
   .social-links a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.3s ease;
   }
-  
-  .social-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    text-decoration: none;
-  }
-  
-  .footer-columns {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-  }
-  
-  .footer-column {
-    flex: 1;
-  }
-  
-  .footer-column h4 {
-    font-size: var(--font-size-medium);
-    font-weight: 500;
-    margin-bottom: var(--spacing-md);
-    color: white;
-  }
-  
-  .footer-column p, 
-  .footer-column a {
-    display: block;
-    margin-bottom: var(--spacing-xs);
-  }
-  
-  .footer-column ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .footer-column ul li {
-    margin-bottom: var(--spacing-xs);
-  }
-  
-  .contact-link {
-    display: inline-block;
-    padding: var(--spacing-xs) var(--spacing-md);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--border-radius-sm);
-    transition: all 0.3s ease;
-  }
-  
-  .contact-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-  
-  .copyright {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: var(--spacing-md) 0;
-    text-align: center;
-    font-size: var(--font-size-small);
-  }
-  
-  @media (max-width: 768px) {
-    .footer-columns {
-      flex-direction: column;
-      gap: var(--spacing-lg);
-    }
-  }
+}

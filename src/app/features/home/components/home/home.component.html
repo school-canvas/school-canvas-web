@@ -1,4 +1,6 @@
 
+<app-header></app-header>
+
 <div class="home-container">
   <!-- Hero Section -->
 <section class="hero-section" [ngStyle]="{'background-image': 'url(' + appConfig.schoolImagePath + ')'}">
@@ -7,9 +9,10 @@
         <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
       <h1>{{ appConfig.schoolName }}</h1>
       <p class="motto">Empowering Students for a Brighter Future</p>
+      <p class="tagline">Leading Education Through Innovation & Excellence</p>
       <div class="buttons">
-        <a mat-raised-button color="primary" routerLink="/auth/login">Login</a>
-        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
+        <a mat-raised-button color="primary" routerLink="/auth/login">Login to Canvas</a>
+        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register Now</a>
       </div>
     </div>
   </div>
@@ -18,6 +21,33 @@
   </div>
 </section>
 
+  <!-- Quick Stats Section -->
+  <section class="quick-stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <mat-icon class="stat-icon">school</mat-icon>
+          <h3>2,500+</h3>
+          <p>Active Students</p>
+        </div>
+        <div class="stat-card">
+          <mat-icon class="stat-icon">people</mat-icon>
+          <h3>150+</h3>
+          <p>Expert Faculty</p>
+        </div>
+        <div class="stat-card">
+          <mat-icon class="stat-icon">emoji_events</mat-icon>
+          <h3>95%</h3>
+          <p>Success Rate</p>
+        </div>
+        <div class="stat-card">
+          <mat-icon class="stat-icon">workspace_premium</mat-icon>
+          <h3>20+</h3>
+          <p>Years Excellence</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- School Info Section -->
   <section class="school-info">
@@ -70,6 +100,111 @@
           <h3>Supportive Community</h3>
           <p>A collaborative environment where students, teachers, and parents work together.</p>
         </div>
+
+        <div class="feature">
+          <mat-icon>science</mat-icon>
+          <h3>Modern Facilities</h3>
+          <p>Well-equipped laboratories, libraries, and sports facilities for holistic development.</p>
+        </div>
+
+        <div class="feature">
+          <mat-icon>psychology</mat-icon>
+          <h3>Student Counseling</h3>
+          <p>Professional guidance and counseling services to support student well-being.</p>
+        </div>
+
+        <div class="feature">
+          <mat-icon>language</mat-icon>
+          <h3>Global Perspective</h3>
+          <p>International curriculum and exchange programs to prepare global citizens.</p>
+        </div>
+      </div>
+
+      <!-- Canvas Platform Features -->
+      <div class="platform-section">
+        <h2>Canvas Platform Features</h2>
+        <div class="platform-features">
+          <mat-card class="platform-card">
+            <mat-icon color="primary">assignment</mat-icon>
+            <h4>Assignment Management</h4>
+            <p>Submit, track, and grade assignments digitally with ease.</p>
+          </mat-card>
+
+          <mat-card class="platform-card">
+            <mat-icon color="accent">event</mat-icon>
+            <h4>Attendance Tracking</h4>
+            <p>Real-time attendance monitoring and reporting system.</p>
+          </mat-card>
+
+          <mat-card class="platform-card">
+            <mat-icon color="primary">assessment</mat-icon>
+            <h4>Grade Management</h4>
+            <p>Comprehensive grading system with detailed analytics.</p>
+          </mat-card>
+
+          <mat-card class="platform-card">
+            <mat-icon color="accent">message</mat-icon>
+            <h4>Communication Hub</h4>
+            <p>Connect students, teachers, and parents seamlessly.</p>
+          </mat-card>
+
+          <mat-card class="platform-card">
+            <mat-icon color="primary">library_books</mat-icon>
+            <h4>Digital Library</h4>
+            <p>Access to extensive digital resources and e-books.</p>
+          </mat-card>
+
+          <mat-card class="platform-card">
+            <mat-icon color="accent">analytics</mat-icon>
+            <h4>Performance Analytics</h4>
+            <p>Track student progress with detailed reports and insights.</p>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Testimonials Section -->
+      <div class="testimonials-section">
+        <h2>What Our Community Says</h2>
+        <div class="testimonials-grid">
+          <mat-card class="testimonial-card">
+            <div class="testimonial-header">
+              <mat-icon>format_quote</mat-icon>
+            </div>
+            <p class="testimonial-text">
+              "The Canvas platform has revolutionized how we manage our child's education. 
+              We can track progress, communicate with teachers, and stay involved every step of the way."
+            </p>
+            <div class="testimonial-author">
+              <strong>- Parent of Grade 10 Student</strong>
+            </div>
+          </mat-card>
+
+          <mat-card class="testimonial-card">
+            <div class="testimonial-header">
+              <mat-icon>format_quote</mat-icon>
+            </div>
+            <p class="testimonial-text">
+              "As a teacher, Canvas Tech makes my job so much easier. From grading to communication, 
+              everything is streamlined and efficient."
+            </p>
+            <div class="testimonial-author">
+              <strong>- Mathematics Teacher</strong>
+            </div>
+          </mat-card>
+
+          <mat-card class="testimonial-card">
+            <div class="testimonial-header">
+              <mat-icon>format_quote</mat-icon>
+            </div>
+            <p class="testimonial-text">
+              "I love being able to check my grades, submit assignments, and communicate with my 
+              teachers all in one place. It's super convenient!"
+            </p>
+            <div class="testimonial-author">
+              <strong>- Grade 11 Student</strong>
+            </div>
+          </mat-card>
+        </div>
       </div>
 
       <!-- Help Info -->
@@ -89,3 +224,5 @@
     </div>
   </section>
 </div>
+
+<app-footer></app-footer>

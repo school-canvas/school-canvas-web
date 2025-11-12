@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationConfig } from '../../../../../application-config';
-import { SharedModule } from '../../../../shared/shared.module';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../../../../shared/material.module';
 
 @Component({
   selector: 'app-home',
-  imports: [SharedModule],
+  imports: [CommonModule, MaterialModule, HeaderComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

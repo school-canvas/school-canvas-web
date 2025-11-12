@@ -20,6 +20,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { DataTableComponent, TableColumn, TableAction } from '../../../../shared/components/data-table/data-table.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
+import { ChartComponent, ChartData } from '../../../../shared/components/chart/chart.component';
 
 import { FinanceService } from '../../../../core/services/api/finance.service';
 import { Invoice, Payment, InvoiceStatus, PaymentMethod } from '../../../../core/models/finance.model';
@@ -49,7 +50,8 @@ import { takeUntil } from 'rxjs/operators';
     PageHeaderComponent,
     DataTableComponent,
     EmptyStateComponent,
-    StatsCardComponent
+    StatsCardComponent,
+    ChartComponent
   ],
   templateUrl: './finance-management.component.html',
   styleUrl: './finance-management.component.css'
@@ -73,6 +75,11 @@ export class FinanceManagementComponent implements OnInit, OnDestroy {
   pendingAmount = 0;
   paidAmount = 0;
   overdueAmount = 0;
+  
+  // Chart data
+  revenueByMonthChart!: ChartData;
+  invoiceStatusChart!: ChartData;
+  paymentMethodChart!: ChartData;
   
   // Filters
   searchTerm = '';
@@ -212,6 +219,119 @@ export class FinanceManagementComponent implements OnInit, OnDestroy {
     this.overdueAmount = this.invoices
       .filter(inv => inv.status === InvoiceStatus.OVERDUE)
       .reduce((sum, inv) => sum + inv.balanceAmount, 0);
+    
+    this.generateCharts();
+  }
+
+  generateCharts(): void {
+    // Revenue by Month (last 6 months)
+    const monthlyRevenue = this.calculateMonthlyRevenue();
+    this.revenueByMonthChart = {
+      labels: monthlyRevenue.map(m => m.month),
+      datasets: [{
+        label: 'Revenue ($)',
+        data: monthlyRevenue.map(m => m.amount),
+        backgroundColor: 'rgba(63, 81, 181, 0.2)',
+        borderColor: '#3f51b5',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true
+      }]
+    };
+
+    // Invoice Status Distribution
+    const statusCounts = this.groupInvoicesByStatus();
+    this.invoiceStatusChart = {
+      labels: Object.keys(statusCounts),
+      datasets: [{
+        label: 'Count',
+        data: Object.values(statusCounts),
+        backgroundColor: ['#ffc107', '#ff9800', '#4caf50', '#f44336', '#9e9e9e']
+      }]
+    };
+
+    // Payment Method Distribution
+    const paymentMethodCounts = this.groupPaymentsByMethod();
+    this.paymentMethodChart = {
+      labels: Object.keys(paymentMethodCounts),
+      datasets: [{
+        label: 'Amount ($)',
+        data: Object.values(paymentMethodCounts),
+        backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#00bcd4', '#795548', '#607d8b']
+      }]
+    };
+  }
+
+  calculateMonthlyRevenue(): { month: string, amount: number }[] {
+    const monthlyData: { [key: string]: number } = {};
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Initialize last 6 months
+    const currentDate = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      monthlyData[monthKey] = 0;
+    }
+    
+    // Aggregate invoice amounts by month
+    this.invoices.forEach(invoice => {
+      if (invoice.invoiceDate) {
+        const date = new Date(invoice.invoiceDate);
+        const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        if (monthlyData.hasOwnProperty(monthKey)) {
+          monthlyData[monthKey] += invoice.totalAmount;
+        }
+      }
+    });
+    
+    return Object.entries(monthlyData).map(([month, amount]) => ({ month, amount }));
+  }
+
+  groupInvoicesByStatus(): { [key: string]: number } {
+    const statusCounts: { [key: string]: number } = {
+      'Pending': 0,
+      'Partially Paid': 0,
+      'Paid': 0,
+      'Overdue': 0,
+      'Cancelled': 0
+    };
+    
+    this.invoices.forEach(invoice => {
+      const status = invoice.status;
+      if (status === InvoiceStatus.PENDING) statusCounts['Pending']++;
+      else if (status === InvoiceStatus.PARTIALLY_PAID) statusCounts['Partially Paid']++;
+      else if (status === InvoiceStatus.PAID) statusCounts['Paid']++;
+      else if (status === InvoiceStatus.OVERDUE) statusCounts['Overdue']++;
+      else if (status === InvoiceStatus.CANCELLED) statusCounts['Cancelled']++;
+    });
+    
+    return statusCounts;
+  }
+
+  groupPaymentsByMethod(): { [key: string]: number } {
+    const methodAmounts: { [key: string]: number } = {
+      'Cash': 0,
+      'Bank Transfer': 0,
+      'Credit Card': 0,
+      'Debit Card': 0,
+      'Online': 0,
+      'Check': 0,
+      'Other': 0
+    };
+    
+    this.payments.forEach(payment => {
+      const method = payment.paymentMethod;
+      if (method === PaymentMethod.CASH) methodAmounts['Cash'] += payment.amount;
+      else if (method === PaymentMethod.BANK_TRANSFER) methodAmounts['Bank Transfer'] += payment.amount;
+      else if (method === PaymentMethod.CREDIT_CARD) methodAmounts['Credit Card'] += payment.amount;
+      else if (method === PaymentMethod.DEBIT_CARD) methodAmounts['Debit Card'] += payment.amount;
+      else if (method === PaymentMethod.ONLINE) methodAmounts['Online'] += payment.amount;
+      else if (method === PaymentMethod.CHECK) methodAmounts['Check'] += payment.amount;
+      else if (method === PaymentMethod.OTHER) methodAmounts['Other'] += payment.amount;
+    });
+    
+    return methodAmounts;
   }
 
   applyFilters(): void {

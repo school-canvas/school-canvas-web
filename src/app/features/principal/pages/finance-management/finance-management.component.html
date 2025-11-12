@@ -40,6 +40,56 @@
     </app-stats-card>
   </div>
 
+  <!-- Financial Charts -->
+  <div class="charts-section" *ngIf="!loading">
+    <div class="chart-grid">
+      <!-- Revenue by Month -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Revenue Trend (Last 6 Months)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-chart
+            *ngIf="revenueByMonthChart"
+            [data]="revenueByMonthChart"
+            [type]="'line'"
+            [height]="300">
+          </app-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Invoice Status Distribution -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Invoice Status Distribution</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-chart
+            *ngIf="invoiceStatusChart"
+            [data]="invoiceStatusChart"
+            [type]="'pie'"
+            [height]="300">
+          </app-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment Methods -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Payment Methods Distribution</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-chart
+            *ngIf="paymentMethodChart"
+            [data]="paymentMethodChart"
+            [type]="'doughnut'"
+            [height]="300">
+          </app-chart>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
   <!-- Tabs -->
   <mat-card class="tabs-card">
     <mat-tab-group [(selectedIndex)]="selectedTab" (selectedIndexChange)="onTabChange($event)">

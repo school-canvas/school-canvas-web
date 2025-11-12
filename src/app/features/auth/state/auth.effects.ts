@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
@@ -12,6 +12,13 @@ import * as AuthActions from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
+  private actions$ = inject(Actions);
+  private authService = inject(AuthService);
+  private tokenService = inject(TokenService);
+  private websocketService = inject(WebSocketService);
+  private notificationService = inject(NotificationService);
+  private router = inject(Router);
+
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.login),
@@ -24,8 +31,10 @@ export class AuthEffects {
               this.tokenService.saveTenantId(response.user.tenantId);
             }
             
-            // Connect to WebSocket
-            this.websocketService.connect();
+            // Connect to WebSocket with userId
+            if (response.user.id) {
+              this.websocketService.connect(response.user.id);
+            }
             
             return AuthActions.loginSuccess({ 
               token: response.token, 
@@ -138,13 +147,4 @@ export class AuthEffects {
       })
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private authService: AuthService,
-    private tokenService: TokenService,
-    private websocketService: WebSocketService,
-    private notificationService: NotificationService,
-    private router: Router
-  ) {}
 }

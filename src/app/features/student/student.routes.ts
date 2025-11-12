@@ -7,6 +7,7 @@ import { MyAssessmentsComponent } from './pages/my-assessments/my-assessments.co
 import { MyGradesComponent } from './pages/my-grades/my-grades.component';
 import { MyAttendanceComponent } from './pages/my-attendance/my-attendance.component';
 import { LibraryBooksComponent } from './pages/library-books/library-books.component';
+import { FeePaymentComponent } from './pages/fee-payment/fee-payment.component';
 
 export const STUDENT_ROUTES: Routes = [
   {
@@ -21,6 +22,7 @@ export const STUDENT_ROUTES: Routes = [
       { path: 'grades', component: MyGradesComponent },
       { path: 'attendance', component: MyAttendanceComponent },
       { path: 'library', component: LibraryBooksComponent },
+      { path: 'fees', component: FeePaymentComponent },
     ]
   }
 ];

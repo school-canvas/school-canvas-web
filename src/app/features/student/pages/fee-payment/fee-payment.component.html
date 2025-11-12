@@ -1,0 +1,270 @@
+<app-page-header
+  title="Fee Payment"
+  [showBackButton]="true"
+  icon="payments">
+</app-page-header>
+
+<div class="fee-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <app-stats-card
+        title="Total Amount"
+        [value]="formatCurrency(stats.totalAmount)"
+        icon="account_balance_wallet"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Paid"
+        [value]="formatCurrency(stats.paidAmount)"
+        icon="check_circle"
+        color="success">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Pending"
+        [value]="formatCurrency(stats.pendingAmount)"
+        icon="schedule"
+        color="warning">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Overdue"
+        [value]="formatCurrency(stats.overdueAmount)"
+        icon="warning"
+        color="error">
+      </app-stats-card>
+    </div>
+
+    <!-- Tabs for Invoices and Payment History -->
+    <mat-tab-group [(selectedIndex)]="selectedTab" class="fee-tabs">
+      <!-- Invoices Tab -->
+      <mat-tab label="Invoices">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">description</mat-icon>
+          Invoices
+        </ng-template>
+
+        <div class="tab-content">
+          <!-- Filters -->
+          <div class="filters-section">
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Status</mat-label>
+              <mat-select [formControl]="statusFilter">
+                <mat-option value="all">All Status</mat-option>
+                <mat-option value="PENDING">Pending</mat-option>
+                <mat-option value="PAID">Paid</mat-option>
+                <mat-option value="OVERDUE">Overdue</mat-option>
+                <mat-option value="PARTIAL">Partial</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Category</mat-label>
+              <mat-select [formControl]="categoryFilter">
+                <mat-option value="all">All Categories</mat-option>
+                <mat-option *ngFor="let category of categories.slice(1)" [value]="category">
+                  {{ category.replace('_', ' ') }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Academic Year</mat-label>
+              <mat-select [formControl]="academicYearFilter">
+                <mat-option *ngFor="let year of academicYears" [value]="year">
+                  {{ year === 'all' ? 'All Years' : year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button
+              mat-stroked-button
+              (click)="clearFilters()"
+              class="clear-filters-btn">
+              <mat-icon>clear_all</mat-icon>
+              Clear Filters
+            </button>
+          </div>
+
+          <!-- Invoices List -->
+          <div *ngIf="filteredInvoices.length === 0" class="empty-state-wrapper">
+            <app-empty-state
+              icon="description"
+              message="No invoices found"
+              description="Your fee invoices will appear here.">
+            </app-empty-state>
+          </div>
+
+          <div *ngIf="filteredInvoices.length > 0" class="invoices-list">
+            <mat-card *ngFor="let invoice of filteredInvoices" class="invoice-card">
+              <div class="invoice-header">
+                <div class="invoice-number-section">
+                  <mat-icon [class]="'category-icon ' + getCategoryIcon(invoice.category)">
+                    {{ getCategoryIcon(invoice.category) }}
+                  </mat-icon>
+                  <div>
+                    <h3 class="invoice-number">{{ invoice.invoiceNumber }}</h3>
+                    <p class="invoice-description">{{ invoice.description }}</p>
+                  </div>
+                </div>
+                
+                <mat-chip
+                  [class]="getStatusClass(invoice.status)"
+                  [class.status-chip]="true">
+                  {{ invoice.status }}
+                </mat-chip>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="invoice-details">
+                <div class="detail-row">
+                  <span class="detail-label">Category:</span>
+                  <span class="detail-value">{{ invoice.category.replace('_', ' ') }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Academic Year:</span>
+                  <span class="detail-value">{{ invoice.academicYear }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Issue Date:</span>
+                  <span class="detail-value">{{ formatDate(invoice.issueDate) }}</span>
+                </div>
+                <div class="detail-row" [class.overdue-text]="isOverdue(invoice)">
+                  <span class="detail-label">Due Date:</span>
+                  <span class="detail-value">
+                    {{ formatDate(invoice.dueDate) }}
+                    <span *ngIf="isOverdue(invoice)" class="overdue-badge">
+                      <mat-icon>warning</mat-icon>
+                      {{ Math.abs(getDaysUntilDue(invoice.dueDate)) }} days overdue
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="invoice-amounts">
+                <div class="amount-item">
+                  <span class="amount-label">Total Amount</span>
+                  <span class="amount-value total">{{ formatCurrency(invoice.amount) }}</span>
+                </div>
+                <div class="amount-item" *ngIf="invoice.paidAmount > 0">
+                  <span class="amount-label">Paid Amount</span>
+                  <span class="amount-value paid">{{ formatCurrency(invoice.paidAmount) }}</span>
+                </div>
+                <div class="amount-item" *ngIf="invoice.remainingAmount > 0">
+                  <span class="amount-label">Remaining</span>
+                  <span class="amount-value remaining">{{ formatCurrency(invoice.remainingAmount) }}</span>
+                </div>
+              </div>
+
+              <mat-card-actions>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [disabled]="invoice.status === 'PAID'"
+                  (click)="payInvoice(invoice)">
+                  <mat-icon>payment</mat-icon>
+                  {{ invoice.status === 'PAID' ? 'Paid' : 'Pay Now' }}
+                </button>
+                <button
+                  mat-stroked-button
+                  (click)="downloadInvoice(invoice)">
+                  <mat-icon>download</mat-icon>
+                  Download
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Payment History Tab -->
+      <mat-tab label="Payment History">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">receipt_long</mat-icon>
+          Payment History
+        </ng-template>
+
+        <div class="tab-content">
+          <div *ngIf="payments.length === 0" class="empty-state-wrapper">
+            <app-empty-state
+              icon="receipt"
+              message="No payment history"
+              description="Your payment records will appear here.">
+            </app-empty-state>
+          </div>
+
+          <div *ngIf="payments.length > 0" class="payments-table-container">
+            <table mat-table [dataSource]="payments" class="payments-table">
+              <!-- Receipt Number Column -->
+              <ng-container matColumnDef="receiptNumber">
+                <th mat-header-cell *matHeaderCellDef>Receipt Number</th>
+                <td mat-cell *matCellDef="let payment">
+                  <strong>{{ payment.receiptNumber }}</strong>
+                </td>
+              </ng-container>
+
+              <!-- Invoice Number Column -->
+              <ng-container matColumnDef="invoiceNumber">
+                <th mat-header-cell *matHeaderCellDef>Invoice</th>
+                <td mat-cell *matCellDef="let payment">
+                  {{ payment.invoice?.invoiceNumber || 'N/A' }}
+                  <br>
+                  <small class="invoice-desc">{{ payment.invoice?.description }}</small>
+                </td>
+              </ng-container>
+
+              <!-- Amount Column -->
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Amount</th>
+                <td mat-cell *matCellDef="let payment">
+                  <span class="payment-amount">{{ formatCurrency(payment.amount) }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Payment Date Column -->
+              <ng-container matColumnDef="paymentDate">
+                <th mat-header-cell *matHeaderCellDef>Payment Date</th>
+                <td mat-cell *matCellDef="let payment">
+                  {{ formatDate(payment.paymentDate) }}
+                </td>
+              </ng-container>
+
+              <!-- Payment Method Column -->
+              <ng-container matColumnDef="method">
+                <th mat-header-cell *matHeaderCellDef>Method</th>
+                <td mat-cell *matCellDef="let payment">
+                  <div class="payment-method">
+                    <mat-icon>{{ getPaymentMethodIcon(payment.paymentMethod) }}</mat-icon>
+                    <span>{{ payment.paymentMethod.replace('_', ' ') }}</span>
+                  </div>
+                  <div *ngIf="payment.transactionId" class="transaction-id">
+                    TXN: {{ payment.transactionId }}
+                  </div>
+                  <button
+                    mat-icon-button
+                    (click)="downloadReceipt(payment)"
+                    matTooltip="Download Receipt">
+                    <mat-icon>download</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: paymentColumns"></tr>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

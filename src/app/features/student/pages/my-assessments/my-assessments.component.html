@@ -1,0 +1,183 @@
+<div class="my-assessments-page">
+  <!-- Page Header -->
+  <app-page-header 
+    title="My Assessments" 
+    subtitle="View and manage your assignments, quizzes, and exams"
+    [showBackButton]="true"
+    (backClick)="goBack()">
+  </app-page-header>
+
+  <!-- Loading Indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="page-content" *ngIf="!loading">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card pending">
+        <div class="stat-icon">
+          <mat-icon>pending_actions</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ pendingCount }}</span>
+          <span class="stat-label">Pending</span>
+        </div>
+      </div>
+
+      <div class="stat-card submitted">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ submittedCount }}</span>
+          <span class="stat-label">Submitted</span>
+        </div>
+      </div>
+
+      <div class="stat-card graded">
+        <div class="stat-icon">
+          <mat-icon>grade</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ gradedCount }}</span>
+          <span class="stat-label">Graded</span>
+        </div>
+      </div>
+
+      <div class="stat-card overdue" *ngIf="overdueCount > 0">
+        <div class="stat-icon">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ overdueCount }}</span>
+          <span class="stat-label">Overdue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters Card -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-container">
+          <!-- Search -->
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search assessments</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              placeholder="Search by title or class...">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Type Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Type</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedType"
+              (selectionChange)="onTypeChange()">
+              <mat-option *ngFor="let type of types" [value]="type.value">
+                {{ type.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Status Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Status</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedStatus"
+              (selectionChange)="onStatusChange()">
+              <mat-option *ngFor="let status of statuses" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Class Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Class</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedClass"
+              (selectionChange)="onClassChange()">
+              <mat-option *ngFor="let class of classes" [value]="class.value">
+                {{ class.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Clear Filters Button -->
+          <button 
+            mat-raised-button 
+            color="accent"
+            (click)="clearFilters()"
+            class="clear-filters-btn">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Active Filters Chips -->
+        <div class="active-filters" *ngIf="searchTerm || selectedType !== 'all' || selectedStatus !== 'all' || selectedClass !== 'all'">
+          <span class="filters-label">Active Filters:</span>
+          <mat-chip-set>
+            <mat-chip *ngIf="searchTerm" (removed)="searchTerm = ''; onSearchChange()">
+              Search: {{ searchTerm }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <mat-chip *ngIf="selectedType !== 'all'" (removed)="selectedType = 'all'; onTypeChange()">
+              Type: {{ getTypeLabel(selectedType) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <mat-chip *ngIf="selectedStatus !== 'all'" (removed)="selectedStatus = 'all'; onStatusChange()">
+              Status: {{ getStatusLabel(selectedStatus) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <mat-chip *ngIf="selectedClass !== 'all'" (removed)="selectedClass = 'all'; onClassChange()">
+              Class: {{ getClassLabel(selectedClass) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Results Summary -->
+    <div class="results-summary">
+      <p>
+        <mat-icon>assignment</mat-icon>
+        Showing {{ filteredAssessments.length }} of {{ totalAssessments }} assessments
+      </p>
+    </div>
+
+    <!-- Assessments Table -->
+    <mat-card class="table-card" *ngIf="filteredAssessments.length > 0">
+      <mat-card-content>
+        <app-data-table
+          [data]="filteredAssessments"
+          [columns]="columns"
+          [actions]="actions"
+          [totalElements]="filteredAssessments.length">
+        </app-data-table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Empty State -->
+    <app-empty-state
+      *ngIf="filteredAssessments.length === 0 && !loading"
+      icon="assignment"
+      [title]="searchTerm || selectedType !== 'all' || selectedStatus !== 'all' || selectedClass !== 'all' ? 'No Assessments Found' : 'No Assessments'"
+      [message]="searchTerm || selectedType !== 'all' || selectedStatus !== 'all' || selectedClass !== 'all' ? 'Try adjusting your filters to find assessments.' : 'You have no assessments at this time.'">
+      <button mat-raised-button color="primary" (click)="clearFilters()" *ngIf="searchTerm || selectedType !== 'all' || selectedStatus !== 'all' || selectedClass !== 'all'">
+        Clear Filters
+      </button>
+    </app-empty-state>
+  </div>
+</div>

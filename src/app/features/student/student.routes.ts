@@ -3,6 +3,7 @@ import { StudentLayoutComponent } from './components/student-layout/student-layo
 import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
 import { MyClassesComponent } from './pages/my-classes/my-classes.component';
 import { ClassDetailComponent } from './pages/class-detail/class-detail.component';
+import { MyAssessmentsComponent } from './pages/my-assessments/my-assessments.component';
 
 export const STUDENT_ROUTES: Routes = [
   {
@@ -13,6 +14,7 @@ export const STUDENT_ROUTES: Routes = [
       { path: 'dashboard', component: StudentDashboardComponent },
       { path: 'classes', component: MyClassesComponent },
       { path: 'classes/:id', component: ClassDetailComponent },
+      { path: 'assessments', component: MyAssessmentsComponent },
     ]
   }
 ];

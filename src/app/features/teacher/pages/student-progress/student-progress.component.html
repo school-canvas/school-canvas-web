@@ -1,0 +1,367 @@
+<p><div class="student-progress-container">
+  <app-page-header
+    title="Student Progress Reports"
+    subtitle="Track individual student performance and generate comprehensive reports"
+  ></app-page-header>
+
+  <!-- Student Selector -->
+  <mat-card class="selector-card">
+    <div class="selector-container">
+      <mat-form-field appearance="outline" class="student-selector">
+        <mat-label>Select Student</mat-label>
+        <mat-select [(ngModel)]="selectedStudentId" (ngModelChange)="onStudentChange()">
+          @for (student of students; track student.id) {
+            <mat-option [value]="student.id">
+              {{ student.rollNumber }} - {{ student.firstName }} {{ student.lastName }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="action-buttons">
+        <button mat-stroked-button (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Print Report
+        </button>
+        <button mat-raised-button color="primary" (click)="exportReport()">
+          <mat-icon>download</mat-icon>
+          Export PDF
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading student data...</p>
+    </div>
+  } @else if (selectedStudent) {
+    <!-- Student Info Header -->
+    <mat-card class="student-info-card">
+      <div class="student-info">
+        <div class="student-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <div class="student-details">
+          <h2>{{ getStudentName() }}</h2>
+          <div class="meta-info">
+            <span><mat-icon>badge</mat-icon> Roll: {{ selectedStudent.rollNumber }}</span>
+            <span><mat-icon>school</mat-icon> Grade {{ selectedStudent.grade }} - {{ selectedStudent.section }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Performance Metrics -->
+    <div class="stats-container">
+      <app-stats-card
+        title="Current GPA"
+        [value]="currentGPA"
+        icon="grade"
+        color="primary"
+      ></app-stats-card>
+
+      <app-stats-card
+        title="Attendance Rate"
+        [value]="attendanceRate + '%'"
+        icon="event_available"
+        color="success"
+      ></app-stats-card>
+
+      <app-stats-card
+        title="Assignments Completed"
+        [value]="assignmentsCompleted + '/' + totalAssignments"
+        icon="assignment_turned_in"
+        color="warning"
+      ></app-stats-card>
+
+      <app-stats-card
+        title="Behavior Score"
+        [value]="'8.5/10'"
+        icon="emoji_events"
+        color="error"
+      ></app-stats-card>
+    </div>
+
+    <!-- Tabs for Different Sections -->
+    <mat-tab-group class="progress-tabs" animationDuration="300ms">
+      <!-- Academic Performance Tab -->
+      <mat-tab label="Academic Performance">
+        <div class="tab-content">
+          <!-- Grade Trends Chart -->
+          <mat-card class="chart-card">
+            <div class="card-header">
+              <h3>Performance Trends</h3>
+              <p>GPA and Attendance over the semester</p>
+            </div>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                type="line"
+              ></canvas>
+            </div>
+          </mat-card>
+
+          <!-- Subject-wise Performance -->
+          <mat-card class="subjects-card">
+            <div class="card-header">
+              <h3>Subject-wise Performance</h3>
+              <p>Current grades and progress in each subject</p>
+            </div>
+            
+            <div class="subjects-grid">
+              @for (subject of subjectGrades; track subject.subject) {
+                <div class="subject-card">
+                  <div class="subject-header">
+                    <div class="subject-name">{{ subject.subject }}</div>
+                    <div class="subject-grade" [class]="getTrendClass(subject.trend)">
+                      {{ subject.letterGrade }}
+                      <mat-icon class="trend-icon">{{ getTrendIcon(subject.trend) }}</mat-icon>
+                    </div>
+                  </div>
+                  <div class="subject-details">
+                    <div class="detail-row">
+                      <span>Current Grade:</span>
+                      <strong>{{ subject.currentGrade.toFixed(1) }}%</strong>
+                    </div>
+                    <div class="detail-row">
+                      <span>GPA Points:</span>
+                      <strong>{{ subject.gradePoints.toFixed(1) }}</strong>
+                    </div>
+                    <div class="detail-row">
+                      <span>Assignments:</span>
+                      <strong>{{ subject.completed }}/{{ subject.assignments }}</strong>
+                    </div>
+                  </div>
+                  <div class="progress-bar">
+                    <div 
+                      class="progress-fill" 
+                      [style.width.%]="(subject.completed / subject.assignments) * 100"
+                      [class]="getTrendClass(subject.trend)"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-card>
+
+          <!-- Subject Comparison Chart -->
+          <mat-card class="chart-card">
+            <div class="card-header">
+              <h3>Subject Comparison</h3>
+              <p>Average scores across all subjects</p>
+            </div>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [data]="barChartData"
+                [options]="barChartOptions"
+                type="bar"
+              ></canvas>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Recent Assignments Tab -->
+      <mat-tab label="Recent Assignments">
+        <div class="tab-content">
+          <mat-card class="table-card">
+            <div class="card-header">
+              <h3>Recent Assignments</h3>
+              <p>Latest 10 assignments and their status</p>
+            </div>
+            
+            <div class="table-container">
+              <table mat-table [dataSource]="recentAssignments" class="assignments-table">
+                <!-- Title Column -->
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef>Assignment</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <div class="assignment-title">
+                      <div>{{ assignment.title }}</div>
+                      <div class="subtitle">{{ assignment.subject }}</div>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Type Column -->
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef>Type</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    {{ assignment.type }}
+                  </td>
+                </ng-container>
+
+                <!-- Due Date Column -->
+                <ng-container matColumnDef="dueDate">
+                  <th mat-header-cell *matHeaderCellDef>Due Date</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    {{ formatDate(assignment.dueDate) }}
+                  </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Status</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <mat-chip [class]="getStatusClass(assignment.status)">
+                      {{ assignment.status }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Score Column -->
+                <ng-container matColumnDef="score">
+                  <th mat-header-cell *matHeaderCellDef>Score</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    @if (assignment.score !== undefined) {
+                      <div class="score-cell">
+                        <strong>{{ assignment.score }}/{{ assignment.maxScore }}</strong>
+                        <span class="grade-badge">{{ assignment.grade }}</span>
+                      </div>
+                    } @else {
+                      <span class="no-score">-</span>
+                    }
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: assignmentColumns;"></tr>
+              </table>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Attendance Tab -->
+      <mat-tab label="Attendance">
+        <div class="tab-content">
+          <mat-card class="attendance-card">
+            <div class="card-header">
+              <h3>Attendance Summary</h3>
+              <p>Attendance record for the last 60 days</p>
+            </div>
+
+            <div class="attendance-stats">
+              <div class="stat-item">
+                <mat-icon class="status-present">check_circle</mat-icon>
+                <div>
+                  <div class="stat-value">{{ getPresentCount() }}</div>
+                  <div class="stat-label">Present</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon class="status-absent">cancel</mat-icon>
+                <div>
+                  <div class="stat-value">{{ getAbsentCount() }}</div>
+                  <div class="stat-label">Absent</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon class="status-late">schedule</mat-icon>
+                <div>
+                  <div class="stat-value">{{ getLateCount() }}</div>
+                  <div class="stat-label">Late</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon class="status-excused">event_busy</mat-icon>
+                <div>
+                  <div class="stat-value">{{ getExcusedCount() }}</div>
+                  <div class="stat-label">Excused</div>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="attendance-calendar">
+              <h4>Recent Attendance</h4>
+              <div class="calendar-grid">
+                @for (record of attendanceRecords.slice(0, 30); track record.date) {
+                  <div 
+                    class="calendar-day" 
+                    [class]="'status-' + record.status.toLowerCase()"
+                    [matTooltip]="formatDate(record.date) + ' - ' + record.status"
+                  >
+                    <div class="day-number">{{ record.date.split('-')[2] }}</div>
+                  </div>
+                }
+              </div>
+              <div class="calendar-legend">
+                <div class="legend-item">
+                  <span class="legend-color status-present"></span>
+                  <span>Present</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color status-absent"></span>
+                  <span>Absent</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color status-late"></span>
+                  <span>Late</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color status-excused"></span>
+                  <span>Excused</span>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Behavior Notes Tab -->
+      <mat-tab label="Behavior & Notes">
+        <div class="tab-content">
+          <mat-card class="table-card">
+            <div class="card-header">
+              <h3>Behavior Notes</h3>
+              <p>Teacher observations and behavioral notes</p>
+            </div>
+
+            <div class="notes-list">
+              @for (note of behaviorNotes; track note.id) {
+                <div class="note-item" [class]="getBehaviorClass(note.type)">
+                  <div class="note-header">
+                    <div class="note-type">
+                      <mat-icon>
+                        @if (note.type === 'POSITIVE') {
+                          thumb_up
+                        } @else if (note.type === 'NEGATIVE') {
+                          thumb_down
+                        } @else {
+                          info
+                        }
+                      </mat-icon>
+                      <mat-chip [class]="getBehaviorClass(note.type)">
+                        {{ note.type }}
+                      </mat-chip>
+                    </div>
+                    <div class="note-meta">
+                      <span class="note-date">{{ formatDate(note.date) }}</span>
+                      <span class="note-category">{{ note.category }}</span>
+                    </div>
+                  </div>
+                  <div class="note-content">
+                    {{ note.note }}
+                  </div>
+                  <div class="note-footer">
+                    <span class="note-teacher">
+                      <mat-icon>person</mat-icon>
+                      {{ note.teacher }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

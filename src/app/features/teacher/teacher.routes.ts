@@ -6,6 +6,7 @@ import { ClassDetailComponent } from './pages/class-detail/class-detail.componen
 import { TakeAttendanceComponent } from './pages/take-attendance/take-attendance.component';
 import { GradebookComponent } from './pages/gradebook/gradebook.component';
 import { ManageAssignmentsComponent } from './pages/manage-assignments/manage-assignments.component';
+import { StudentProgressComponent } from './pages/student-progress/student-progress.component';
 
 export const TEACHER_ROUTES: Routes = [
   {
@@ -19,6 +20,7 @@ export const TEACHER_ROUTES: Routes = [
       { path: 'attendance/:id', component: TakeAttendanceComponent },
       { path: 'gradebook/:id', component: GradebookComponent },
       { path: 'assignments', component: ManageAssignmentsComponent },
+      { path: 'student-progress', component: StudentProgressComponent },
     ]
   }
 ];

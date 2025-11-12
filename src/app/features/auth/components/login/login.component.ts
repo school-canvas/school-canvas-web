@@ -7,10 +7,11 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ApplicationConfig } from '../../../../../application-config'
 import { CommonModule } from '@angular/common'
 import { Observable } from 'rxjs'
+import { AuthFooterComponent } from '../auth-footer/auth-footer.component'
 
 @Component({
   selector: 'app-login',
-  imports: [SharedModule, CommonModule],
+  imports: [SharedModule, CommonModule, AuthFooterComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

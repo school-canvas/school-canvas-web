@@ -5,10 +5,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { AuthService } from '../../../../core/services/auth.service'
 import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { AuthFooterComponent } from '../auth-footer/auth-footer.component'
 
 @Component({
   selector: 'app-register-user',
-  imports: [SharedModule],
+  imports: [SharedModule, AuthFooterComponent],
   templateUrl: './register-user.component.html',
   styleUrl: './register-user.component.css',
 })

@@ -22,6 +22,7 @@ import { StatsCardComponent } from '../../../../shared/components/stats-card/sta
 
 import { ClassService } from '../../../../core/services/api/class.service';
 import { ClassDTO } from '../../../../core/models/class.model';
+import { ClassDialogComponent } from '../../components/class-dialog/class-dialog.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -196,18 +197,17 @@ export class ClassManagementComponent implements OnInit, OnDestroy {
   }
 
   addClass(): void {
-    // TODO: Future Implementation - Add Class Dialog
-    // Service References:
-    //   - ClassService (core/services/api/class.service.ts) - For class creation
-    //   - TeacherService (core/services/api/teacher.service.ts) - To fetch available teachers
-    //
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/add-class-dialog
-    // 2. Create form with: className, subject, gradeLevel, teacherId, description, maxCapacity, schedule
-    // 3. Load active teachers for teacher dropdown
-    // 4. Call ClassService.createClass() with CreateClassRequest
-    // 5. Reload list on success
-    this.snackBar.open('Add Class - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(ClassDialogComponent, {
+      width: '800px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadClasses();
+        this.snackBar.open('Class created successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   viewClassDetails(classItem: ClassDTO): void {
@@ -221,14 +221,17 @@ export class ClassManagementComponent implements OnInit, OnDestroy {
   }
 
   editClass(classItem: ClassDTO): void {
-    // TODO: Future Implementation - Edit Class Dialog
-    // Service: ClassService.updateClass(classId, Partial<CreateClassRequest>)
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/edit-class-dialog
-    // 2. Pre-populate form with class data
-    // 3. Allow updates to: className, subject, gradeLevel, teacherId, description, maxCapacity, schedule
-    // 4. Reload list on success
-    this.snackBar.open('Edit Class - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(ClassDialogComponent, {
+      width: '800px',
+      data: { mode: 'edit', class: classItem }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadClasses();
+        this.snackBar.open('Class updated successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   manageStudents(classItem: ClassDTO): void {

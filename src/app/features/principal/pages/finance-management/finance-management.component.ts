@@ -23,6 +23,8 @@ import { StatsCardComponent } from '../../../../shared/components/stats-card/sta
 
 import { FinanceService } from '../../../../core/services/api/finance.service';
 import { Invoice, Payment, InvoiceStatus, PaymentMethod } from '../../../../core/models/finance.model';
+import { InvoiceDialogComponent } from '../../components/invoice-dialog/invoice-dialog.component';
+import { PaymentDialogComponent } from '../../components/payment-dialog/payment-dialog.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -262,14 +264,17 @@ export class FinanceManagementComponent implements OnInit, OnDestroy {
   }
 
   createInvoice(): void {
-    // TODO: Future Implementation - Create Invoice Dialog
-    // Service: FinanceService.createInvoice()
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/create-invoice-dialog
-    // 2. Form fields: studentId, description, items[], dueDate
-    // 3. Calculate totalAmount from items
-    // 4. Reload invoices on success
-    this.snackBar.open('Create Invoice - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(InvoiceDialogComponent, {
+      width: '900px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadInvoices();
+        this.snackBar.open('Invoice created successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   viewInvoiceDetails(invoice: Invoice): void {
@@ -280,15 +285,18 @@ export class FinanceManagementComponent implements OnInit, OnDestroy {
   }
 
   recordPayment(invoice: Invoice): void {
-    // TODO: Future Implementation - Record Payment Dialog
-    // Service: FinanceService.createPayment(RecordPaymentRequest)
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/record-payment-dialog
-    // 2. Form: amount (max: balanceAmount), paymentMethod, paymentDate, transactionId, remarks
-    // 3. Validate amount <= balanceAmount
-    // 4. Update invoice status after payment
-    // 5. Reload invoices and payments
-    this.snackBar.open('Record Payment - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(PaymentDialogComponent, {
+      width: '700px',
+      data: { invoice }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadInvoices();
+        this.loadPayments();
+        this.snackBar.open('Payment recorded successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   downloadInvoice(invoice: Invoice): void {

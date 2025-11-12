@@ -1,0 +1,216 @@
+<div class="fee-management-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Fee Management'" 
+    [subtitle]="'View and manage fee payments for your children'">
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to My Children
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading && !selectedChild">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading fee information...</p>
+  </div>
+
+  <!-- Content -->
+  <div class="fee-content" *ngIf="!loading || selectedChild">
+    <!-- Child Selector -->
+    <mat-card class="selector-card" *ngIf="children.length > 1">
+      <mat-card-content>
+        <mat-form-field class="child-selector">
+          <mat-label>Select Child</mat-label>
+          <mat-select [(ngModel)]="selectedChild" (selectionChange)="onChildChange($event.value)">
+            <mat-option *ngFor="let child of children" [value]="child">
+              {{ child.firstName }} {{ child.lastName }} - Grade {{ child.gradeLevel }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Selected Child Summary -->
+    <div class="child-summary" *ngIf="selectedChild">
+      <mat-card>
+        <mat-card-header>
+          <div class="child-avatar" mat-card-avatar>
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <mat-card-title>{{ selectedChild.firstName }} {{ selectedChild.lastName }}</mat-card-title>
+          <mat-card-subtitle>Grade {{ selectedChild.gradeLevel }}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-row" *ngIf="selectedChild">
+      <app-stats-card
+        [title]="'Total Due'"
+        [value]="formatCurrency(totalDue)"
+        [icon]="'receipt'"
+        [color]="'warning'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Total Paid'"
+        [value]="formatCurrency(totalPaid)"
+        [icon]="'payments'"
+        [color]="'success'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Pending Invoices'"
+        [value]="pendingInvoices.toString()"
+        [icon]="'pending_actions'"
+        [color]="'warning'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Overdue'"
+        [value]="overdueInvoices.toString()"
+        [icon]="'warning'"
+        [color]="'error'">
+      </app-stats-card>
+    </div>
+
+    <!-- Tabbed Content -->
+    <mat-tab-group class="fee-tabs" *ngIf="selectedChild">
+      <!-- Invoices Tab -->
+      <mat-tab label="Invoices">
+        <div class="tab-content">
+          <mat-card class="data-table-card">
+            <mat-card-header>
+              <mat-card-title>All Invoices</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="table-container" *ngIf="invoices.length > 0">
+                <table mat-table [dataSource]="invoices" class="invoices-table">
+                  <ng-container matColumnDef="invoiceNumber">
+                    <th mat-header-cell *matHeaderCellDef>Invoice #</th>
+                    <td mat-cell *matCellDef="let invoice">{{ invoice.invoiceNumber }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="dueDate">
+                    <th mat-header-cell *matHeaderCellDef>Due Date</th>
+                    <td mat-cell *matCellDef="let invoice">{{ formatDate(invoice.dueDate) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef>Amount</th>
+                    <td mat-cell *matCellDef="let invoice">
+                      <strong>{{ formatCurrency(invoice.totalAmount) }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let invoice">
+                      <mat-chip [ngClass]="getInvoiceStatusClass(invoice.status)" size="small">
+                        {{ invoice.status }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let invoice">
+                      <button mat-icon-button (click)="viewInvoice(invoice)" matTooltip="View Details">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                      <button 
+                        mat-icon-button 
+                        *ngIf="invoice.status !== 'PAID' && invoice.status !== 'CANCELLED'" 
+                        (click)="payInvoice(invoice)"
+                        matTooltip="Pay Now"
+                        color="primary">
+                        <mat-icon>payment</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="downloadInvoice(invoice)" matTooltip="Download">
+                        <mat-icon>download</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="invoiceDisplayColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: invoiceDisplayColumns;"></tr>
+                </table>
+              </div>
+              <app-empty-state
+                *ngIf="invoices.length === 0"
+                [icon]="'receipt'"
+                [title]="'No Invoices'"
+                [message]="'No invoices found for this student.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Payments Tab -->
+      <mat-tab label="Payment History">
+        <div class="tab-content">
+          <mat-card class="data-table-card">
+            <mat-card-header>
+              <mat-card-title>All Payments</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="table-container" *ngIf="payments.length > 0">
+                <table mat-table [dataSource]="payments" class="payments-table">
+                  <ng-container matColumnDef="paymentDate">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let payment">{{ formatDate(payment.paymentDate) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef>Amount</th>
+                    <td mat-cell *matCellDef="let payment">
+                      <strong class="text-success">{{ formatCurrency(payment.amount) }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="method">
+                    <th mat-header-cell *matHeaderCellDef>Method</th>
+                    <td mat-cell *matCellDef="let payment">{{ payment.paymentMethod || 'N/A' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="reference">
+                    <th mat-header-cell *matHeaderCellDef>Reference</th>
+                    <td mat-cell *matCellDef="let payment">
+                      <span>{{ payment.transactionId || 'N/A' }}</span>
+                      <button 
+                        mat-icon-button 
+                        (click)="downloadReceipt(payment)" 
+                        matTooltip="Download Receipt"
+                        size="small">
+                        <mat-icon>download</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="paymentDisplayColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: paymentDisplayColumns;"></tr>
+                </table>
+              </div>
+              <app-empty-state
+                *ngIf="payments.length === 0"
+                [icon]="'payments'"
+                [title]="'No Payments'"
+                [message]="'No payment records found for this student.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Empty State - No Children -->
+    <app-empty-state
+      *ngIf="!loading && children.length === 0"
+      [icon]="'receipt'"
+      [title]="'No Fee Information'"
+      [message]="'No student records found. Please contact the school administration.'">
+    </app-empty-state>
+  </div>
+</div>

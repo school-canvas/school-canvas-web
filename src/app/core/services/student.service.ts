@@ -9,7 +9,7 @@ import { CreateStudentRequest, Student, UpdateStudentRequest } from '../models/s
 })
 export class StudentService {
 
-  private readonly API_URL = environment.apiUrls.students;
+  private readonly API_URL = environment.apiUrls.student;
 
   constructor(private http: HttpClient) {}
 

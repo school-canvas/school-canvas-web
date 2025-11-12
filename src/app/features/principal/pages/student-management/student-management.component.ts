@@ -19,6 +19,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { DataTableComponent, TableColumn, TableAction } from '../../../../shared/components/data-table/data-table.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
+import { StudentDialogComponent } from '../../components/student-dialog/student-dialog.component';
 
 import { StudentService } from '../../../../core/services/api/student.service';
 import { Student } from '../../../../core/models/student.model';
@@ -209,18 +210,17 @@ export class StudentManagementComponent implements OnInit, OnDestroy {
   }
 
   addStudent(): void {
-    // TODO: Future Implementation - Add Student Dialog
-    // Service References:
-    //   - UserService (core/services/user.service.ts) - For user account creation
-    //   - StudentService (core/services/api/student.service.ts) - For student profile
-    //
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/add-student-dialog
-    // 2. Create form with: firstName, lastName, email, password, dateOfBirth, gradeLevel, phoneNumber, address
-    // 3. Call UserService to create user account first (may need to add method)
-    // 4. Then call StudentService.createStudent() with userId from step 3
-    // 5. Reload list on success
-    this.snackBar.open('Add Student - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(StudentDialogComponent, {
+      width: '800px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Student added successfully!', 'Close', { duration: 3000 });
+        this.loadStudents();
+      }
+    });
   }
 
   viewStudentDetails(student: Student): void {
@@ -233,14 +233,20 @@ export class StudentManagementComponent implements OnInit, OnDestroy {
   }
 
   editStudent(student: Student): void {
-    // TODO: Future Implementation - Edit Student Dialog
-    // Service: StudentService.updateStudent(userId, UpdateStudentRequest)
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/edit-student-dialog
-    // 2. Pre-populate form with student data
-    // 3. Allow updates to: gradeLevel, phoneNumber, address, status, etc.
-    // 4. Reload list on success
-    this.snackBar.open('Edit Student - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(StudentDialogComponent, {
+      width: '800px',
+      data: { 
+        mode: 'edit',
+        student: student
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Student updated successfully!', 'Close', { duration: 3000 });
+        this.loadStudents();
+      }
+    });
   }
 
   deleteStudent(student: Student): void {

@@ -25,27 +25,52 @@ export class AuthEffects {
       switchMap(({ credentials }) =>
         this.authService.login(credentials).pipe(
           map((response) => {
+            console.log('Auth Effects - Login Response:', response);
+            
             // Store token and tenant ID
             this.tokenService.saveToken(response.token);
-            if (response.user.tenantId) {
-              this.tokenService.saveTenantId(response.user.tenantId);
+            if (response.tenantId) {
+              this.tokenService.saveTenantId(response.tenantId);
             }
             
+            // Build user object from response or token
+            let user = response.user;
+            if (!user) {
+              // If user object not in response, decode from token
+              const decoded = this.tokenService.getDecodedToken();
+              user = {
+                id: decoded?.sub || '',
+                username: response.username || credentials.username,
+                email: decoded?.email || '',
+                roles: response.roles?.map((r: string) => ({ name: r, description: '' })) || [],
+                userRoles: response.roles?.map((r: string) => ({ role: r, userId: decoded?.sub || '' })) || [],
+                tenantId: response.tenantId || decoded?.tenantId || '',
+                firstName: '',
+                lastName: '',
+                isActive: true,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+            }
+            
+            console.log('Constructed user object:', user);
+            
             // Connect to WebSocket with userId
-            if (response.user.id) {
-              this.websocketService.connect(response.user.id);
+            if (user?.id) {
+              this.websocketService.connect(user.id);
             }
             
             return AuthActions.loginSuccess({ 
               token: response.token, 
-              user: response.user 
+              user: user as any
             });
           }),
-          catchError((error) =>
-            of(AuthActions.loginFailure({ 
-              error: error.error?.message || 'Login failed' 
-            }))
-          )
+          catchError((error) => {
+            console.error('Auth Effects - Login Error:', error);
+            return of(AuthActions.loginFailure({ 
+              error: error.error?.message || error.message || 'Login failed' 
+            }));
+          })
         )
       )
     )
@@ -56,19 +81,27 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         tap(({ user }) => {
+          console.log('Auth Effects - loginSuccess$ triggered with user:', user);
           this.notificationService.showSuccess('Login successful!');
           
           // Redirect based on role
           const role = getPrimaryRole(user);
+          console.log('Detected role:', role);
+          
           if (role === 'PRINCIPAL' || role === 'ADMIN') {
+            console.log('Navigating to /principal/dashboard');
             this.router.navigate(['/principal/dashboard']);
           } else if (role === 'TEACHER') {
+            console.log('Navigating to /teacher/dashboard');
             this.router.navigate(['/teacher/dashboard']);
           } else if (role === 'STUDENT') {
+            console.log('Navigating to /student/dashboard');
             this.router.navigate(['/student/dashboard']);
           } else if (role === 'PARENT' || role === 'GUARDIAN') {
+            console.log('Navigating to /parent/dashboard');
             this.router.navigate(['/parent/dashboard']);
           } else {
+            console.log('Navigating to /dashboard (default)');
             this.router.navigate(['/dashboard']);
           }
         })

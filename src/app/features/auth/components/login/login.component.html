@@ -27,9 +27,9 @@
         </mat-form-field>
         
         <div class="form-actions">
-          <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid || isLoading">
-            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-            <span *ngIf="!isLoading">Login</span>
+          <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid || (isLoading$ | async)">
+            <mat-spinner diameter="20" *ngIf="isLoading$ | async"></mat-spinner>
+            <span *ngIf="!(isLoading$ | async)">Login</span>
           </button>
         </div>
       </form>
@@ -44,7 +44,7 @@
       <a mat-button color="accent" routerLink="/auth/register-user">Register Now</a>
     </mat-card-actions>
     
-    <mat-card-footer *ngIf="isLoading" class="loading-footer">
+    <mat-card-footer *ngIf="isLoading$ | async" class="loading-footer">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </mat-card-footer>
   </mat-card>

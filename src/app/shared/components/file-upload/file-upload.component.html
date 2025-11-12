@@ -1,1 +1,79 @@
-<p>file-upload works!</p>
+<div class="file-upload-container">
+  <!-- File Input (Hidden) -->
+  <input 
+    #fileInput
+    type="file" 
+    [accept]="accept"
+    [multiple]="multiple"
+    (change)="onFileSelect($event)"
+    style="display: none"
+  />
+
+  <!-- Upload Button -->
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="triggerFileInput()"
+    [disabled]="uploading"
+    class="upload-button"
+  >
+    <mat-icon>{{ buttonIcon }}</mat-icon>
+    {{ buttonText }}
+  </button>
+
+  <!-- Selected Files List -->
+  <div class="selected-files" *ngIf="selectedFiles.length > 0">
+    <h4>Selected Files</h4>
+    <div class="file-list">
+      <div class="file-item" *ngFor="let file of selectedFiles; let i = index">
+        <!-- Preview or Icon -->
+        <div class="file-preview">
+          <img *ngIf="previews[i]" [src]="previews[i]" alt="Preview" />
+          <mat-icon *ngIf="!previews[i]" class="file-icon">{{ getFileIcon(file) }}</mat-icon>
+        </div>
+
+        <!-- File Info -->
+        <div class="file-info">
+          <div class="file-name">{{ file.name }}</div>
+          <div class="file-size">{{ formatFileSize(file.size) }}</div>
+        </div>
+
+        <!-- Remove Button -->
+        <button 
+          mat-icon-button 
+          (click)="removeFile(i)"
+          [disabled]="uploading"
+          class="remove-button"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Upload Progress -->
+    <div class="upload-progress" *ngIf="uploading">
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      <div class="progress-text">{{ progress }}%</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="uploadFiles()"
+        [disabled]="uploading"
+      >
+        <mat-icon>cloud_upload</mat-icon>
+        Upload
+      </button>
+      <button 
+        mat-button 
+        (click)="clearSelection()"
+        [disabled]="uploading"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+</div>

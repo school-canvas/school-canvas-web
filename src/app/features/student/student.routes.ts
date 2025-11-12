@@ -4,6 +4,7 @@ import { StudentDashboardComponent } from './components/student-dashboard/studen
 import { MyClassesComponent } from './pages/my-classes/my-classes.component';
 import { ClassDetailComponent } from './pages/class-detail/class-detail.component';
 import { MyAssessmentsComponent } from './pages/my-assessments/my-assessments.component';
+import { MyGradesComponent } from './pages/my-grades/my-grades.component';
 
 export const STUDENT_ROUTES: Routes = [
   {
@@ -15,6 +16,7 @@ export const STUDENT_ROUTES: Routes = [
       { path: 'classes', component: MyClassesComponent },
       { path: 'classes/:id', component: ClassDetailComponent },
       { path: 'assessments', component: MyAssessmentsComponent },
+      { path: 'grades', component: MyGradesComponent },
     ]
   }
 ];

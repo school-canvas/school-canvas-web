@@ -1,0 +1,239 @@
+<div class="my-grades-page">
+  <!-- Page Header -->
+  <app-page-header 
+    title="My Grades" 
+    subtitle="View your academic performance and report card"
+    [showBackButton]="true"
+    (backClick)="goBack()">
+  </app-page-header>
+
+  <!-- Loading Indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="page-content" *ngIf="!loading">
+    <!-- Controls Bar -->
+    <mat-card class="controls-card">
+      <mat-card-content>
+        <div class="controls-container">
+          <!-- Semester Selector -->
+          <mat-form-field appearance="outline" class="semester-field">
+            <mat-label>Select Semester</mat-label>
+            <mat-select 
+              [(ngModel)]="selectedSemester"
+              (selectionChange)="onSemesterChange()">
+              <mat-option *ngFor="let semester of semesters" [value]="semester.value">
+                {{ semester.label }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>calendar_today</mat-icon>
+          </mat-form-field>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button mat-raised-button (click)="printReportCard()">
+              <mat-icon>print</mat-icon>
+              Print Report Card
+            </button>
+            <button mat-raised-button color="primary" (click)="downloadReportCard()">
+              <mat-icon>download</mat-icon>
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <app-stats-card
+        title="Current GPA"
+        [value]="currentGPA.toFixed(2)"
+        icon="school"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Average Grade"
+        [value]="averagePercentage.toFixed(1) + '%'"
+        icon="grade"
+        [color]="averagePercentage >= 90 ? 'success' : averagePercentage >= 80 ? 'primary' : averagePercentage >= 70 ? 'warning' : 'error'">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Total Credits"
+        [value]="totalCredits"
+        icon="stars"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Classes Completed"
+        [value]="classesCompleted"
+        icon="check_circle"
+        color="success">
+      </app-stats-card>
+    </div>
+
+    <!-- Report Card -->
+    <mat-card class="report-card" *ngIf="grades.length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>description</mat-icon>
+          Academic Report Card - {{ selectedSemester | titlecase }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          Student: {{ studentProfile?.firstName }} {{ studentProfile?.lastName }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Grades Table -->
+        <div class="table-container">
+          <table mat-table [dataSource]="grades" class="grades-table">
+            <!-- Class Name Column -->
+            <ng-container matColumnDef="className">
+              <th mat-header-cell *matHeaderCellDef>Class</th>
+              <td mat-cell *matCellDef="let grade">
+                <div class="class-name">
+                  <mat-icon>class</mat-icon>
+                  {{ grade.className }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Percentage Column -->
+            <ng-container matColumnDef="percentage">
+              <th mat-header-cell *matHeaderCellDef>Percentage</th>
+              <td mat-cell *matCellDef="let grade">
+                <span class="percentage">{{ grade.grade }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Letter Grade Column -->
+            <ng-container matColumnDef="letterGrade">
+              <th mat-header-cell *matHeaderCellDef>Letter Grade</th>
+              <td mat-cell *matCellDef="let grade">
+                <span class="letter-grade" [ngClass]="getGradeColor(grade.letterGrade)">
+                  {{ grade.letterGrade }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Credits Column -->
+            <ng-container matColumnDef="credits">
+              <th mat-header-cell *matHeaderCellDef>Credits</th>
+              <td mat-cell *matCellDef="let grade">{{ grade.credits }}</td>
+            </ng-container>
+
+            <!-- Grade Point Column -->
+            <ng-container matColumnDef="gradePoint">
+              <th mat-header-cell *matHeaderCellDef>Grade Point</th>
+              <td mat-cell *matCellDef="let grade">
+                <span class="grade-point">{{ grade.gradePoint.toFixed(1) }}</span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <!-- Summary Section -->
+        <div class="summary-section">
+          <div class="summary-item">
+            <span class="summary-label">Semester GPA:</span>
+            <span class="summary-value highlight">{{ currentGPA.toFixed(2) }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Total Credits:</span>
+            <span class="summary-value">{{ totalCredits }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Classes Completed:</span>
+            <span class="summary-value">{{ classesCompleted }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Average Percentage:</span>
+            <span class="summary-value">{{ averagePercentage.toFixed(1) }}%</span>
+          </div>
+        </div>
+
+        <!-- Grade Scale Reference -->
+        <div class="grade-scale">
+          <h4>Grade Scale Reference</h4>
+          <div class="scale-grid">
+            <div class="scale-item">
+              <span class="letter-grade grade-a">A</span>
+              <span class="scale-range">93-100%</span>
+              <span class="scale-points">4.0</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-a">A-</span>
+              <span class="scale-range">90-92%</span>
+              <span class="scale-points">3.7</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-b">B+</span>
+              <span class="scale-range">87-89%</span>
+              <span class="scale-points">3.3</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-b">B</span>
+              <span class="scale-range">83-86%</span>
+              <span class="scale-points">3.0</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-b">B-</span>
+              <span class="scale-range">80-82%</span>
+              <span class="scale-points">2.7</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-c">C+</span>
+              <span class="scale-range">77-79%</span>
+              <span class="scale-points">2.3</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-c">C</span>
+              <span class="scale-range">73-76%</span>
+              <span class="scale-points">2.0</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-c">C-</span>
+              <span class="scale-range">70-72%</span>
+              <span class="scale-points">1.7</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-d">D+</span>
+              <span class="scale-range">67-69%</span>
+              <span class="scale-points">1.3</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-d">D</span>
+              <span class="scale-range">63-66%</span>
+              <span class="scale-points">1.0</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-d">D-</span>
+              <span class="scale-range">60-62%</span>
+              <span class="scale-points">0.7</span>
+            </div>
+            <div class="scale-item">
+              <span class="letter-grade grade-f">F</span>
+              <span class="scale-range">0-59%</span>
+              <span class="scale-points">0.0</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Empty State -->
+    <app-empty-state
+      *ngIf="grades.length === 0 && !loading"
+      icon="grade"
+      title="No Grades Available"
+      message="No grades have been recorded for this semester yet.">
+    </app-empty-state>
+  </div>
+</div>

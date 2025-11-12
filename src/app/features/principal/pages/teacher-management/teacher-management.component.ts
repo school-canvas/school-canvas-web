@@ -23,6 +23,7 @@ import { StatsCardComponent } from '../../../../shared/components/stats-card/sta
 
 import { TeacherService } from '../../../../core/services/api/teacher.service';
 import { Teacher } from '../../../../core/models/teacher.model';
+import { TeacherDialogComponent } from '../../components/teacher-dialog/teacher-dialog.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -210,18 +211,17 @@ export class TeacherManagementComponent implements OnInit, OnDestroy {
   }
 
   addTeacher(): void {
-    // TODO: Future Implementation - Add Teacher Dialog
-    // Service References:
-    //   - UserService (core/services/user.service.ts) - For user account creation
-    //   - TeacherService (core/services/api/teacher.service.ts) - For teacher profile
-    //
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/add-teacher-dialog
-    // 2. Create form with: firstName, lastName, email, password, department, hireDate, qualification, phoneNumber
-    // 3. Call UserService to create user account with role 'TEACHER'
-    // 4. Then call TeacherService.createTeacher() with userId from step 3
-    // 5. Reload list on success
-    this.snackBar.open('Add Teacher - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(TeacherDialogComponent, {
+      width: '800px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadTeachers();
+        this.snackBar.open('Teacher added successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   viewTeacherDetails(teacher: Teacher): void {
@@ -235,14 +235,17 @@ export class TeacherManagementComponent implements OnInit, OnDestroy {
   }
 
   editTeacher(teacher: Teacher): void {
-    // TODO: Future Implementation - Edit Teacher Dialog
-    // Service: TeacherService.updateTeacher(userId, UpdateTeacherRequest)
-    // Steps:
-    // 1. ng generate component features/principal/dialogs/edit-teacher-dialog
-    // 2. Pre-populate form with teacher data
-    // 3. Allow updates to: department, qualification, phoneNumber, status, etc.
-    // 4. Reload list on success
-    this.snackBar.open('Edit Teacher - Dialog needed', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(TeacherDialogComponent, {
+      width: '800px',
+      data: { mode: 'edit', teacher }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadTeachers();
+        this.snackBar.open('Teacher updated successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   assignClasses(teacher: Teacher): void {

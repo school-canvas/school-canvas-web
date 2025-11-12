@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ChartComponent, ChartData } from '../../../../shared/components/chart/chart.component';
 import { StudentService } from '../../../../core/services/student.service';
 import { selectUser } from '../../../auth/state/auth.selectors';
 
@@ -64,7 +65,8 @@ interface AttendanceStats {
     MatButtonToggleModule,
     PageHeaderComponent,
     StatsCardComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    ChartComponent
   ],
   templateUrl: './my-attendance.component.html',
   styleUrl: './my-attendance.component.css'
@@ -94,6 +96,10 @@ export class MyAttendanceComponent implements OnInit, OnDestroy {
     excusedDays: 0,
     attendanceRate: 0
   };
+
+  // Chart data
+  attendanceTrendChart!: ChartData;
+  attendanceDistributionChart!: ChartData;
 
   // Table configuration
   displayedColumns: string[] = ['date', 'status', 'class', 'remarks'];
@@ -273,6 +279,7 @@ export class MyAttendanceComponent implements OnInit, OnDestroy {
     }
 
     this.stats = stats;
+    this.generateCharts();
   }
 
   updateRecentAttendance(): void {
@@ -365,6 +372,85 @@ export class MyAttendanceComponent implements OnInit, OnDestroy {
 
   getCurrentMonthYear(): string {
     return `${this.monthNames[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`;
+  }
+
+  generateCharts(): void {
+    // Attendance Distribution Pie Chart
+    this.attendanceDistributionChart = {
+      labels: ['Present', 'Absent', 'Late', 'Excused'],
+      datasets: [{
+        label: 'Days',
+        data: [
+          this.stats.presentDays,
+          this.stats.absentDays,
+          this.stats.lateDays,
+          this.stats.excusedDays
+        ],
+        backgroundColor: ['#4caf50', '#f44336', '#ff9800', '#2196f3']
+      }]
+    };
+
+    // Attendance Trend Line Chart (last 30 days)
+    const last30Days = this.attendanceRecords.slice(-30);
+    const trendData = this.groupAttendanceByWeek(last30Days);
+
+    this.attendanceTrendChart = {
+      labels: trendData.labels,
+      datasets: [{
+        label: 'Attendance Rate (%)',
+        data: trendData.rates,
+        borderColor: '#3f51b5',
+        backgroundColor: 'rgba(63, 81, 181, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    };
+  }
+
+  groupAttendanceByWeek(records: AttendanceRecord[]): { labels: string[], rates: number[] } {
+    const weekMap = new Map<string, { present: number, total: number }>();
+    
+    records.forEach(record => {
+      const date = new Date(record.date);
+      const weekStart = this.getWeekStart(date);
+      const weekKey = weekStart.toISOString().split('T')[0];
+      
+      if (!weekMap.has(weekKey)) {
+        weekMap.set(weekKey, { present: 0, total: 0 });
+      }
+      
+      const week = weekMap.get(weekKey)!;
+      week.total++;
+      if (record.status === 'PRESENT' || record.status === 'LATE') {
+        week.present++;
+      }
+    });
+    
+    const labels: string[] = [];
+    const rates: number[] = [];
+    
+    Array.from(weekMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .forEach(([weekKey, data]) => {
+        const weekDate = new Date(weekKey);
+        labels.push(this.formatWeekLabel(weekDate));
+        rates.push(data.total > 0 ? (data.present / data.total) * 100 : 0);
+      });
+    
+    return { labels, rates };
+  }
+
+  getWeekStart(date: Date): Date {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day;
+    return new Date(d.setDate(diff));
+  }
+
+  formatWeekLabel(date: Date): string {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}/${day}`;
   }
 
   printAttendance(): void {

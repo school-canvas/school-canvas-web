@@ -218,6 +218,38 @@
   color: #424242;
 }
 
+/* Charts Section */
+.charts-section {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+}
+
+.chart-card {
+  height: 100%;
+}
+
+.chart-card mat-card-header {
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px 4px 0 0;
+}
+
+.chart-card mat-card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.chart-card mat-card-content {
+  padding: 24px 16px;
+}
+
 /* History Section */
 .history-section {
   margin-top: 32px;

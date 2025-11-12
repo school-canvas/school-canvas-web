@@ -16,6 +16,7 @@ import { Store } from '@ngrx/store';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
+import { ChartComponent, ChartData } from '../../../../shared/components/chart/chart.component';
 
 import { AssessmentService } from '../../../../core/services/api/assessment.service';
 import { StudentService } from '../../../../core/services/api/student.service';
@@ -51,7 +52,8 @@ interface GradeData {
     MatChipsModule,
     PageHeaderComponent,
     EmptyStateComponent,
-    StatsCardComponent
+    StatsCardComponent,
+    ChartComponent
   ],
   templateUrl: './my-grades.component.html',
   styleUrl: './my-grades.component.css'
@@ -80,6 +82,10 @@ export class MyGradesComponent implements OnInit, OnDestroy {
   totalCredits = 0;
   averagePercentage = 0;
   classesCompleted = 0;
+  
+  // Chart data
+  gradeDistributionChart!: ChartData;
+  performanceTrendChart!: ChartData;
   
   // Table columns
   displayedColumns: string[] = ['className', 'percentage', 'letterGrade', 'credits', 'gradePoint'];
@@ -211,6 +217,52 @@ export class MyGradesComponent implements OnInit, OnDestroy {
     this.totalCredits = totalCredits;
     this.averagePercentage = this.grades.length > 0 ? totalPercentage / this.grades.length : 0;
     this.classesCompleted = this.grades.length;
+    
+    this.generateCharts();
+  }
+
+  generateCharts(): void {
+    // Grade Distribution Bar Chart
+    this.gradeDistributionChart = {
+      labels: this.grades.map(g => g.className),
+      datasets: [{
+        label: 'Grade (%)',
+        data: this.grades.map(g => g.percentage),
+        backgroundColor: this.grades.map(g => this.getGradeColor(g.percentage)),
+        borderWidth: 0
+      }]
+    };
+
+    // Performance Trend - GPA over semesters (mock data for now)
+    this.performanceTrendChart = {
+      labels: ['Spring 2024', 'Summer 2024', 'Fall 2024', 'Spring 2025'],
+      datasets: [{
+        label: 'GPA',
+        data: [3.2, 3.4, 3.5, this.currentGPA],
+        borderColor: '#3f51b5',
+        backgroundColor: 'rgba(63, 81, 181, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    };
+  }
+
+  getGradeColor(input: number | string): string {
+    if (typeof input === 'number') {
+      // Color based on percentage
+      if (input >= 90) return '#4caf50'; // Green - A
+      if (input >= 80) return '#8bc34a'; // Light green - B
+      if (input >= 70) return '#ffc107'; // Yellow - C
+      if (input >= 60) return '#ff9800'; // Orange - D
+      return '#f44336'; // Red - F
+    } else {
+      // CSS class based on letter grade
+      if (input.startsWith('A')) return 'grade-a';
+      if (input.startsWith('B')) return 'grade-b';
+      if (input.startsWith('C')) return 'grade-c';
+      if (input.startsWith('D')) return 'grade-d';
+      return 'grade-f';
+    }
   }
 
   getLetterGrade(percentage: number): string {
@@ -237,14 +289,6 @@ export class MyGradesComponent implements OnInit, OnDestroy {
       'F': 0.0
     };
     return gradePoints[letterGrade] || 0.0;
-  }
-
-  getGradeColor(letterGrade: string): string {
-    if (letterGrade.startsWith('A')) return 'grade-a';
-    if (letterGrade.startsWith('B')) return 'grade-b';
-    if (letterGrade.startsWith('C')) return 'grade-c';
-    if (letterGrade.startsWith('D')) return 'grade-d';
-    return 'grade-f';
   }
 
   onSemesterChange(): void {

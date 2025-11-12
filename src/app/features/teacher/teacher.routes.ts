@@ -3,6 +3,7 @@ import { TeacherLayoutComponent } from './components/teacher-layout/teacher-layo
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { MyClassesComponent } from './pages/my-classes/my-classes.component';
 import { ClassDetailComponent } from './pages/class-detail/class-detail.component';
+import { TakeAttendanceComponent } from './pages/take-attendance/take-attendance.component';
 
 export const TEACHER_ROUTES: Routes = [
   {
@@ -13,6 +14,7 @@ export const TEACHER_ROUTES: Routes = [
       { path: 'dashboard', component: TeacherDashboardComponent },
       { path: 'classes', component: MyClassesComponent },
       { path: 'classes/:id', component: ClassDetailComponent },
+      { path: 'attendance/:id', component: TakeAttendanceComponent },
     ]
   }
 ];

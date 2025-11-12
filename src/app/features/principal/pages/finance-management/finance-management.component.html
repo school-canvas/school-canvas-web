@@ -1,0 +1,180 @@
+<div class="finance-management-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Finance Management'" 
+    [subtitle]="'Manage invoices and payments'">
+    <button mat-raised-button color="primary" class="create-invoice-btn" (click)="createInvoice()">
+      <mat-icon>add</mat-icon>
+      Create Invoice
+    </button>
+  </app-page-header>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <app-stats-card
+      [title]="'Total Revenue'"
+      [value]="'$' + totalRevenue.toFixed(2)"
+      [icon]="'attach_money'"
+      [color]="'primary'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Amount Collected'"
+      [value]="'$' + paidAmount.toFixed(2)"
+      [icon]="'payments'"
+      [color]="'success'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Pending Amount'"
+      [value]="'$' + pendingAmount.toFixed(2)"
+      [icon]="'schedule'"
+      [color]="'warning'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Overdue Amount'"
+      [value]="'$' + overdueAmount.toFixed(2)"
+      [icon]="'warning'"
+      [color]="'error'">
+    </app-stats-card>
+  </div>
+
+  <!-- Tabs -->
+  <mat-card class="tabs-card">
+    <mat-tab-group [(selectedIndex)]="selectedTab" (selectedIndexChange)="onTabChange($event)">
+      <!-- Invoices Tab -->
+      <mat-tab label="Invoices">
+        <!-- Filters Section -->
+        <div class="filters-container">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search Invoices</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="searchTerm" 
+              (input)="onSearchChange()"
+              placeholder="Invoice number or student name">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterChange()">
+              <mat-option value="all">All Status</mat-option>
+              <mat-option *ngFor="let status of invoiceStatuses" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>filter_list</mat-icon>
+          </mat-form-field>
+
+          <button 
+            mat-stroked-button 
+            class="clear-btn" 
+            (click)="clearFilters()"
+            [disabled]="searchTerm === '' && selectedStatus === 'all'">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Invoices Table -->
+        <div class="table-container" *ngIf="!loading && filteredInvoices.length > 0">
+          <app-data-table
+            [columns]="invoiceColumns"
+            [data]="filteredInvoices"
+            [actions]="invoiceActions">
+          </app-data-table>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="loading">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>Loading invoices...</p>
+        </div>
+
+        <!-- Empty State -->
+        <app-empty-state
+          *ngIf="!loading && filteredInvoices.length === 0"
+          [icon]="searchTerm || selectedStatus !== 'all' ? 'search_off' : 'receipt_long'"
+          [title]="searchTerm || selectedStatus !== 'all' ? 'No Invoices Found' : 'No Invoices Yet'"
+          [message]="searchTerm || selectedStatus !== 'all' ? 'Try adjusting your filters or search criteria.' : 'Start by creating your first invoice.'">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            *ngIf="!(searchTerm || selectedStatus !== 'all')"
+            (click)="createInvoice()">
+            <mat-icon>add</mat-icon>
+            Create First Invoice
+          </button>
+          <button 
+            mat-stroked-button 
+            *ngIf="searchTerm || selectedStatus !== 'all'"
+            (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </app-empty-state>
+      </mat-tab>
+
+      <!-- Payments Tab -->
+      <mat-tab label="Payments">
+        <!-- Filters Section -->
+        <div class="filters-container">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search Payments</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="searchTerm" 
+              (input)="onSearchChange()"
+              placeholder="Invoice number, student, or transaction ID">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Payment Method</mat-label>
+            <mat-select [(ngModel)]="selectedPaymentMethod" (selectionChange)="onFilterChange()">
+              <mat-option value="all">All Methods</mat-option>
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">
+                {{ method.label }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>payment</mat-icon>
+          </mat-form-field>
+
+          <button 
+            mat-stroked-button 
+            class="clear-btn" 
+            (click)="clearFilters()"
+            [disabled]="searchTerm === '' && selectedPaymentMethod === 'all'">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-container" *ngIf="!loading && filteredPayments.length > 0">
+          <app-data-table
+            [columns]="paymentColumns"
+            [data]="filteredPayments"
+            [actions]="paymentActions">
+          </app-data-table>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="loading">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>Loading payments...</p>
+        </div>
+
+        <!-- Empty State -->
+        <app-empty-state
+          *ngIf="!loading && filteredPayments.length === 0"
+          [icon]="'payments'"
+          [title]="'No Payments Yet'"
+          [message]="'Payment records will appear here once invoices are paid.'">
+        </app-empty-state>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

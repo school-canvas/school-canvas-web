@@ -5,3 +5,21 @@
   </main>
   <app-footer></app-footer>
 </div>
+
+
+<div class="app-container" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <app-header (toggleSidebarEvent)="toggleSideBar()"></app-header>
+  
+  <div class="main-content-wrapper">
+    <app-sidebar (toggleSidebarEvent)="onSideBarToggle($event)"></app-sidebar>
+    
+    <div class="content-area">
+      <!-- <app-breadcrumb></app-breadcrumb> -->
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+  
+  <app-footer></app-footer>
+</div>

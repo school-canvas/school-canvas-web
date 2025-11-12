@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { SharedModule } from '../../../../shared/shared.module';
 import { ApplicationConfig } from '../../../../../application-config';
 import { User } from '../../../../core/models/user.model';
-import { AuthService } from '../../../../core/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '../../../../core/services/user.service';
 
@@ -12,7 +11,7 @@ import { UserService } from '../../../../core/services/user.service';
   templateUrl: './principal-dashboard.component.html',
   styleUrl: './principal-dashboard.component.css'
 })
-export class PrincipalDashboardComponent {
+export class PrincipalDashboardComponent implements OnInit{
 
   appConfig = ApplicationConfig;
   allUsers : User[] = [];
@@ -33,7 +32,7 @@ export class PrincipalDashboardComponent {
 
   loadUsers(): void {
   this.isLoadingUsers = true;
-  
+
   this.userService.getAllUsers().subscribe({
     next: (users) => {
       this.allUsers = users;
@@ -53,7 +52,7 @@ export class PrincipalDashboardComponent {
   approveUser(userId: string): void {
     // Get the tenant ID from localStorage
     const tenantId = localStorage.getItem('tenantId') || '';
-    
+
     this.userService.approveUser(userId, tenantId).subscribe({
       next: (updatedUser) => {
         // Update user in the lists
@@ -61,10 +60,10 @@ export class PrincipalDashboardComponent {
         if (userIndex !== -1) {
           this.allUsers[userIndex] = updatedUser;
         }
-        
+
         // Remove from pending users
         this.pendingUsers = this.pendingUsers.filter(u => u.id !== userId);
-        
+
         this.snackBar.open('User approved successfully', 'Close', {
           duration: 3000
         });

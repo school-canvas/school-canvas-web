@@ -1,0 +1,163 @@
+.fee-management-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Fee Content */
+.fee-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+/* Child Selector Card */
+.selector-card {
+  margin-bottom: 0;
+}
+
+.child-selector {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Child Summary */
+.child-summary mat-card {
+  margin-bottom: 0;
+}
+
+.child-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+}
+
+.child-avatar mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #757575;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* Tabs */
+.fee-tabs {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+/* Data Table Card */
+.data-table-card mat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.invoices-table,
+.payments-table {
+  width: 100%;
+}
+
+.invoices-table th,
+.payments-table th {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.invoices-table td,
+.payments-table td {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Status Chips */
+.status-paid {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.status-pending {
+  background-color: #fff3e0 !important;
+  color: #ef6c00 !important;
+}
+
+.status-overdue {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}
+
+.status-cancelled {
+  background-color: #f5f5f5 !important;
+  color: #757575 !important;
+}
+
+/* Text Colors */
+.text-success {
+  color: #4caf50;
+}
+
+/* Action Buttons */
+button[mat-icon-button] {
+  margin: 0 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fee-management-container {
+    padding: 16px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .child-selector {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

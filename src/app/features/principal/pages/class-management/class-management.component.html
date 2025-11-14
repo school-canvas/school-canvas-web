@@ -1,0 +1,138 @@
+<div class="class-management-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Class Management'" 
+    [subtitle]="'Manage all classes in the system'">
+    <button mat-raised-button color="primary" class="add-class-btn" (click)="addClass()">
+      <mat-icon>add</mat-icon>
+      Add Class
+    </button>
+  </app-page-header>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <app-stats-card
+      [title]="'Total Classes'"
+      [value]="totalClasses"
+      [icon]="'school'"
+      [color]="'primary'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Full Capacity'"
+      [value]="fullCapacityClasses"
+      [icon]="'groups'"
+      [color]="'error'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Low Enrollment'"
+      [value]="lowEnrollmentClasses"
+      [icon]="'trending_down'"
+      [color]="'warning'">
+    </app-stats-card>
+    
+    <app-stats-card
+      [title]="'Avg Enrollment'"
+      [value]="averageEnrollment"
+      [icon]="'analytics'"
+      [color]="'success'">
+    </app-stats-card>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-container">
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Classes</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearchChange()"
+            placeholder="Class name, subject, or teacher">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Subject Filter -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Subject</mat-label>
+          <mat-select [(ngModel)]="selectedSubject" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All Subjects</mat-option>
+            <mat-option *ngFor="let subject of subjects" [value]="subject">
+              {{ subject }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>book</mat-icon>
+        </mat-form-field>
+
+        <!-- Grade Level Filter -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Grade Level</mat-label>
+          <mat-select [(ngModel)]="selectedGradeLevel" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All Grades</mat-option>
+            <mat-option *ngFor="let grade of gradeLevels" [value]="grade">
+              {{ grade }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>grade</mat-icon>
+        </mat-form-field>
+
+        <!-- Clear Filters Button -->
+        <button 
+          mat-stroked-button 
+          class="clear-btn" 
+          (click)="clearFilters()"
+          [disabled]="searchTerm === '' && selectedSubject === 'all' && selectedGradeLevel === 'all'">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Classes Table -->
+  <mat-card class="table-card" *ngIf="!loading && filteredClasses.length > 0">
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="filteredClasses"
+        [actions]="actions">
+      </app-data-table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading State -->
+  <mat-card class="loading-card" *ngIf="loading">
+    <mat-card-content>
+      <div class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading classes...</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="!loading && filteredClasses.length === 0"
+    [icon]="searchTerm || selectedSubject !== 'all' || selectedGradeLevel !== 'all' ? 'search_off' : 'school'"
+    [title]="searchTerm || selectedSubject !== 'all' || selectedGradeLevel !== 'all' ? 'No Classes Found' : 'No Classes Yet'"
+    [message]="searchTerm || selectedSubject !== 'all' || selectedGradeLevel !== 'all' ? 'Try adjusting your filters or search criteria.' : 'Start by adding your first class to the system.'">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      *ngIf="!(searchTerm || selectedSubject !== 'all' || selectedGradeLevel !== 'all')"
+      (click)="addClass()">
+      <mat-icon>add</mat-icon>
+      Add First Class
+    </button>
+    <button 
+      mat-stroked-button 
+      *ngIf="searchTerm || selectedSubject !== 'all' || selectedGradeLevel !== 'all'"
+      (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+      Clear Filters
+    </button>
+  </app-empty-state>
+</div>

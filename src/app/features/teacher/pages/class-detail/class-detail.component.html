@@ -1,0 +1,360 @@
+<div class="class-detail-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading class details...</p>
+    </div>
+  } @else if (classInfo) {
+    <!-- Page Header -->
+    <app-page-header 
+      [title]="classInfo.name" 
+      [subtitle]="classInfo.section + ' • ' + classInfo.semester + ' • ' + classInfo.academicYear"
+      [showBackButton]="true">
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="takeAttendance()">
+          <mat-icon>how_to_reg</mat-icon>
+          Take Attendance
+        </button>
+        <button mat-raised-button color="primary" (click)="openGradebook()">
+          <mat-icon>grade</mat-icon>
+          Gradebook
+        </button>
+        <button mat-raised-button color="primary" (click)="createAssignment()">
+          <mat-icon>add</mat-icon>
+          New Assignment
+        </button>
+      </div>
+    </app-page-header>
+
+    <!-- Tab Navigation -->
+    <mat-tab-group class="class-tabs" animationDuration="300ms">
+      <!-- Overview Tab -->
+      <mat-tab label="Overview">
+        <div class="tab-content">
+          <!-- Class Information Card -->
+          <mat-card class="info-card">
+            <mat-card-header>
+              <mat-card-title>Class Information</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>subject</mat-icon>
+                  <div>
+                    <span class="label">Subject</span>
+                    <span class="value">{{ classInfo.subject }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <mat-icon>school</mat-icon>
+                  <div>
+                    <span class="label">Grade Level</span>
+                    <span class="value">{{ classInfo.gradeLevel }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <div>
+                    <span class="label">Schedule</span>
+                    <span class="value">{{ classInfo.schedule }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <mat-icon>meeting_room</mat-icon>
+                  <div>
+                    <span class="label">Room</span>
+                    <span class="value">{{ classInfo.room }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <mat-icon>stars</mat-icon>
+                  <div>
+                    <span class="label">Credits</span>
+                    <span class="value">{{ classInfo.credits }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <mat-icon>check_circle</mat-icon>
+                  <div>
+                    <span class="label">Status</span>
+                    <mat-chip [class]="'status-' + classInfo.status.toLowerCase()">
+                      {{ classInfo.status }}
+                    </mat-chip>
+                  </div>
+                </div>
+              </div>
+              @if (classInfo.description) {
+                <div class="description">
+                  <h3>Description</h3>
+                  <p>{{ classInfo.description }}</p>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Statistics Cards -->
+          <div class="stats-grid">
+            <app-stats-card
+              [title]="'Total Students'"
+              [value]="students.length.toString()"
+              icon="people"
+              color="primary">
+            </app-stats-card>
+            
+            <app-stats-card
+              [title]="'Avg. Attendance'"
+              [value]="getAverageAttendance() + '%'"
+              icon="how_to_reg"
+              color="success">
+            </app-stats-card>
+            
+            <app-stats-card
+              [title]="'Avg. Grade'"
+              [value]="getAverageGrade() + '%'"
+              icon="grade"
+              color="warning">
+            </app-stats-card>
+            
+            <app-stats-card
+              [title]="'Assignments'"
+              [value]="assignments.length.toString()"
+              icon="assignment"
+              color="primary">
+            </app-stats-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Students Tab -->
+      <mat-tab [label]="'Students (' + students.length + ')'">
+        <div class="tab-content">
+          @if (students.length > 0) {
+            <div class="table-container">
+              <table mat-table [dataSource]="students" class="students-table">
+                <!-- Roll Number Column -->
+                <ng-container matColumnDef="rollNumber">
+                  <th mat-header-cell *matHeaderCellDef>Roll No.</th>
+                  <td mat-cell *matCellDef="let student">{{ student.rollNumber }}</td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef>Name</th>
+                  <td mat-cell *matCellDef="let student">{{ getStudentName(student) }}</td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef>Email</th>
+                  <td mat-cell *matCellDef="let student">
+                    <a [href]="'mailto:' + student.email">{{ student.email }}</a>
+                  </td>
+                </ng-container>
+
+                <!-- Attendance Column -->
+                <ng-container matColumnDef="attendance">
+                  <th mat-header-cell *matHeaderCellDef>Attendance</th>
+                  <td mat-cell *matCellDef="let student">
+                    <span class="attendance-badge" [style.color]="getAttendanceColor(student.attendance)">
+                      {{ student.attendance }}%
+                    </span>
+                  </td>
+                </ng-container>
+
+                <!-- Average Grade Column -->
+                <ng-container matColumnDef="averageGrade">
+                  <th mat-header-cell *matHeaderCellDef>Avg. Grade</th>
+                  <td mat-cell *matCellDef="let student">
+                    <span class="grade-badge" [style.color]="getGradeColor(student.averageGrade)">
+                      {{ student.averageGrade }}%
+                    </span>
+                  </td>
+                </ng-container>
+
+                <!-- Progress Column -->
+                <ng-container matColumnDef="progress">
+                  <th mat-header-cell *matHeaderCellDef>Progress</th>
+                  <td mat-cell *matCellDef="let student">
+                    {{ student.assignmentsCompleted }}/{{ student.assignmentsTotal }}
+                    ({{ getProgressPercentage(student.assignmentsCompleted, student.assignmentsTotal) }}%)
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let student">
+                    <button mat-icon-button [matTooltip]="'View Profile'" (click)="viewStudentProfile(student)">
+                      <mat-icon>person</mat-icon>
+                    </button>
+                    <button mat-icon-button [matTooltip]="'View Grades'" (click)="viewStudentGrades(student)">
+                      <mat-icon>grade</mat-icon>
+                    </button>
+                    <button mat-icon-button [matTooltip]="'Send Message'" (click)="sendMessageToStudent(student)">
+                      <mat-icon>email</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="studentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: studentColumns;"></tr>
+              </table>
+            </div>
+          } @else {
+            <app-empty-state
+              icon="people_outline"
+              title="No students enrolled"
+              message="There are no students enrolled in this class yet.">
+            </app-empty-state>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Assignments Tab -->
+      <mat-tab [label]="'Assignments (' + assignments.length + ')'">
+        <div class="tab-content">
+          @if (assignments.length > 0) {
+            <div class="table-container">
+              <table mat-table [dataSource]="assignments" class="assignments-table">
+                <!-- Title Column -->
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef>Title</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <strong>{{ assignment.title }}</strong>
+                  </td>
+                </ng-container>
+
+                <!-- Type Column -->
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef>Type</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <mat-chip [class]="getAssignmentTypeClass(assignment.type)">
+                      {{ assignment.type }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Due Date Column -->
+                <ng-container matColumnDef="dueDate">
+                  <th mat-header-cell *matHeaderCellDef>Due Date</th>
+                  <td mat-cell *matCellDef="let assignment">{{ formatDate(assignment.dueDate) }}</td>
+                </ng-container>
+
+                <!-- Submissions Column -->
+                <ng-container matColumnDef="submissions">
+                  <th mat-header-cell *matHeaderCellDef>Submissions</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <div class="submissions-info">
+                      <span>{{ assignment.submissionsCount }}/{{ students.length }} submitted</span>
+                      <span class="graded">{{ assignment.gradedCount }} graded</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Status</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <mat-chip [class]="getStatusClass(assignment.status)">
+                      {{ assignment.status }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <button mat-icon-button [matTooltip]="'View'" (click)="viewAssignment(assignment)">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button mat-icon-button [matTooltip]="'Edit'" (click)="editAssignment(assignment)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button [matTooltip]="'Grade'" (click)="gradeAssignment(assignment)"
+                            [disabled]="assignment.submissionsCount === 0">
+                      <mat-icon>grade</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: assignmentColumns;"></tr>
+              </table>
+            </div>
+          } @else {
+            <app-empty-state
+              icon="assignment"
+              title="No assignments"
+              message="You haven't created any assignments for this class yet."
+              actionLabel="Create Assignment"
+              (action)="createAssignment()">
+            </app-empty-state>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Attendance Tab -->
+      <mat-tab [label]="'Attendance (' + attendanceRecords.length + ')'">
+        <div class="tab-content">
+          @if (attendanceRecords.length > 0) {
+            <div class="table-container">
+              <table mat-table [dataSource]="attendanceRecords" class="attendance-table">
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Date</th>
+                  <td mat-cell *matCellDef="let record">{{ formatDate(record.date) }}</td>
+                </ng-container>
+
+                <!-- Present Column -->
+                <ng-container matColumnDef="present">
+                  <th mat-header-cell *matHeaderCellDef>Present</th>
+                  <td mat-cell *matCellDef="let record">
+                    <span class="count-badge present">{{ record.presentCount }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Absent Column -->
+                <ng-container matColumnDef="absent">
+                  <th mat-header-cell *matHeaderCellDef>Absent</th>
+                  <td mat-cell *matCellDef="let record">
+                    <span class="count-badge absent">{{ record.absentCount }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Late Column -->
+                <ng-container matColumnDef="late">
+                  <th mat-header-cell *matHeaderCellDef>Late</th>
+                  <td mat-cell *matCellDef="let record">
+                    <span class="count-badge late">{{ record.lateCount }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Rate Column -->
+                <ng-container matColumnDef="rate">
+                  <th mat-header-cell *matHeaderCellDef>Attendance Rate</th>
+                  <td mat-cell *matCellDef="let record">
+                    <span class="rate-badge" [style.color]="getAttendanceColor(record.attendanceRate)">
+                      {{ record.attendanceRate.toFixed(1) }}%
+                    </span>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="attendanceColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: attendanceColumns;"></tr>
+              </table>
+            </div>
+          } @else {
+            <app-empty-state
+              icon="how_to_reg"
+              title="No attendance records"
+              message="You haven't taken attendance for this class yet."
+              actionLabel="Take Attendance"
+              (action)="takeAttendance()">
+            </app-empty-state>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

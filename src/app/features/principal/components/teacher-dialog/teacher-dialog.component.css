@@ -1,0 +1,79 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+h2 mat-icon {
+  color: #3f51b5;
+}
+
+mat-dialog-content {
+  padding: 24px;
+  min-width: 700px;
+  max-width: 800px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.teacher-form {
+  padding: 8px 0;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  gap: 8px;
+}
+
+mat-dialog-actions button {
+  min-width: 100px;
+}
+
+mat-dialog-actions button mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  mat-dialog-content {
+    min-width: 90vw;
+    padding: 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .section {
+    margin-bottom: 16px;
+  }
+}

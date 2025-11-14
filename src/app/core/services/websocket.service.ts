@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+// @ts-ignore
 import SockJS from 'sockjs-client';
 
 @Injectable({

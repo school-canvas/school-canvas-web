@@ -5,8 +5,6 @@ import { MaterialModule } from './material.module';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { routes } from '../app.routes';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
 import { SafeResourceUrlPipe } from './pipes/safe-resource-url.pipe';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';

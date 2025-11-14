@@ -1,0 +1,304 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+  {{ isEditMode ? 'Edit Student' : 'Add New Student' }}
+</h2>
+
+<mat-dialog-content>
+  <mat-stepper [linear]="!isEditMode" #stepper>
+    <!-- Step 1: Basic Information -->
+    <mat-step [stepControl]="studentForm" label="Basic Information">
+      <form [formGroup]="studentForm" class="step-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>User ID</mat-label>
+            <input matInput formControlName="userId" placeholder="Enter user ID" required>
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-error *ngIf="studentForm.get('userId')?.hasError('required')">
+              User ID is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Student ID</mat-label>
+            <input matInput formControlName="studentId" placeholder="Auto-generated if empty">
+            <mat-icon matPrefix>tag</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" placeholder="Enter first name" required>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="studentForm.get('firstName')?.hasError('required')">
+              First name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" placeholder="Enter last name" required>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="studentForm.get('lastName')?.hasError('required')">
+              Last name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="student@example.com" required>
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="studentForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="studentForm.get('email')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="(123) 456-7890">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" required>
+            <mat-icon matPrefix>cake</mat-icon>
+            <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+            <mat-datepicker #dobPicker></mat-datepicker>
+            <mat-error *ngIf="studentForm.get('dateOfBirth')?.hasError('required')">
+              Date of birth is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Grade Level</mat-label>
+            <mat-select formControlName="gradeLevel" required>
+              <mat-option *ngFor="let grade of gradeLevels" [value]="grade">
+                {{ grade }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>school</mat-icon>
+            <mat-error *ngIf="studentForm.get('gradeLevel')?.hasError('required')">
+              Grade level is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Enrollment Date</mat-label>
+            <input matInput [matDatepicker]="enrollPicker" formControlName="enrollmentDate">
+            <mat-icon matPrefix>event</mat-icon>
+            <mat-datepicker-toggle matSuffix [for]="enrollPicker"></mat-datepicker-toggle>
+            <mat-datepicker #enrollPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="isEditMode">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option *ngFor="let status of statusOptions" [value]="status">
+                {{ status }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>info</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="stepper-buttons">
+          <button mat-button matStepperNext type="button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Address -->
+    <mat-step [stepControl]="addressForm" label="Address" [optional]="true">
+      <form [formGroup]="addressForm" class="step-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Street Address</mat-label>
+            <input matInput formControlName="street" placeholder="123 Main St">
+            <mat-icon matPrefix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>City</mat-label>
+            <input matInput formControlName="city" placeholder="New York">
+            <mat-icon matPrefix>location_city</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>State</mat-label>
+            <input matInput formControlName="state" placeholder="NY">
+            <mat-icon matPrefix>map</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>ZIP Code</mat-label>
+            <input matInput formControlName="zipCode" placeholder="10001">
+            <mat-icon matPrefix>pin</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
+            <input matInput formControlName="country" placeholder="USA">
+            <mat-icon matPrefix>public</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="stepper-buttons">
+          <button mat-button matStepperPrevious type="button">Back</button>
+          <button mat-button matStepperNext type="button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Emergency Contact -->
+    <mat-step [stepControl]="emergencyForm" label="Emergency Contact" [optional]="true">
+      <form [formGroup]="emergencyForm" class="step-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Name</mat-label>
+            <input matInput formControlName="name" placeholder="John Doe">
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Relationship</mat-label>
+            <input matInput formControlName="relationship" placeholder="Father, Mother, etc.">
+            <mat-icon matPrefix>family_restroom</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="(123) 456-7890">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="contact@example.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="emergencyForm.get('email')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="stepper-buttons">
+          <button mat-button matStepperPrevious type="button">Back</button>
+          <button mat-button matStepperNext type="button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 4: Guardian Information -->
+    <mat-step [stepControl]="guardianForm" label="Guardian Info" [optional]="true">
+      <form [formGroup]="guardianForm" class="step-form">
+        <h3 class="section-title">Father's Information</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Father's Name</mat-label>
+            <input matInput formControlName="fatherName" placeholder="John Doe">
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Occupation</mat-label>
+            <input matInput formControlName="fatherOccupation" placeholder="Engineer">
+            <mat-icon matPrefix>work</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="fatherPhone" placeholder="(123) 456-7890">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="fatherEmail" placeholder="father@example.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="guardianForm.get('fatherEmail')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Mother's Information</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Mother's Name</mat-label>
+            <input matInput formControlName="motherName" placeholder="Jane Doe">
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Occupation</mat-label>
+            <input matInput formControlName="motherOccupation" placeholder="Teacher">
+            <mat-icon matPrefix>work</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="motherPhone" placeholder="(123) 456-7890">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="motherEmail" placeholder="mother@example.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="guardianForm.get('motherEmail')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Legal Guardian (if applicable)</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Guardian's Name</mat-label>
+            <input matInput formControlName="legalGuardianName" placeholder="Guardian Name">
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Relationship</mat-label>
+            <input matInput formControlName="legalGuardianRelationship" placeholder="Uncle, Aunt, etc.">
+            <mat-icon matPrefix>family_restroom</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="legalGuardianPhone" placeholder="(123) 456-7890">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="legalGuardianEmail" placeholder="guardian@example.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="guardianForm.get('legalGuardianEmail')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="stepper-buttons">
+          <button mat-button matStepperPrevious type="button">Back</button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()" 
+    [disabled]="loading || !studentForm.valid">
+    <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }} Student</span>
+  </button>
+</mat-dialog-actions>

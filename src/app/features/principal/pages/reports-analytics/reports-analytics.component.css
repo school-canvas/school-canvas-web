@@ -1,0 +1,317 @@
+.reports-analytics-container {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.period-select {
+  width: 200px;
+  margin: 0;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 20px;
+}
+
+.loading-container p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Overview Statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Tabs Card */
+.tabs-card {
+  margin-bottom: 24px;
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+/* Analytics Grid */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 24px;
+}
+
+/* Chart Card */
+.chart-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card mat-card-header {
+  margin-bottom: 16px;
+}
+
+.chart-card mat-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chart-card mat-card-content {
+  flex: 1;
+}
+
+.chart-card mat-card-actions {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 8px;
+}
+
+.chart-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Data List */
+.data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.data-list.horizontal {
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.data-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.data-item.vertical {
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 4px;
+}
+
+.data-item .label {
+  flex: 1;
+  font-size: 14px;
+  color: #666;
+}
+
+.data-item .value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Bar Container */
+.bar-container {
+  flex: 2;
+  height: 24px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-container.vertical {
+  width: 40px;
+  height: 150px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3f51b5 0%, #5c6bc0 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.bar-container.vertical .bar {
+  width: 100%;
+  background: linear-gradient(180deg, #3f51b5 0%, #5c6bc0 100%);
+}
+
+.bar.bar-success {
+  background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.bar.bar-warning {
+  background: linear-gradient(90deg, #ff9800 0%, #ffa726 100%);
+}
+
+.bar.bar-danger {
+  background: linear-gradient(90deg, #f44336 0%, #ef5350 100%);
+}
+
+.bar.bar-info {
+  background: linear-gradient(90deg, #2196f3 0%, #42a5f5 100%);
+}
+
+/* Chart Placeholder */
+.chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #fafafa;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.placeholder-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  font-size: 14px;
+  margin: 0;
+}
+
+.placeholder-text mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #ccc;
+}
+
+/* Financial Summary */
+.financial-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  padding: 16px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.summary-item mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.summary-item .icon-pending {
+  color: #ff9800;
+}
+
+.summary-item .icon-paid {
+  color: #4caf50;
+}
+
+.summary-item .icon-overdue {
+  color: #f44336;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.summary-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-analytics-container {
+    padding: 16px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .period-select {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .financial-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .data-list.horizontal {
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reports-analytics-container {
+    padding: 12px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .tab-content {
+    padding: 12px;
+  }
+
+  ::ng-deep app-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions button {
+    width: 100%;
+  }
+}

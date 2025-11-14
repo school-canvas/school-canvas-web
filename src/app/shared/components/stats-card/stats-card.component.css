@@ -1,0 +1,64 @@
+.stats-card {
+  height: 100%;
+}
+
+.stats-card--primary {
+  border-left: 4px solid var(--color-primary, #1976d2);
+}
+
+.stats-card--success {
+  border-left: 4px solid var(--color-success, #4caf50);
+}
+
+.stats-card--warning {
+  border-left: 4px solid var(--color-warning, #ff9800);
+}
+
+.stats-card--error {
+  border-left: 4px solid var(--color-error, #f44336);
+}
+
+.stats-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-card__icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.stats-card__title {
+  font-size: 14px;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.stats-card__value {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 16px 0 8px;
+}
+
+.stats-card__change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.stats-card__change.positive {
+  color: var(--color-success, #4caf50);
+}
+
+.stats-card__change.negative {
+  color: var(--color-error, #f44336);
+}
+
+.stats-card__change mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

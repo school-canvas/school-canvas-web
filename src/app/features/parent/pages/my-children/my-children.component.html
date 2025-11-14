@@ -1,0 +1,120 @@
+<div class="my-children-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'My Children'" 
+    [subtitle]="'View and manage your children\'s academic information'">
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading children...</p>
+  </div>
+
+  <!-- Children Grid -->
+  <div class="children-grid" *ngIf="!loading && children.length > 0">
+    <mat-card class="child-card" *ngFor="let child of children">
+      <!-- Child Header -->
+      <mat-card-header>
+        <div class="child-avatar" mat-card-avatar>
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <mat-card-title>{{ child.firstName }} {{ child.lastName }}</mat-card-title>
+        <mat-card-subtitle>
+          <div class="child-info">
+            <span>{{ child.gradeLevel }}</span>
+            <mat-chip [color]="getStatusColor(child.status)" selected>
+              {{ child.status }}
+            </mat-chip>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <!-- Quick Stats -->
+      <mat-card-content>
+        <div class="stats-section">
+          <div class="stat-item">
+            <mat-icon [class]="'icon-' + getAttendanceColor(child.attendanceRate!)">fact_check</mat-icon>
+            <div class="stat-details">
+              <span class="stat-label">Attendance</span>
+              <span class="stat-value" [class]="'text-' + getAttendanceColor(child.attendanceRate!)">
+                {{ child.attendanceRate }}%
+              </span>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <mat-icon class="icon-primary">school</mat-icon>
+            <div class="stat-details">
+              <span class="stat-label">Current GPA</span>
+              <span class="stat-value">{{ child.currentGPA }}</span>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <mat-icon [class]="child.pendingFees! > 0 ? 'icon-warning' : 'icon-success'">payment</mat-icon>
+            <div class="stat-details">
+              <span class="stat-label">Pending Fees</span>
+              <span class="stat-value" [class]="child.pendingFees! > 0 ? 'text-warning' : 'text-success'">
+                ${{ child.pendingFees }}
+              </span>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <mat-icon class="icon-info">event</mat-icon>
+            <div class="stat-details">
+              <span class="stat-label">Upcoming Events</span>
+              <span class="stat-value">{{ child.upcomingEvents }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-divider></mat-divider>
+
+      <!-- Quick Actions -->
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewChildProgress(child)">
+          <mat-icon>visibility</mat-icon>
+          View Progress
+        </button>
+        <button mat-button (click)="viewAttendance(child)">
+          <mat-icon>calendar_today</mat-icon>
+          Attendance
+        </button>
+        <button mat-button (click)="viewGrades(child)">
+          <mat-icon>grade</mat-icon>
+          Grades
+        </button>
+        <button mat-button [matMenuTriggerFor]="moreMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu">
+          <button mat-menu-item (click)="viewFees(child)">
+            <mat-icon>payment</mat-icon>
+            <span>View Fees</span>
+          </button>
+          <button mat-menu-item (click)="contactTeacher(child)">
+            <mat-icon>email</mat-icon>
+            <span>Contact Teacher</span>
+          </button>
+          <button mat-menu-item (click)="viewReportCard(child)">
+            <mat-icon>description</mat-icon>
+            <span>Report Card</span>
+          </button>
+        </mat-menu>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="!loading && children.length === 0"
+    [icon]="'groups'"
+    [title]="'No Children Found'"
+    [message]="'No student records are linked to your account. Please contact the school administration.'">
+  </app-empty-state>
+</div>

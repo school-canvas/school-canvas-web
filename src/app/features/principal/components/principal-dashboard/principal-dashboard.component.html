@@ -1,0 +1,284 @@
+<div class="principal-dashboard">
+  <!-- Page Header -->
+  <app-page-header
+    [title]="'Principal Dashboard'"
+    [subtitle]="'School Management & Administration'">
+    <button mat-raised-button color="primary" (click)="generateReport('overview')">
+      <mat-icon>assessment</mat-icon>
+      Generate Report
+    </button>
+    <button mat-raised-button color="accent" (click)="manageUsers()">
+      <mat-icon>admin_panel_settings</mat-icon>
+      Manage Users
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="dashboard-content">
+    <!-- Key Metrics Stats -->
+    <div class="stats-grid">
+      <app-stats-card
+        [title]="'Total Students'"
+        [value]="totalStudents"
+        [icon]="'school'"
+        [color]="'primary'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Total Teachers'"
+        [value]="totalTeachers"
+        [icon]="'person'"
+        [color]="'success'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Total Classes'"
+        [value]="totalClasses"
+        [icon]="'class'"
+        [color]="'primary'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Active Teachers'"
+        [value]="activeTeachers"
+        [icon]="'verified'"
+        [color]="'success'">
+      </app-stats-card>
+    </div>
+
+    <!-- Finance Metrics -->
+    <div class="finance-stats-grid">
+      <app-stats-card
+        [title]="'Pending Payments'"
+        [value]="pendingPayments"
+        [icon]="'payment'"
+        [color]="pendingPayments > 10 ? 'warning' : 'success'">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Monthly Revenue'"
+        [value]="'$' + monthlyRevenue.toLocaleString()"
+        [icon]="'attach_money'"
+        [color]="'success'">
+      </app-stats-card>
+    </div>
+
+    <!-- Tabbed Content Sections -->
+    <mat-tab-group class="content-tabs" animationDuration="300ms">
+      <!-- Students Tab -->
+      <mat-tab label="Students">
+        <div class="tab-content">
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>school</mat-icon>
+                Recent Student Enrollments
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-data-table
+                *ngIf="recentStudents.length > 0"
+                [data]="recentStudents"
+                [columns]="studentColumns"
+                [actions]="studentActions"
+                [totalElements]="totalStudents"
+                [pageSize]="5"
+                (pageChange)="onPageChange($event)"
+                (sortChange)="onSortChange($event)">
+              </app-data-table>
+
+              <app-empty-state
+                *ngIf="recentStudents.length === 0"
+                [icon]="'school'"
+                [title]="'No students found'"
+                [message]="'No student records available.'">
+              </app-empty-state>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/principal/students']">
+                View All Students
+              </button>
+              <button mat-raised-button color="primary" [routerLink]="['/principal/students/add']">
+                <mat-icon>add</mat-icon>
+                Add Student
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Teachers Tab -->
+      <mat-tab label="Teachers">
+        <div class="tab-content">
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>person</mat-icon>
+                Teaching Staff
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-data-table
+                *ngIf="recentTeachers.length > 0"
+                [data]="recentTeachers"
+                [columns]="teacherColumns"
+                [actions]="teacherActions"
+                [totalElements]="totalTeachers"
+                [pageSize]="5"
+                (pageChange)="onPageChange($event)"
+                (sortChange)="onSortChange($event)">
+              </app-data-table>
+
+              <app-empty-state
+                *ngIf="recentTeachers.length === 0"
+                [icon]="'person'"
+                [title]="'No teachers found'"
+                [message]="'No teacher records available.'">
+              </app-empty-state>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/principal/teachers']">
+                View All Teachers
+              </button>
+              <button mat-raised-button color="primary" [routerLink]="['/principal/teachers/add']">
+                <mat-icon>add</mat-icon>
+                Add Teacher
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Finance Tab -->
+      <mat-tab label="Finance">
+        <div class="tab-content">
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>payment</mat-icon>
+                Pending Invoices
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-data-table
+                *ngIf="pendingInvoices.length > 0"
+                [data]="pendingInvoices"
+                [columns]="invoiceColumns"
+                [actions]="invoiceActions"
+                [totalElements]="pendingInvoices.length"
+                [pageSize]="5"
+                (pageChange)="onPageChange($event)"
+                (sortChange)="onSortChange($event)">
+              </app-data-table>
+
+              <app-empty-state
+                *ngIf="pendingInvoices.length === 0"
+                [icon]="'payment'"
+                [title]="'No pending invoices'"
+                [message]="'All invoices have been paid.'">
+              </app-empty-state>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/principal/finance']">
+                View All Invoices
+              </button>
+              <button mat-raised-button color="primary" [routerLink]="['/principal/finance/create']">
+                <mat-icon>add</mat-icon>
+                Create Invoice
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Audit Logs Tab -->
+      <mat-tab label="Audit Logs">
+        <div class="tab-content">
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>history</mat-icon>
+                Recent Activity (Last 7 Days)
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-data-table
+                *ngIf="recentAuditLogs.length > 0"
+                [data]="recentAuditLogs"
+                [columns]="auditColumns"
+                [totalElements]="recentAuditLogs.length"
+                [pageSize]="10"
+                (pageChange)="onPageChange($event)"
+                (sortChange)="onSortChange($event)">
+              </app-data-table>
+
+              <app-empty-state
+                *ngIf="recentAuditLogs.length === 0"
+                [icon]="'history'"
+                [title]="'No recent activity'"
+                [message]="'No audit logs available for the selected period.'">
+              </app-empty-state>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" (click)="viewAuditLogs()">
+                View All Logs
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Quick Admin Actions -->
+    <mat-card class="admin-actions">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>admin_panel_settings</mat-icon>
+          Administrative Actions
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="action-grid">
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/classes/manage']">
+            <mat-icon>class</mat-icon>
+            <span>Manage Classes</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/attendance']">
+            <mat-icon>event_available</mat-icon>
+            <span>Attendance Reports</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" (click)="generateReport('academic')">
+            <mat-icon>assessment</mat-icon>
+            <span>Academic Reports</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" (click)="generateReport('finance')">
+            <mat-icon>account_balance</mat-icon>
+            <span>Financial Reports</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/communication']">
+            <mat-icon>campaign</mat-icon>
+            <span>Announcements</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/settings']">
+            <mat-icon>settings</mat-icon>
+            <span>School Settings</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/curriculum']">
+            <mat-icon>menu_book</mat-icon>
+            <span>Curriculum</span>
+          </button>
+          <button mat-raised-button class="admin-action-btn" [routerLink]="['/principal/events']">
+            <mat-icon>event</mat-icon>
+            <span>Events Calendar</span>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

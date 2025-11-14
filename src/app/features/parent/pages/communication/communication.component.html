@@ -1,0 +1,177 @@
+<div class="communication-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Communication'" 
+    [subtitle]="'Messages, announcements, and teacher contacts'">
+    <button mat-raised-button color="primary" (click)="composeMessage()">
+      <mat-icon>add</mat-icon>
+      New Message
+    </button>
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading messages and announcements...</p>
+  </div>
+
+  <!-- Content -->
+  <div class="communication-content" *ngIf="!loading">
+    <!-- Tabbed Interface -->
+    <mat-tab-group class="comm-tabs">
+      <!-- Messages Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">message</mat-icon>
+          Messages
+          <span class="unread-badge" *ngIf="unreadCount > 0" [matBadge]="unreadCount" matBadgeColor="warn"></span>
+        </ng-template>
+        <div class="tab-content">
+          <mat-card class="messages-card">
+            <mat-card-header>
+              <mat-card-title>Message Inbox</mat-card-title>
+              <mat-card-subtitle>{{ messages.length }} total, {{ unreadCount }} unread</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list *ngIf="messages.length > 0">
+                <mat-list-item 
+                  *ngFor="let message of messages; let last = last" 
+                  class="message-item"
+                  [class.unread]="!message.isRead"
+                  (click)="viewMessage(message)">
+                  <mat-icon matListItemIcon>
+                    {{ message.isRead ? 'mail_outline' : 'mail' }}
+                  </mat-icon>
+                  <div matListItemTitle>
+                    <strong>{{ message.senderName || 'Unknown Sender' }}</strong>
+                  </div>
+                  <div matListItemLine class="message-preview">
+                    {{ message.content.substring(0, 80) }}{{ message.content.length > 80 ? '...' : '' }}
+                  </div>
+                  <div matListItemMeta class="message-time">
+                    {{ formatDate(message.createdAt) }}
+                  </div>
+                  <mat-divider *ngIf="!last"></mat-divider>
+                </mat-list-item>
+              </mat-list>
+              <app-empty-state
+                *ngIf="messages.length === 0"
+                [icon]="'inbox'"
+                [title]="'No Messages'"
+                [message]="'You have no messages in your inbox.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Announcements Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">campaign</mat-icon>
+          Announcements
+        </ng-template>
+        <div class="tab-content">
+          <mat-card class="announcements-card">
+            <mat-card-header>
+              <mat-card-title>School Announcements</mat-card-title>
+              <mat-card-subtitle>{{ announcements.length }} announcements</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="announcements-list" *ngIf="announcements.length > 0">
+                <mat-card 
+                  *ngFor="let announcement of announcements" 
+                  class="announcement-card"
+                  (click)="viewAnnouncement(announcement)">
+                  <mat-card-header>
+                    <mat-icon 
+                      mat-card-avatar 
+                      [ngClass]="getAnnouncementPriorityClass(announcement.priority || 'LOW')">
+                      {{ announcement.priority === 'HIGH' ? 'priority_high' : 'info' }}
+                    </mat-icon>
+                    <mat-card-title>{{ announcement.title }}</mat-card-title>
+                    <mat-card-subtitle>
+                      <mat-chip [ngClass]="getAnnouncementPriorityClass(announcement.priority || 'LOW')" size="small">
+                        {{ announcement.priority || 'LOW' }}
+                      </mat-chip>
+                      • {{ formatDate(announcement.validFrom) }}
+                    </mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>{{ announcement.content.substring(0, 150) }}{{ announcement.content.length > 150 ? '...' : '' }}</p>
+                  </mat-card-content>
+                  <mat-card-actions align="end">
+                    <button mat-button color="primary">Read More</button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+              <app-empty-state
+                *ngIf="announcements.length === 0"
+                [icon]="'campaign'"
+                [title]="'No Announcements'"
+                [message]="'There are no announcements at this time.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Teachers Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">people</mat-icon>
+          Contact Teachers
+        </ng-template>
+        <div class="tab-content">
+          <mat-card class="teachers-card">
+            <mat-card-header>
+              <mat-card-title>School Teachers</mat-card-title>
+              <mat-card-subtitle>{{ teachers.length }} teachers available</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="teachers-grid" *ngIf="teachers.length > 0">
+                <mat-card *ngFor="let teacher of teachers" class="teacher-card">
+                  <mat-card-header>
+                    <div class="teacher-avatar" mat-card-avatar>
+                      <mat-icon>person</mat-icon>
+                    </div>
+                    <mat-card-title>{{ teacher.firstName }} {{ teacher.lastName }}</mat-card-title>
+                    <mat-card-subtitle>{{ teacher.department }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="teacher-details">
+                      <div class="detail-item" *ngIf="teacher.email">
+                        <mat-icon>email</mat-icon>
+                        <span>{{ teacher.email }}</span>
+                      </div>
+                      <div class="detail-item" *ngIf="teacher.phoneNumber">
+                        <mat-icon>phone</mat-icon>
+                        <span>{{ teacher.phoneNumber }}</span>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <button mat-button color="primary" (click)="composeMessage(teacher)">
+                      <mat-icon>send</mat-icon>
+                      Send Message
+                    </button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+              <app-empty-state
+                *ngIf="teachers.length === 0"
+                [icon]="'people'"
+                [title]="'No Teachers'"
+                [message]="'No teacher information available at this time.'">
+              </app-empty-state>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

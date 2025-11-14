@@ -1,0 +1,171 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEditMode ? 'edit' : 'assignment' }}</mat-icon>
+  {{ isEditMode ? 'Edit Assignment' : 'Create New Assignment' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="assignmentForm" class="assignment-form">
+    <!-- Basic Information -->
+    <div class="section">
+      <h3 class="section-title">Basic Information</h3>
+      
+      <div class="form-grid">
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Assignment Title</mat-label>
+          <mat-icon matPrefix>title</mat-icon>
+          <input matInput formControlName="title" placeholder="e.g., Chapter 5 Homework, Math Quiz">
+          <mat-error *ngIf="assignmentForm.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+          <mat-error *ngIf="assignmentForm.get('title')?.hasError('minlength')">
+            Title must be at least 3 characters
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Class -->
+        <mat-form-field appearance="outline">
+          <mat-label>Class</mat-label>
+          <mat-icon matPrefix>class</mat-icon>
+          <mat-select formControlName="classId">
+            <mat-option *ngIf="loadingData" disabled>
+              <mat-spinner diameter="20"></mat-spinner> Loading classes...
+            </mat-option>
+            <mat-option *ngFor="let class of classes" [value]="class.id">
+              {{ class.className }} - {{ class.gradeLevel }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="assignmentForm.get('classId')?.hasError('required')">
+            Class is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Assessment Type -->
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-icon matPrefix>category</mat-icon>
+          <mat-select formControlName="assessmentTypeId">
+            <mat-option *ngFor="let type of assessmentTypes" [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="assignmentForm.get('assessmentTypeId')?.hasError('required')">
+            Type is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (Optional)</mat-label>
+          <mat-icon matPrefix>description</mat-icon>
+          <textarea 
+            matInput 
+            formControlName="description" 
+            rows="2" 
+            placeholder="Brief description of the assignment">
+          </textarea>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Grading & Deadline -->
+    <div class="section">
+      <h3 class="section-title">Grading & Deadline</h3>
+      
+      <div class="form-grid">
+        <!-- Total Marks -->
+        <mat-form-field appearance="outline">
+          <mat-label>Total Marks</mat-label>
+          <mat-icon matPrefix>grade</mat-icon>
+          <input matInput type="number" formControlName="totalMarks" placeholder="100">
+          <mat-error *ngIf="assignmentForm.get('totalMarks')?.hasError('required')">
+            Total marks is required
+          </mat-error>
+          <mat-error *ngIf="assignmentForm.get('totalMarks')?.hasError('min')">
+            Must be at least 1
+          </mat-error>
+          <mat-error *ngIf="assignmentForm.get('totalMarks')?.hasError('max')">
+            Cannot exceed 1000
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Passing Marks -->
+        <mat-form-field appearance="outline">
+          <mat-label>Passing Marks (Optional)</mat-label>
+          <mat-icon matPrefix>check_circle</mat-icon>
+          <input matInput type="number" formControlName="passingMarks" placeholder="40">
+          <mat-error *ngIf="assignmentForm.get('passingMarks')?.hasError('min')">
+            Must be at least 0
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Due Date -->
+        <mat-form-field appearance="outline">
+          <mat-label>Due Date</mat-label>
+          <mat-icon matPrefix>event</mat-icon>
+          <input 
+            matInput 
+            [matDatepicker]="picker" 
+            formControlName="dueDate"
+            [min]="minDate"
+            placeholder="Select due date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="assignmentForm.get('dueDate')?.hasError('required')">
+            Due date is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Status (Edit Mode Only) -->
+        <mat-form-field appearance="outline" *ngIf="isEditMode">
+          <mat-label>Status</mat-label>
+          <mat-icon matPrefix>info</mat-icon>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of statusOptions" [value]="status">
+              {{ getStatusLabel(status) }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="section">
+      <h3 class="section-title">Additional Details</h3>
+      
+      <!-- Instructions -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Instructions (Optional)</mat-label>
+        <mat-icon matPrefix>list</mat-icon>
+        <textarea 
+          matInput 
+          formControlName="instructions" 
+          rows="4" 
+          placeholder="Detailed instructions for students...">
+        </textarea>
+      </mat-form-field>
+
+      <!-- Attachment URL -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Attachment URL (Optional)</mat-label>
+        <mat-icon matPrefix>attach_file</mat-icon>
+        <input matInput formControlName="attachmentUrl" placeholder="https://...">
+        <mat-hint>Link to additional resources or materials</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">
+    Cancel
+  </button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()" 
+    [disabled]="!isFormValid">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }} Assignment</span>
+  </button>
+</mat-dialog-actions>

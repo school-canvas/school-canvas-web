@@ -1,0 +1,202 @@
+<div class="class-detail-page">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="classDetails?.className || 'Class Details'" 
+    [subtitle]="classDetails?.section ? 'Section ' + classDetails.section : ''"
+    [showBackButton]="true"
+    (backClick)="goBack()">
+  </app-page-header>
+
+  <!-- Loading Indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="page-content" *ngIf="!loading && classDetails">
+    <!-- Class Info Card -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          Class Information
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon>class</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Class Name</span>
+              <span class="info-value">{{ classDetails.className }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>grid_view</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Section</span>
+              <span class="info-value">{{ classDetails.section || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Schedule</span>
+              <span class="info-value">{{ classDetails.schedule }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>meeting_room</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Room</span>
+              <span class="info-value">{{ classDetails.room }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>calendar_today</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Semester</span>
+              <span class="info-value">{{ classDetails.semester }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>stars</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Credits</span>
+              <span class="info-value">{{ classDetails.credits }}</span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <div class="description">
+          <h4>Description</h4>
+          <p>{{ classDetails.description }}</p>
+        </div>
+
+        <div class="status-chip">
+          <mat-chip-set>
+            <mat-chip [class.status-active]="classDetails.status === 'active'"
+                     [class.status-completed]="classDetails.status === 'completed'">
+              {{ classDetails.status | titlecase }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Teacher Info Card -->
+    <mat-card class="teacher-card" *ngIf="teacherDetails">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>person</mat-icon>
+          Instructor
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="teacher-info">
+          <div class="teacher-details">
+            <h3>{{ teacherDetails.firstName }} {{ teacherDetails.lastName }}</h3>
+            <p class="teacher-email">
+              <mat-icon>email</mat-icon>
+              {{ teacherDetails.email }}
+            </p>
+            <p class="teacher-department" *ngIf="teacherDetails.department">
+              <mat-icon>business</mat-icon>
+              {{ teacherDetails.department }}
+            </p>
+          </div>
+          <div class="teacher-actions">
+            <button mat-raised-button color="primary" (click)="contactTeacher()">
+              <mat-icon>email</mat-icon>
+              Contact Instructor
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs for Assessments and Students -->
+    <mat-card class="tabs-card">
+      <mat-tab-group>
+        <!-- Upcoming Assessments Tab -->
+        <mat-tab label="Upcoming Assessments">
+          <div class="tab-content">
+            <div class="tab-header">
+              <h3>
+                <mat-icon>assignment</mat-icon>
+                Assessments & Assignments
+              </h3>
+              <button mat-button color="primary" (click)="viewAllAssessments()">
+                View All
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+
+            <app-data-table
+              *ngIf="upcomingAssessments.length > 0"
+              [data]="upcomingAssessments"
+              [columns]="assessmentColumns"
+              [actions]="assessmentActions"
+              [totalElements]="upcomingAssessments.length">
+            </app-data-table>
+
+            <app-empty-state
+              *ngIf="upcomingAssessments.length === 0"
+              icon="assignment"
+              title="No Assessments"
+              message="No upcoming assessments for this class."
+              size="small">
+            </app-empty-state>
+          </div>
+        </mat-tab>
+
+        <!-- Class Students Tab -->
+        <mat-tab label="Classmates">
+          <div class="tab-content">
+            <div class="tab-header">
+              <h3>
+                <mat-icon>people</mat-icon>
+                Class Roster
+              </h3>
+              <button mat-button color="primary" (click)="viewAllStudents()">
+                View All
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+
+            <app-data-table
+              *ngIf="classStudents.length > 0"
+              [data]="classStudents"
+              [columns]="studentColumns"
+              [totalElements]="classStudents.length">
+            </app-data-table>
+
+            <app-empty-state
+              *ngIf="classStudents.length === 0"
+              icon="people"
+              title="No Students"
+              message="No students enrolled in this class."
+              size="small">
+            </app-empty-state>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+
+  <!-- Error State -->
+  <app-empty-state
+    *ngIf="!loading && !classDetails"
+    icon="error"
+    title="Class Not Found"
+    message="Unable to load class details. Please try again later.">
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Classes
+    </button>
+  </app-empty-state>
+</div>

@@ -1,43 +1,217 @@
-<mat-toolbar color="primary">
-<div class="container">
-    <div class = "logo-container">
-        <a routerLink="/">
-            <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
-        </a>
-    </div>
-    <div>
+<mat-toolbar color="primary" class="app-header">
+  <div class="header-container">
+    <!-- Logo and Brand -->
+    <div class="logo-section">
+      <a routerLink="/" class="logo-link">
+        <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
         <h1 class="app-name">{{ appConfig.shortName }}</h1>
+      </a>
     </div>
-</div>
-<span class="spacer"></span>
+
+    <span class="spacer"></span>
     
-    <div class="nav-links">
+    <!-- Navigation Links for Logged In Users -->
+    <div class="nav-links" *ngIf="isLoggedIn">
+      <!-- Student Navigation -->
+      <ng-container *ngIf="userRole === appConfig.roles.STUDENT">
+        <a mat-button routerLink="/student/dashboard" routerLinkActive="active-link">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </a>
+        <a mat-button routerLink="/student/classes" routerLinkActive="active-link">
+          <mat-icon>class</mat-icon>
+          My Classes
+        </a>
+        <a mat-button routerLink="/student/my-grades" routerLinkActive="active-link">
+          <mat-icon>grade</mat-icon>
+          Grades
+        </a>
+        <button mat-button [matMenuTriggerFor]="studentMore">
+          <mat-icon>more_horiz</mat-icon>
+          More
+        </button>
+        <mat-menu #studentMore="matMenu">
+          <a mat-menu-item routerLink="/student/my-attendance">
+            <mat-icon>event_available</mat-icon>
+            Attendance
+          </a>
+          <a mat-menu-item routerLink="/student/library-books">
+            <mat-icon>library_books</mat-icon>
+            Library
+          </a>
+          <a mat-menu-item routerLink="/student/fee-payment">
+            <mat-icon>payment</mat-icon>
+            Fees
+          </a>
+        </mat-menu>
+      </ng-container>
+
+      <!-- Teacher Navigation -->
+      <ng-container *ngIf="userRole === appConfig.roles.TEACHER">
+        <a mat-button routerLink="/teacher/dashboard" routerLinkActive="active-link">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </a>
+        <a mat-button routerLink="/teacher/classes" routerLinkActive="active-link">
+          <mat-icon>class</mat-icon>
+          My Classes
+        </a>
+        <a mat-button routerLink="/teacher/assignments" routerLinkActive="active-link">
+          <mat-icon>assignment</mat-icon>
+          Assignments
+        </a>
+        <button mat-button [matMenuTriggerFor]="teacherMore">
+          <mat-icon>more_horiz</mat-icon>
+          More
+        </button>
+        <mat-menu #teacherMore="matMenu">
+          <a mat-menu-item routerLink="/teacher/student-progress">
+            <mat-icon>analytics</mat-icon>
+            Progress Reports
+          </a>
+          <button mat-menu-item>
+            <mat-icon>message</mat-icon>
+            Messages
+          </button>
+          <button mat-menu-item>
+            <mat-icon>event</mat-icon>
+            Schedule
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <!-- Principal Navigation -->
+      <ng-container *ngIf="userRole === appConfig.roles.PRINCIPAL">
+        <a mat-button routerLink="/principal/dashboard" routerLinkActive="active-link">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </a>
+        <button mat-button [matMenuTriggerFor]="principalMenu">
+          <mat-icon>menu</mat-icon>
+          Management
+        </button>
+        <mat-menu #principalMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>people</mat-icon>
+            Students
+          </button>
+          <button mat-menu-item>
+            <mat-icon>school</mat-icon>
+            Teachers
+          </button>
+          <button mat-menu-item>
+            <mat-icon>class</mat-icon>
+            Classes
+          </button>
+          <button mat-menu-item>
+            <mat-icon>assessment</mat-icon>
+            Reports
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <!-- Parent Navigation -->
+      <ng-container *ngIf="userRole === appConfig.roles.PARENT">
+        <a mat-button routerLink="/parent/dashboard" routerLinkActive="active-link">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </a>
+        <button mat-button [matMenuTriggerFor]="parentMenu">
+          <mat-icon>menu</mat-icon>
+          My Children
+        </button>
+        <mat-menu #parentMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>grade</mat-icon>
+            Academic Progress
+          </button>
+          <button mat-menu-item>
+            <mat-icon>event_available</mat-icon>
+            Attendance
+          </button>
+          <button mat-menu-item>
+            <mat-icon>payment</mat-icon>
+            Payments
+          </button>
+          <button mat-menu-item>
+            <mat-icon>message</mat-icon>
+            Messages
+          </button>
+        </mat-menu>
+      </ng-container>
+    </div>
+
+    <!-- User Menu or Login/Register -->
+    <div class="user-section">
       <ng-container *ngIf="!isLoggedIn">
-        <a mat-button routerLink="/auth/login">Login</a>
-        <a mat-raised-button color="accent" routerLink="/auth/register-user">Register</a>
+        <a mat-button routerLink="/auth/login">
+          <mat-icon>login</mat-icon>
+          Login
+        </a>
+        <a mat-raised-button color="accent" routerLink="/auth/register-user">
+          Register
+        </a>
       </ng-container>
       
       <ng-container *ngIf="isLoggedIn">
-        <button mat-button [matMenuTriggerFor]="dashboardMenu">Dashboard</button>
-        <mat-menu #dashboardMenu="matMenu">
-          <a mat-menu-item routerLink="/dashboard/home">Home</a>
-          <a mat-menu-item routerLink="/dashboard/profile">Profile</a>
-          
-          <ng-container *ngIf="userRole === appConfig.roles.PRINCIPAL">
-            <a mat-menu-item routerLink="/dashboard/principal">Principal Dashboard</a>
-            <a mat-menu-item routerLink="/dashboard/users">Manage Users</a>
-          </ng-container>
-          
-          <ng-container *ngIf="userRole === appConfig.roles.TEACHER">
-            <a mat-menu-item routerLink="/dashboard/teacher">Teacher Dashboard</a>
-          </ng-container>
-          
-          <ng-container *ngIf="userRole === appConfig.roles.STUDENT">
-            <a mat-menu-item routerLink="/dashboard/student">Student Dashboard</a>
-          </ng-container>
+        <!-- Notifications Button -->
+        <button mat-icon-button [matMenuTriggerFor]="notifications">
+          <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+        </button>
+        <mat-menu #notifications="matMenu">
+          <div class="notification-header">
+            <h4>Notifications</h4>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item>
+            <mat-icon>assignment</mat-icon>
+            <span>New assignment posted</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>grade</mat-icon>
+            <span>Grades updated</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>message</mat-icon>
+            <span>New message received</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="view-all">View All Notifications</button>
         </mat-menu>
-        
-        <button mat-button (click)="logout()">Logout</button>
+
+        <!-- User Profile Menu -->
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+          <div class="user-avatar">{{ getUserInitials() }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ getUserName() }}</span>
+            <span class="user-role">{{ getRoleName() }}</span>
+          </div>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <div class="user-menu-header">
+            <div class="user-avatar-large">{{ getUserInitials() }}</div>
+            <div>
+              <div class="user-menu-name">{{ getUserName() }}</div>
+              <div class="user-menu-email">{{ currentUser?.email }}</div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item routerLink="/profile">
+            <mat-icon>person</mat-icon>
+            <span>My Profile</span>
+          </button>
+          <button mat-menu-item routerLink="/settings">
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
       </ng-container>
     </div>
+  </div>
 </mat-toolbar>

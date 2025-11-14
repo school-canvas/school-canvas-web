@@ -1,112 +1,186 @@
-<div class="register-container">
-  <mat-card class="register-card">
-    <mat-card-header>
-      <mat-card-title>Register for {{ appConfig.shortName }}</mat-card-title>
-    </mat-card-header>
-    
-    <mat-card-content>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="form-section">
-          <h3>School Information</h3>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Tenant ID</mat-label>
-            <input matInput formControlName="tenantId" placeholder="Enter your school tenant ID">
-            <mat-icon matSuffix>business</mat-icon>
-            <mat-hint>This is provided by your school administrator</mat-hint>
-            <mat-error *ngIf="registerForm.get('tenantId')?.hasError('required')">
-              Tenant ID is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+<div class="register-wrapper">
+  <!-- Background decorations -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
 
-        <div class="form-section">
-          <h3>Personal Information</h3>
-          <div class="name-fields">
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" placeholder="Enter your first name">
-              <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
-                First name is required
+  <div class="register-container">
+    <!-- Back to Home Button -->
+    <button mat-icon-button class="back-button" routerLink="/" matTooltip="Back to Home">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <mat-card class="register-card">
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <img [src]="appConfig.logoPath" alt="School Logo" class="school-logo">
+        <h1 class="app-title">Join {{ appConfig.shortName }}</h1>
+        <p class="welcome-text">Create your account to get started</p>
+      </div>
+      
+      <mat-card-content>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <!-- School Information Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">business</mat-icon>
+              <h3>School Information</h3>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Tenant ID</mat-label>
+              <input matInput formControlName="tenantId" placeholder="Enter your school tenant ID" autocomplete="organization">
+              <mat-icon matPrefix>badge</mat-icon>
+              <mat-hint>This is provided by your school administrator</mat-hint>
+              <mat-error *ngIf="registerForm.get('tenantId')?.hasError('required')">
+                Tenant ID is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Personal Information Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">person</mat-icon>
+              <h3>Personal Information</h3>
+            </div>
+            <div class="name-fields">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="First name" autocomplete="given-name">
+                <mat-icon matPrefix>account_circle</mat-icon>
+                <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
+                  First name is required
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Last name" autocomplete="family-name">
+                <mat-icon matPrefix>account_circle</mat-icon>
+                <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
+                  Last name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Address</mat-label>
+              <input matInput formControlName="email" placeholder="your.email@example.com" type="email" autocomplete="email">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Account Information Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">vpn_key</mat-icon>
+              <h3>Account Credentials</h3>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" placeholder="Choose a unique username" autocomplete="username">
+              <mat-icon matPrefix>account_box</mat-icon>
+              <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+                Username is required
+              </mat-error>
+              <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
+                Username must be at least 3 characters
               </mat-error>
             </mat-form-field>
             
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" placeholder="Enter your last name">
-              <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
-                Last name is required
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password</mat-label>
+              <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Create a strong password" autocomplete="new-password">
+              <mat-icon matPrefix>lock</mat-icon>
+              <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-hint>Minimum 6 characters</mat-hint>
+              <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+              <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                Password must be at least 6 characters
+              </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Select Your Role</mat-label>
+              <mat-select formControlName="roles" multiple>
+                <mat-option *ngFor="let role of roles" [value]="role.value">
+                  <mat-icon>{{ role.value === 'STUDENT' ? 'school' : role.value === 'TEACHER' ? 'workspace_premium' : 'family_restroom' }}</mat-icon>
+                  {{ role.label }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matPrefix>badge</mat-icon>
+              <mat-hint>You can select multiple roles</mat-hint>
+              <mat-error *ngIf="registerForm.get('roles')?.hasError('required')">
+                Please select at least one role
               </mat-error>
             </mat-form-field>
           </div>
           
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" placeholder="Enter your email" type="email">
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
-              Email is required
-            </mat-error>
-            <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
-              Please enter a valid email address
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="form-section">
-          <h3>Account Information</h3>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username" placeholder="Choose a username">
-            <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
-              Username is required
-            </mat-error>
-            <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
-              Username must be at least 3 characters
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Choose a password">
-            <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button 
+              type="button" 
+              mat-stroked-button 
+              class="cancel-button"
+              routerLink="/auth/login"
+              [disabled]="isLoading">
+              <mat-icon>login</mat-icon>
+              Back to Login
             </button>
-            <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
-              Password is required
-            </mat-error>
-            <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
-              Password must be at least 6 characters
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="roles" multiple>
-              <mat-option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="registerForm.get('roles')?.hasError('required')">
-              Please select at least one role
-            </mat-error>
-          </mat-form-field>
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" mat-raised-button color="primary" [disabled]="registerForm.invalid || isLoading">
-            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-            <span *ngIf="!isLoading">Register</span>
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-    
-    <mat-card-actions class="card-actions">
-      <p>Already have an account?</p>
-      <a mat-button color="accent" routerLink="/auth/login">Login Instead</a>
-    </mat-card-actions>
-    
-    <mat-card-footer *ngIf="isLoading" class="loading-footer">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </mat-card-footer>
-  </mat-card>
+            <button 
+              type="submit" 
+              mat-raised-button 
+              color="primary" 
+              class="register-button"
+              [disabled]="registerForm.invalid || isLoading">
+              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+              <mat-icon *ngIf="!isLoading">person_add</mat-icon>
+              <span *ngIf="!isLoading">Create Account</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+      
+      <!-- Divider -->
+      <mat-divider></mat-divider>
+
+      <!-- Login Section -->
+      <mat-card-actions class="card-actions">
+        <p class="login-text">Already have an account?</p>
+        <a mat-raised-button color="accent" routerLink="/auth/login" class="login-button">
+          <mat-icon>login</mat-icon>
+          Sign In Instead
+        </a>
+      </mat-card-actions>
+      
+      <!-- Loading Bar -->
+      <mat-card-footer *ngIf="isLoading" class="loading-footer">
+        <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+      </mat-card-footer>
+    </mat-card>
+
+    <!-- Info Section -->
+    <div class="info-section">
+      <mat-icon class="info-icon">verified_user</mat-icon>
+      <p class="info-text">
+        <strong>Privacy First:</strong> Your information is secure and encrypted. 
+        By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </p>
+    </div>
+  </div>
+  
+  <!-- Auth Footer -->
+  <app-auth-footer></app-auth-footer>
 </div>

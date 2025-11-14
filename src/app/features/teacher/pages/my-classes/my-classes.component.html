@@ -1,0 +1,271 @@
+<app-page-header
+  title="My Classes"
+  [showBackButton]="true"
+  icon="class">
+</app-page-header>
+
+<div class="classes-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <app-stats-card
+        title="Total Classes"
+        [value]="stats.totalClasses.toString()"
+        icon="class"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Total Students"
+        [value]="stats.totalStudents.toString()"
+        icon="people"
+        color="success">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Avg Attendance"
+        [value]="stats.averageAttendance + '%'"
+        icon="fact_check"
+        [color]="getAttendanceColor(stats.averageAttendance)">
+      </app-stats-card>
+
+      <app-stats-card
+        title="Pending Grading"
+        [value]="stats.pendingGrading.toString()"
+        icon="grade"
+        color="warning">
+      </app-stats-card>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="filters-section">
+      <mat-form-field class="search-field" appearance="outline">
+        <mat-label>Search classes</mat-label>
+        <input
+          matInput
+          [formControl]="searchControl"
+          placeholder="Search by name, subject, or section">
+        <mat-icon matPrefix>search</mat-icon>
+        <button
+          *ngIf="searchControl.value"
+          matSuffix
+          mat-icon-button
+          (click)="clearSearch()"
+          matTooltip="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Semester</mat-label>
+        <mat-select [formControl]="semesterFilter">
+          <mat-option value="all">All Semesters</mat-option>
+          <mat-option *ngFor="let semester of semesters.slice(1)" [value]="semester">
+            {{ semester }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="statusFilter">
+          <mat-option value="all">All Status</mat-option>
+          <mat-option *ngFor="let status of statuses.slice(1)" [value]="status">
+            {{ status }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        mat-stroked-button
+        (click)="clearFilters()"
+        class="clear-filters-btn">
+        <mat-icon>clear_all</mat-icon>
+        Clear Filters
+      </button>
+    </div>
+
+    <!-- Performance Charts -->
+    <div class="charts-section" *ngIf="filteredClasses.length > 0">
+      <div class="chart-grid">
+        <!-- Student Distribution -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Students per Class</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="studentDistributionChart"
+              [data]="studentDistributionChart"
+              [type]="'bar'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Attendance Comparison -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Attendance by Class</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="attendanceComparisonChart"
+              [data]="attendanceComparisonChart"
+              [type]="'bar'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Grading Progress -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Grading Progress</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart
+              *ngIf="gradingProgressChart"
+              [data]="gradingProgressChart"
+              [type]="'doughnut'"
+              [height]="300">
+            </app-chart>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Classes Count -->
+    <div class="classes-count">
+      Showing {{ filteredClasses.length }} class<span *ngIf="filteredClasses.length !== 1">es</span>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredClasses.length === 0" class="empty-state-wrapper">
+      <app-empty-state
+        icon="class"
+        message="No classes found"
+        description="Adjust your filters or search to find classes.">
+      </app-empty-state>
+    </div>
+
+    <!-- Classes Grid -->
+    <div *ngIf="filteredClasses.length > 0" class="classes-grid">
+      <mat-card *ngFor="let classInfo of filteredClasses" class="class-card">
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="class-info">
+            <h3 class="class-name">{{ classInfo.name }}</h3>
+            <p class="class-section">Section {{ classInfo.section }}</p>
+          </div>
+          <mat-chip
+            [class]="getStatusClass(classInfo.status)"
+            [class.status-chip]="true">
+            {{ classInfo.status }}
+          </mat-chip>
+        </div>
+
+        <mat-card-content>
+          <!-- Class Details -->
+          <div class="class-details">
+            <div class="detail-item">
+              <mat-icon>subject</mat-icon>
+              <span>{{ classInfo.subject }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>event</mat-icon>
+              <span>{{ classInfo.schedule }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>meeting_room</mat-icon>
+              <span>{{ classInfo.room }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>calendar_today</mat-icon>
+              <span>{{ classInfo.semester }}</span>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="stats-row">
+            <div class="stat-item">
+              <mat-icon>people</mat-icon>
+              <div class="stat-content">
+                <span class="stat-value">{{ classInfo.activeStudents }}/{{ classInfo.totalStudents }}</span>
+                <span class="stat-label">Students</span>
+              </div>
+            </div>
+
+            <div class="stat-item">
+              <mat-icon>fact_check</mat-icon>
+              <div class="stat-content">
+                <span class="stat-value" [style.color]="getAttendanceColor(classInfo.averageAttendance) === 'success' ? '#2e7d32' : getAttendanceColor(classInfo.averageAttendance) === 'warning' ? '#f57c00' : '#c62828'">
+                  {{ classInfo.averageAttendance }}%
+                </span>
+                <span class="stat-label">Attendance</span>
+              </div>
+            </div>
+
+            <div class="stat-item">
+              <mat-icon [matBadge]="classInfo.pendingAssignments" matBadgeColor="warn">grade</mat-icon>
+              <div class="stat-content">
+                <span class="stat-value">{{ classInfo.gradedAssignments }}</span>
+                <span class="stat-label">Graded</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <!-- Card Actions -->
+        <mat-card-actions>
+          <button
+            mat-button
+            color="primary"
+            (click)="viewClassDetails(classInfo)">
+            <mat-icon>visibility</mat-icon>
+            View Details
+          </button>
+          <button
+            mat-button
+            (click)="takeAttendance(classInfo)"
+            [disabled]="classInfo.status !== 'ACTIVE'">
+            <mat-icon>how_to_reg</mat-icon>
+            Attendance
+          </button>
+          <button
+            mat-button
+            (click)="manageGrades(classInfo)">
+            <mat-icon>grading</mat-icon>
+            Gradebook
+          </button>
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="classMenu"
+            matTooltip="More options">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          
+          <mat-menu #classMenu="matMenu">
+            <button mat-menu-item (click)="viewStudents(classInfo)">
+              <mat-icon>people</mat-icon>
+              <span>View Students</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>assignment</mat-icon>
+              <span>Manage Assignments</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>analytics</mat-icon>
+              <span>View Analytics</span>
+            </button>
+          </mat-menu>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -142,4 +142,34 @@ export class TokenService {
     localStorage.removeItem(environment.tenant.storageKey);
     localStorage.removeItem('user_data');
   }
+
+  // Alias methods for consistency with NgRx effects
+  saveToken(token: string): void {
+    this.setToken(token);
+  }
+
+  saveTenantId(tenantId: string): void {
+    localStorage.setItem(environment.tenant.storageKey, tenantId);
+  }
+
+  getDecodedToken(): JwtPayload | null {
+    return this.decodeToken();
+  }
+
+  getUser(): any {
+    const payload = this.decodeToken();
+    if (!payload) return null;
+    
+    return {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.roles?.[0] || 'USER',
+      roles: payload.roles,
+      tenantId: payload.tenantId
+    };
+  }
+
+  clearAll(): void {
+    this.clearAuth();
+  }
 }

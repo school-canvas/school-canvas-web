@@ -1,0 +1,189 @@
+<div class="attendance-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading class information...</p>
+    </div>
+  } @else if (classInfo) {
+    <!-- Page Header -->
+    <app-page-header 
+      [title]="'Take Attendance'"
+      [subtitle]="classInfo.name + ' • ' + classInfo.section"
+      [showBackButton]="true">
+      <div class="header-actions">
+        <button mat-raised-button (click)="saveAttendance()" [disabled]="!hasUnsavedChanges || saving">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+        <button mat-raised-button color="primary" (click)="saveAndReturn()" [disabled]="saving">
+          <mat-icon>check</mat-icon>
+          Save & Return
+        </button>
+      </div>
+    </app-page-header>
+
+    <!-- Date Selector and Class Info -->
+    <mat-card class="info-card">
+      <mat-card-content>
+        <div class="info-row">
+          <div class="date-selector">
+            <mat-form-field appearance="outline">
+              <mat-label>Attendance Date</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" 
+                     (dateChange)="onDateChange($event.value!)">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <div class="date-display">
+              <mat-icon>today</mat-icon>
+              <span>{{ formatDate(selectedDate) }}</span>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+              <button mat-stroked-button (click)="markAllPresent()">
+                <mat-icon>check_circle</mat-icon>
+                Mark All Present
+              </button>
+              <button mat-stroked-button (click)="markAllAbsent()">
+                <mat-icon>cancel</mat-icon>
+                Mark All Absent
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <app-stats-card
+        [title]="'Total Students'"
+        [value]="students.length.toString()"
+        icon="people"
+        color="primary">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Present'"
+        [value]="getStatusCount('PRESENT').toString()"
+        icon="check_circle"
+        color="success">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Absent'"
+        [value]="getStatusCount('ABSENT').toString()"
+        icon="cancel"
+        color="error">
+      </app-stats-card>
+      
+      <app-stats-card
+        [title]="'Late'"
+        [value]="getStatusCount('LATE').toString()"
+        icon="schedule"
+        color="warning">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Excused'"
+        [value]="getStatusCount('EXCUSED').toString()"
+        icon="verified"
+        color="primary">
+      </app-stats-card>
+
+      <app-stats-card
+        [title]="'Attendance Rate'"
+        [value]="getAttendanceRate() + '%'"
+        icon="assessment"
+        color="success">
+      </app-stats-card>
+    </div>
+
+    <!-- Student Attendance List -->
+    <mat-card class="students-card">
+      <mat-card-header>
+        <mat-card-title>
+          Student Roster
+          @if (hasUnsavedChanges) {
+            <mat-chip class="unsaved-chip">
+              <mat-icon>edit</mat-icon>
+              Unsaved Changes
+            </mat-chip>
+          }
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="students-list">
+          @for (student of students; track student.id) {
+            <div class="student-row">
+              <div class="student-info">
+                <div class="student-avatar">
+                  {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+                </div>
+                <div class="student-details">
+                  <h4>{{ getStudentName(student) }}</h4>
+                  <span class="roll-number">Roll No: {{ student.rollNumber }}</span>
+                </div>
+              </div>
+
+              <div class="attendance-controls">
+                <mat-button-toggle-group [(ngModel)]="student.status" 
+                                        (change)="setStudentStatus(student, student.status)"
+                                        class="status-toggle-group">
+                  <mat-button-toggle value="PRESENT" class="status-present">
+                    <mat-icon>check_circle</mat-icon>
+                    <span class="status-label">Present</span>
+                  </mat-button-toggle>
+                  <mat-button-toggle value="ABSENT" class="status-absent">
+                    <mat-icon>cancel</mat-icon>
+                    <span class="status-label">Absent</span>
+                  </mat-button-toggle>
+                  <mat-button-toggle value="LATE" class="status-late">
+                    <mat-icon>schedule</mat-icon>
+                    <span class="status-label">Late</span>
+                  </mat-button-toggle>
+                  <mat-button-toggle value="EXCUSED" class="status-excused">
+                    <mat-icon>verified</mat-icon>
+                    <span class="status-label">Excused</span>
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+
+                <div class="status-indicator" [class]="getStatusClass(student.status)">
+                  <mat-icon>{{ getStatusIcon(student.status) }}</mat-icon>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Save Footer (Sticky) -->
+    @if (hasUnsavedChanges) {
+      <div class="save-footer">
+        <div class="save-footer-content">
+          <div class="save-message">
+            <mat-icon>warning</mat-icon>
+            <span>You have unsaved changes</span>
+          </div>
+          <div class="save-actions">
+            <button mat-button (click)="goBack()">
+              Cancel
+            </button>
+            <button mat-raised-button color="primary" (click)="saveAndReturn()" [disabled]="saving">
+              @if (saving) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>check</mat-icon>
+              }
+              Save & Return
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

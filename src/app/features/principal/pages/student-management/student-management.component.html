@@ -1,0 +1,153 @@
+<div class="student-management-page">
+  <app-page-header 
+    title="Student Management" 
+    subtitle="Manage all student records, enrollments, and profiles"
+    [showBackButton]="true"
+    (backClick)="goBack()">
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="addStudent()">
+        <mat-icon>add</mat-icon>
+        Add Student
+      </button>
+      <button mat-button [matMenuTriggerFor]="bulkMenu">
+        <mat-icon>more_vert</mat-icon>
+        More Actions
+      </button>
+      <mat-menu #bulkMenu="matMenu">
+        <button mat-menu-item (click)="bulkEnroll()">
+          <mat-icon>group_add</mat-icon>
+          <span>Bulk Enrollment</span>
+        </button>
+        <button mat-menu-item (click)="importStudents()">
+          <mat-icon>upload</mat-icon>
+          <span>Import Students</span>
+        </button>
+        <button mat-menu-item (click)="exportStudents()">
+          <mat-icon>download</mat-icon>
+          <span>Export Students</span>
+        </button>
+      </mat-menu>
+    </div>
+  </app-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="page-content" *ngIf="!loading">
+    <div class="stats-grid">
+      <app-stats-card
+        icon="school"
+        title="Total Students"
+        [value]="totalStudents"
+        color="primary"
+        subtitle="All enrolled students">
+      </app-stats-card>
+
+      <app-stats-card
+        icon="check_circle"
+        title="Active"
+        [value]="activeCount"
+        color="success"
+        subtitle="Currently enrolled">
+      </app-stats-card>
+
+      <app-stats-card
+        icon="cancel"
+        title="Inactive"
+        [value]="inactiveCount"
+        color="warning"
+        subtitle="Not currently enrolled">
+      </app-stats-card>
+
+      <app-stats-card
+        icon="emoji_events"
+        title="Graduated"
+        [value]="graduatedCount"
+        color="success"
+        subtitle="Completed program">
+      </app-stats-card>
+    </div>
+
+    <mat-card class="filters-card">
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Students</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search by name, email, or student ID">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Grade Level</mat-label>
+          <mat-select 
+            [(ngModel)]="selectedGrade"
+            (ngModelChange)="onGradeChange()">
+            <mat-option *ngFor="let grade of grades" [value]="grade.value">
+              {{ grade.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select 
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onStatusChange()">
+            <mat-option *ngFor="let status of statuses" [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button 
+          mat-stroked-button 
+          (click)="clearFilters()"
+          class="clear-filters-btn">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <div class="active-filters" *ngIf="selectedGrade !== 'all' || selectedStatus !== 'all'">
+        <span class="filter-label">Active Filters:</span>
+        <mat-chip-set>
+          <mat-chip *ngIf="selectedGrade !== 'all'" (removed)="selectedGrade = 'all'; onGradeChange()">
+            Grade: {{ selectedGrade }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+          <mat-chip *ngIf="selectedStatus !== 'all'" (removed)="selectedStatus = 'all'; onStatusChange()">
+            Status: {{ selectedStatus }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </mat-card>
+
+    <mat-card class="table-card">
+      <div class="table-header">
+        <h3>Student List ({{ filteredStudents.length }})</h3>
+      </div>
+
+      <app-data-table
+        *ngIf="filteredStudents.length > 0"
+        [columns]="columns"
+        [data]="filteredStudents"
+        [actions]="actions">
+      </app-data-table>
+
+      <app-empty-state
+        *ngIf="filteredStudents.length === 0"
+        icon="people_outline"
+        title="No Students Found"
+        [message]="searchTerm ? 'Try adjusting your search criteria' : 'No students match the selected filters'">
+        <button mat-raised-button color="primary" (click)="addStudent()">
+          <mat-icon>add</mat-icon>
+          Add First Student
+        </button>
+      </app-empty-state>
+    </mat-card>
+  </div>
+</div>
+

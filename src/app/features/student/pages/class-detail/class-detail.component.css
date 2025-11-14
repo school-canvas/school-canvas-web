@@ -1,0 +1,245 @@
+.class-detail-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading-bar {
+  margin-bottom: 24px;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Info Card */
+.info-card mat-card-header {
+  margin-bottom: 20px;
+}
+
+.info-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+}
+
+.info-item mat-icon {
+  color: #1976d2;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.divider {
+  margin: 24px 0;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.description h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.description p {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.status-chip {
+  margin-top: 16px;
+}
+
+.status-chip mat-chip.status-active {
+  background-color: #4caf50 !important;
+  color: white;
+}
+
+.status-chip mat-chip.status-completed {
+  background-color: #9e9e9e !important;
+  color: white;
+}
+
+/* Teacher Card */
+.teacher-card mat-card-header {
+  margin-bottom: 16px;
+}
+
+.teacher-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.teacher-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.teacher-details h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.teacher-details p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  color: #666;
+}
+
+.teacher-details mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #1976d2;
+}
+
+.teacher-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tabs Card */
+.tabs-card {
+  margin-bottom: 24px;
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.tab-header h3 mat-icon {
+  color: #1976d2;
+}
+
+.tab-header button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .class-detail-page {
+    padding: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .teacher-actions {
+    width: 100%;
+  }
+
+  .teacher-actions button {
+    width: 100%;
+  }
+
+  .tab-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tab-header button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .class-detail-page {
+    padding: 12px;
+  }
+
+  .page-content {
+    gap: 16px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .info-item {
+    padding: 12px;
+  }
+}

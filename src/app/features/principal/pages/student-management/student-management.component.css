@@ -1,0 +1,153 @@
+.student-management-page {
+  padding: 0;
+}
+
+.loading-bar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.page-content {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.filters-card {
+  margin-bottom: 24px;
+  padding: 20px;
+}
+
+.filters-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.search-field {
+  width: 100%;
+}
+
+.filter-field {
+  width: 100%;
+}
+
+.clear-filters-btn {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.active-filters {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: #fafafa;
+}
+
+.table-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+@media (max-width: 1200px) {
+  .filters-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-field {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .filters-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .search-field,
+  .filter-field,
+  .clear-filters-btn {
+    grid-column: 1;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-header h3 {
+    font-size: 16px;
+  }
+}

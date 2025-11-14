@@ -1,0 +1,372 @@
+<p><div class="manage-assignments-container">
+  <app-page-header
+    title="Manage Assignments"
+    subtitle="Create, edit, and track all your assignments"
+  ></app-page-header>
+
+  <!-- Statistics Cards -->
+  <div class="stats-container">
+    <app-stats-card
+      title="Total Assignments"
+      [value]="getStatistics().total"
+      icon="assignment"
+      color="primary"
+    ></app-stats-card>
+
+    <app-stats-card
+      title="Published"
+      [value]="getStatistics().published"
+      icon="publish"
+      color="success"
+    ></app-stats-card>
+
+    <app-stats-card
+      title="Draft"
+      [value]="getStatistics().draft"
+      icon="edit_note"
+      color="warning"
+    ></app-stats-card>
+
+    <app-stats-card
+      title="Closed"
+      [value]="getStatistics().closed"
+      icon="lock"
+      color="error"
+    ></app-stats-card>
+  </div>
+
+  <!-- Filters and Actions -->
+  <mat-card class="filters-card">
+    <div class="filters-container">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search assignments</mat-label>
+          <input
+            matInput
+            placeholder="Search by title or class..."
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange()"
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-controls">
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="filterType" (ngModelChange)="onFilterChange()">
+            <mat-option value="all">All Types</mat-option>
+            <mat-option value="HOMEWORK">Homework</mat-option>
+            <mat-option value="QUIZ">Quiz</mat-option>
+            <mat-option value="EXAM">Exam</mat-option>
+            <mat-option value="PROJECT">Project</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()">
+            <mat-option value="all">All Status</mat-option>
+            <mat-option value="DRAFT">Draft</mat-option>
+            <mat-option value="PUBLISHED">Published</mat-option>
+            <mat-option value="CLOSED">Closed</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Class</mat-label>
+          <mat-select [(ngModel)]="filterClass" (ngModelChange)="onFilterChange()">
+            <mat-option value="all">All Classes</mat-option>
+            @for (class of classes; track class.id) {
+              <mat-option [value]="class.id">{{ class.name }} - {{ class.section }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="clearFilters()" class="clear-btn">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <div class="action-controls">
+        <button mat-raised-button color="primary" (click)="openCreateForm()" class="create-btn">
+          <mat-icon>add</mat-icon>
+          Create Assignment
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Create/Edit Form -->
+  @if (showForm) {
+    <mat-card class="form-card">
+      <div class="form-header">
+        <h2>{{ isEditMode ? 'Edit' : 'Create' }} Assignment</h2>
+        <button mat-icon-button (click)="closeForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <form [formGroup]="assignmentForm" (ngSubmit)="saveAssignment()">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" placeholder="Enter assignment title" />
+            @if (assignmentForm.get('title')?.hasError('required')) {
+              <mat-error>Title is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              rows="3"
+              placeholder="Enter assignment description"
+            ></textarea>
+            @if (assignmentForm.get('description')?.hasError('required')) {
+              <mat-error>Description is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="HOMEWORK">Homework</mat-option>
+              <mat-option value="QUIZ">Quiz</mat-option>
+              <mat-option value="EXAM">Exam</mat-option>
+              <mat-option value="PROJECT">Project</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="classId">
+              @for (class of classes; track class.id) {
+                <mat-option [value]="class.id">{{ class.name }} - {{ class.section }}</mat-option>
+              }
+            </mat-select>
+            @if (assignmentForm.get('classId')?.hasError('required')) {
+              <mat-error>Class is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Subject</mat-label>
+            <input matInput formControlName="subject" placeholder="e.g., Mathematics" />
+            @if (assignmentForm.get('subject')?.hasError('required')) {
+              <mat-error>Subject is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Total Points</mat-label>
+            <input matInput type="number" formControlName="totalPoints" />
+            @if (assignmentForm.get('totalPoints')?.hasError('required')) {
+              <mat-error>Total points is required</mat-error>
+            }
+            @if (assignmentForm.get('totalPoints')?.hasError('min')) {
+              <mat-error>Points must be at least 1</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Due Date</mat-label>
+            <input matInput [matDatepicker]="dueDatePicker" formControlName="dueDate" />
+            <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #dueDatePicker></mat-datepicker>
+            @if (assignmentForm.get('dueDate')?.hasError('required')) {
+              <mat-error>Due date is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Publish Date (Optional)</mat-label>
+            <input matInput [matDatepicker]="publishDatePicker" formControlName="publishDate" />
+            <mat-datepicker-toggle matSuffix [for]="publishDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #publishDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="DRAFT">Draft</mat-option>
+              <mat-option value="PUBLISHED">Published</mat-option>
+              <mat-option value="CLOSED">Closed</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="closeForm()">Cancel</button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="assignmentForm.invalid"
+          >
+            {{ isEditMode ? 'Update' : 'Create' }} Assignment
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+
+  <!-- Assignments Table -->
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading assignments...</p>
+    </div>
+  } @else {
+    @if (filteredAssignments.length === 0) {
+      <mat-card class="empty-state">
+        <mat-icon>assignment</mat-icon>
+        <h3>No assignments found</h3>
+        @if (searchQuery || filterType !== 'all' || filterStatus !== 'all' || filterClass !== 'all') {
+          <p>Try adjusting your filters or search query.</p>
+        } @else {
+          <p>Create your first assignment to get started.</p>
+        }
+        @if (!showForm) {
+          <button mat-raised-button color="primary" (click)="openCreateForm()">
+            <mat-icon>add</mat-icon>
+            Create Assignment
+          </button>
+        }
+      </mat-card>
+    } @else {
+      <mat-card class="table-card">
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredAssignments" class="assignments-table">
+            <!-- Title Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Title</th>
+              <td mat-cell *matCellDef="let assignment">
+                <div class="title-cell">
+                  <div class="title">{{ assignment.title }}</div>
+                  <div class="subtitle">{{ assignment.description | slice:0:60 }}{{ assignment.description.length > 60 ? '...' : '' }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Class Column -->
+            <ng-container matColumnDef="class">
+              <th mat-header-cell *matHeaderCellDef>Class</th>
+              <td mat-cell *matCellDef="let assignment">
+                <div class="class-cell">
+                  <div>{{ assignment.className }}</div>
+                  <div class="subtitle">{{ assignment.subject }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Type Column -->
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let assignment">
+                <mat-chip [class]="getTypeClass(assignment.type)">
+                  {{ assignment.type }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Due Date Column -->
+            <ng-container matColumnDef="dueDate">
+              <th mat-header-cell *matHeaderCellDef>Due Date</th>
+              <td mat-cell *matCellDef="let assignment">
+                <div class="due-date-cell">
+                  <div [class.overdue]="isOverdue(assignment.dueDate)">
+                    {{ formatDate(assignment.dueDate) }}
+                  </div>
+                  @if (!isOverdue(assignment.dueDate)) {
+                    <div class="subtitle">
+                      {{ getDaysUntilDue(assignment.dueDate) }} days left
+                    </div>
+                  } @else {
+                    <div class="subtitle overdue">Overdue</div>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Submissions Column -->
+            <ng-container matColumnDef="submissions">
+              <th mat-header-cell *matHeaderCellDef>Submissions</th>
+              <td mat-cell *matCellDef="let assignment">
+                <div class="submissions-cell">
+                  <div>{{ assignment.submissions }} / 25</div>
+                  <div class="subtitle">{{ assignment.graded }} graded</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let assignment">
+                <mat-chip [class]="getStatusClass(assignment.status)">
+                  {{ assignment.status }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let assignment">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="actionsMenu"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actionsMenu="matMenu">
+                  <button mat-menu-item (click)="openEditForm(assignment)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="duplicateAssignment(assignment)">
+                    <mat-icon>content_copy</mat-icon>
+                    <span>Duplicate</span>
+                  </button>
+                  @if (assignment.status === 'DRAFT') {
+                    <button mat-menu-item (click)="publishAssignment(assignment)">
+                      <mat-icon>publish</mat-icon>
+                      <span>Publish</span>
+                    </button>
+                  }
+                  @if (assignment.status === 'PUBLISHED') {
+                    <button mat-menu-item (click)="closeAssignment(assignment)">
+                      <mat-icon>lock</mat-icon>
+                      <span>Close</span>
+                    </button>
+                    <button mat-menu-item (click)="viewSubmissions(assignment)">
+                      <mat-icon>assignment_turned_in</mat-icon>
+                      <span>View Submissions</span>
+                    </button>
+                    <button mat-menu-item (click)="gradeAssignment(assignment)">
+                      <mat-icon>grading</mat-icon>
+                      <span>Grade</span>
+                    </button>
+                  }
+                  <mat-divider></mat-divider>
+                  <button mat-menu-item (click)="deleteAssignment(assignment)" class="delete-action">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-card>
+    }
+  }
+</div>

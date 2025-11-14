@@ -5,8 +5,8 @@ export const environment = {
         users: 'http://localhost:8080/api/v1',         // Auth, Users, Roles
         tenant: 'http://localhost:8081/api/v1',        // Tenant Management
         student: 'http://localhost:8082/api/v1',       // Student Management
-        teacher: 'http://localhost:8083/api/v1',       // Teacher Management
-        class: 'http://localhost:8084/api/v1',         // Class & Enrollment
+        teacher: 'http://localhost:8084/api/v1',       // Teacher Management
+        class: 'http://localhost:8083/api/v1',         // Class & Enrollment
         assessment: 'http://localhost:8085/api/v1',    // Assessments, Submissions
         attendance: 'http://localhost:8086/api/v1',    // Student & Teacher Attendance
         finance: 'http://localhost:8087/api/v1',       // Fee, Payment, Invoice

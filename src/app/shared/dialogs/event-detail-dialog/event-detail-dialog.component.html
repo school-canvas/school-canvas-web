@@ -1,0 +1,139 @@
+<h2 mat-dialog-title>
+  <mat-icon>event</mat-icon>
+  {{ event.title }}
+  <mat-chip [color]="getStatusColor(event.status)" selected>{{ event.status }}</mat-chip>
+</h2>
+
+<mat-dialog-content>
+  <div class="event-details">
+    <!-- Category -->
+    <div class="detail-row" *ngIf="event.categoryName">
+      <mat-icon>category</mat-icon>
+      <div>
+        <strong>Category:</strong>
+        <span>{{ event.categoryName }}</span>
+      </div>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="detail-row">
+      <mat-icon>schedule</mat-icon>
+      <div>
+        <strong>Start:</strong>
+        <span>{{ formatDateTime(event.startDatetime) }}</span>
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <mat-icon>schedule</mat-icon>
+      <div>
+        <strong>End:</strong>
+        <span>{{ formatDateTime(event.endDatetime) }}</span>
+      </div>
+    </div>
+
+    <!-- All Day Event -->
+    <div class="detail-row" *ngIf="event.isAllDay">
+      <mat-icon>event_available</mat-icon>
+      <div>
+        <strong>All Day Event</strong>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="detail-row" *ngIf="event.location">
+      <mat-icon>place</mat-icon>
+      <div>
+        <strong>Location:</strong>
+        <span>{{ event.location }}</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="detail-row" *ngIf="event.description">
+      <mat-icon>description</mat-icon>
+      <div>
+        <strong>Description:</strong>
+        <p class="description">{{ event.description }}</p>
+      </div>
+    </div>
+
+    <!-- Recurring Event -->
+    <div class="detail-row" *ngIf="event.isRecurring">
+      <mat-icon>repeat</mat-icon>
+      <div>
+        <strong>Recurring Event</strong>
+      </div>
+    </div>
+
+    <!-- Participant Count -->
+    <div class="detail-row">
+      <mat-icon>people</mat-icon>
+      <div>
+        <strong>Participants:</strong>
+        <span>{{ event.participantCount }} registered</span>
+      </div>
+    </div>
+
+    <!-- Your RSVP Status -->
+    <div class="detail-row" *ngIf="event.userParticipationStatus">
+      <mat-icon>how_to_reg</mat-icon>
+      <div>
+        <strong>Your RSVP:</strong>
+        <mat-chip [color]="getParticipationStatusColor(event.userParticipationStatus)" selected>
+          {{ event.userParticipationStatus }}
+        </mat-chip>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSVP Actions -->
+  <div class="rsvp-actions" *ngIf="event.userParticipationStatus && event.status === 'SCHEDULED'">
+    <h3>Respond to Invitation</h3>
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        [disabled]="respondingToInvite || event.userParticipationStatus === ParticipationStatus.ACCEPTED"
+        (click)="respondToInvite(ParticipationStatus.ACCEPTED)">
+        <mat-icon>check_circle</mat-icon>
+        Accept
+      </button>
+      <button 
+        mat-raised-button 
+        color="warn" 
+        [disabled]="respondingToInvite || event.userParticipationStatus === ParticipationStatus.DECLINED"
+        (click)="respondToInvite(ParticipationStatus.DECLINED)">
+        <mat-icon>cancel</mat-icon>
+        Decline
+      </button>
+    </div>
+  </div>
+
+  <!-- Participants List -->
+  <div class="participants-section">
+    <h3>Participants</h3>
+    <div *ngIf="loadingParticipants" class="loading">
+      <mat-spinner diameter="30"></mat-spinner>
+      <span>Loading participants...</span>
+    </div>
+    <mat-list *ngIf="!loadingParticipants">
+      <mat-list-item *ngFor="let participant of participants">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <div matListItemTitle>{{ participant.userName || 'User ' + participant.userId.substring(0, 8) }}</div>
+        <div matListItemLine>
+          <mat-chip [color]="getParticipationStatusColor(participant.participationStatus)" selected size="small">
+            {{ participant.participationStatus }}
+          </mat-chip>
+        </div>
+      </mat-list-item>
+      <mat-list-item *ngIf="participants.length === 0">
+        <span matListItemTitle>No participants yet</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

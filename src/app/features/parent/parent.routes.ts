@@ -7,6 +7,8 @@ import { FeeManagementComponent } from './pages/fee-management/fee-management.co
 import { CommunicationComponent } from './pages/communication/communication.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { NotificationSettingsComponent } from './pages/notification-settings/notification-settings.component';
+import { CalendarComponent } from './pages/calendar/calendar.component';
+import { EventListComponent } from './pages/event-list/event-list.component';
 
 export const PARENT_ROUTES: Routes = [
   {
@@ -21,6 +23,9 @@ export const PARENT_ROUTES: Routes = [
       { path: 'communication', component: CommunicationComponent },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'notification-settings', component: NotificationSettingsComponent },
+      { path: 'calendar', component: CalendarComponent },
+      { path: 'event-list', component: EventListComponent },
     ]
   }
 ];
+

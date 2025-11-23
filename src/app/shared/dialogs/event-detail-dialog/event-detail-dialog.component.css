@@ -1,0 +1,98 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+h2[mat-dialog-title] mat-icon {
+  color: #2196F3;
+}
+
+.event-details {
+  margin-bottom: 24px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.detail-row mat-icon {
+  color: #666;
+  margin-top: 2px;
+}
+
+.detail-row strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.detail-row span {
+  color: #666;
+}
+
+.description {
+  margin: 8px 0 0 0;
+  white-space: pre-wrap;
+  color: #666;
+  line-height: 1.6;
+}
+
+.rsvp-actions {
+  margin: 24px 0;
+  padding: 20px;
+  background: #E3F2FD;
+  border-radius: 8px;
+}
+
+.rsvp-actions h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.action-buttons button {
+  flex: 1;
+}
+
+.participants-section {
+  margin-top: 24px;
+}
+
+.participants-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  justify-content: center;
+  color: #666;
+}
+
+mat-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0 -24px -24px -24px;
+  border-top: 1px solid #e0e0e0;
+}

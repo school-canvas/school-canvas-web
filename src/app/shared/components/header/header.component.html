@@ -31,6 +31,10 @@
           More
         </button>
         <mat-menu #studentMore="matMenu">
+          <a mat-menu-item routerLink="/student/calendar">
+            <mat-icon>calendar_month</mat-icon>
+            Calendar
+          </a>
           <a mat-menu-item routerLink="/student/my-attendance">
             <mat-icon>event_available</mat-icon>
             Attendance
@@ -65,6 +69,10 @@
           More
         </button>
         <mat-menu #teacherMore="matMenu">
+          <a mat-menu-item routerLink="/teacher/calendar">
+            <mat-icon>calendar_month</mat-icon>
+            Calendar
+          </a>
           <a mat-menu-item routerLink="/teacher/student-progress">
             <mat-icon>analytics</mat-icon>
             Progress Reports
@@ -91,6 +99,10 @@
           Management
         </button>
         <mat-menu #principalMenu="matMenu">
+          <a mat-menu-item routerLink="/principal/calendar">
+            <mat-icon>calendar_month</mat-icon>
+            Calendar
+          </a>
           <button mat-menu-item>
             <mat-icon>people</mat-icon>
             Students
@@ -121,6 +133,10 @@
           My Children
         </button>
         <mat-menu #parentMenu="matMenu">
+          <a mat-menu-item routerLink="/parent/calendar">
+            <mat-icon>calendar_month</mat-icon>
+            Calendar
+          </a>
           <button mat-menu-item>
             <mat-icon>grade</mat-icon>
             Academic Progress

@@ -1,0 +1,71 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+h2[mat-dialog-title] mat-icon {
+  color: #2196F3;
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.date-time-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.date-field {
+  flex: 2;
+}
+
+.time-field {
+  flex: 1;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 24px;
+  margin: 8px 0;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0 -24px -24px -24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .date-time-row {
+    flex-direction: column;
+  }
+  
+  .date-field,
+  .time-field {
+    width: 100%;
+  }
+  
+  .checkbox-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

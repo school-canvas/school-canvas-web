@@ -1,0 +1,101 @@
+<h2 mat-dialog-title>
+  <mat-icon>add_circle</mat-icon>
+  Create New Event
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="eventForm" class="event-form">
+    <!-- Title -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Event Title</mat-label>
+      <input matInput formControlName="title" placeholder="Enter event title" required>
+      <mat-icon matSuffix>title</mat-icon>
+      <mat-error *ngIf="eventForm.get('title')?.hasError('required')">Title is required</mat-error>
+      <mat-error *ngIf="eventForm.get('title')?.hasError('maxlength')">Title must be less than 200 characters</mat-error>
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Enter event description" rows="4"></textarea>
+      <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <!-- Category -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option [value]="null">No Category</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+      <mat-icon matSuffix>category</mat-icon>
+    </mat-form-field>
+
+    <!-- Location -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="Enter event location">
+      <mat-icon matSuffix>place</mat-icon>
+    </mat-form-field>
+
+    <!-- Start Date & Time -->
+    <div class="date-time-row">
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required>
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="time-field">
+        <mat-label>Start Time</mat-label>
+        <input matInput type="time" formControlName="startTime" required>
+        <mat-icon matSuffix>schedule</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- End Date & Time -->
+    <div class="date-time-row">
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required>
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="time-field">
+        <mat-label>End Time</mat-label>
+        <input matInput type="time" formControlName="endTime" required>
+        <mat-icon matSuffix>schedule</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Checkboxes -->
+    <div class="checkbox-row">
+      <mat-checkbox formControlName="isAllDay">All Day Event</mat-checkbox>
+      <mat-checkbox formControlName="isRecurring">Recurring Event</mat-checkbox>
+    </div>
+
+    <!-- Reminders -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Reminders</mat-label>
+      <mat-select formControlName="reminderMinutes" multiple>
+        <mat-option *ngFor="let option of reminderOptions" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+      <mat-icon matSuffix>notifications</mat-icon>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="submitting">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="eventForm.invalid || submitting">
+    <mat-icon *ngIf="!submitting">save</mat-icon>
+    <mat-icon *ngIf="submitting" class="spinning">sync</mat-icon>
+    {{ submitting ? 'Creating...' : 'Create Event' }}
+  </button>
+</mat-dialog-actions>

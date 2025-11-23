@@ -1,0 +1,129 @@
+<div class="calendar-container">
+  <!-- Header -->
+  <div class="calendar-header">
+    <div class="header-left">
+      <h2>
+        <mat-icon>event</mat-icon>
+        School Calendar
+      </h2>
+    </div>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="category-filter">
+        <mat-label>Filter by Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onCategoryFilterChange()">
+          <mat-option [value]="null">All Categories</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="createEvent()">
+        <mat-icon>add</mat-icon>
+        Create Event
+      </button>
+      <button mat-raised-button (click)="viewAllEvents()">
+        <mat-icon>list</mat-icon>
+        View List
+      </button>
+    </div>
+  </div>
+
+  <!-- Calendar Navigation -->
+  <mat-card class="calendar-nav">
+    <div class="nav-controls">
+      <button mat-icon-button (click)="previousMonth()" matTooltip="Previous Month">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <h3 class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</h3>
+      <button mat-icon-button (click)="nextMonth()" matTooltip="Next Month">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    <button mat-stroked-button (click)="goToToday()">Today</button>
+  </mat-card>
+
+  <!-- Calendar Grid -->
+  <mat-card class="calendar-card">
+    <div class="calendar-grid" *ngIf="!loading">
+      <!-- Week days header -->
+      <div class="calendar-weekdays">
+        <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+      </div>
+
+      <!-- Calendar days -->
+      <div class="calendar-days">
+        <div
+          *ngFor="let day of calendarDays"
+          class="calendar-day"
+          [class.other-month]="!day.isCurrentMonth"
+          [class.today]="day.isToday"
+          [class.has-events]="day.events.length > 0"
+          (click)="selectDay(day)"
+        >
+          <div class="day-number">{{ day.date.getDate() }}</div>
+          <div class="day-events">
+            <div
+              *ngFor="let event of day.events.slice(0, 3)"
+              class="event-item"
+              [style.background-color]="getEventColor(event)"
+              [style.border-left]="'4px solid ' + getEventStatusColor(event.status)"
+              (click)="openEventDetail(event, $event)"
+              [matTooltip]="event.title + ' at ' + formatTime(event.startDatetime)"
+            >
+              <div class="event-content">
+                <mat-icon class="event-icon">
+                  {{ getParticipationIcon(event.userParticipationStatus) }}
+                </mat-icon>
+                <span class="event-title">{{ event.title }}</span>
+                @if (event.isAllDay) {
+                  <mat-icon class="all-day-icon" matTooltip="All day event">event_available</mat-icon>
+                }
+              </div>
+              <span class="event-time" *ngIf="!event.isAllDay">{{ formatTime(event.startDatetime) }}</span>
+            </div>
+            <div *ngIf="day.events.length > 3" class="more-events" (click)="selectDay(day)">
+              +{{ day.events.length - 3 }} more
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading spinner -->
+    <div class="loading-container" *ngIf="loading">
+      <mat-icon class="spinning">sync</mat-icon>
+      <p>Loading events...</p>
+    </div>
+  </mat-card>
+
+  <!-- Legend -->
+  <mat-card class="legend-card">
+    <h4>Legend</h4>
+    <div class="legend-items">
+      <div class="legend-item">
+        <mat-icon style="color: #4CAF50;">check_circle</mat-icon>
+        <span>Accepted</span>
+      </div>
+      <div class="legend-item">
+        <mat-icon style="color: #FF9800;">schedule</mat-icon>
+        <span>Pending</span>
+      </div>
+      <div class="legend-item">
+        <mat-icon style="color: #f44336;">cancel</mat-icon>
+        <span>Declined</span>
+      </div>
+      <div class="legend-item">
+        <div class="status-indicator" style="background: #4CAF50;"></div>
+        <span>Scheduled</span>
+      </div>
+      <div class="legend-item">
+        <div class="status-indicator" style="background: #f44336;"></div>
+        <span>Cancelled</span>
+      </div>
+      <div class="legend-item">
+        <div class="status-indicator" style="background: #9E9E9E;"></div>
+        <span>Completed</span>
+      </div>
+    </div>
+  </mat-card>
+</div>

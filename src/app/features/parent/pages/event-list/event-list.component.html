@@ -1,0 +1,96 @@
+<div class="event-list-container">
+  <div class="header">
+    <h2>
+      <mat-icon>list</mat-icon>
+      All Events
+    </h2>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="filter">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterChange()">
+          <mat-option [value]="null">All Status</mat-option>
+          <mat-option [value]="EventStatus.SCHEDULED">Scheduled</mat-option>
+          <mat-option [value]="EventStatus.CANCELLED">Cancelled</mat-option>
+          <mat-option [value]="EventStatus.COMPLETED">Completed</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="filter">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onFilterChange()">
+          <mat-option [value]="null">All Categories</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button (click)="goToCalendar()">
+        <mat-icon>calendar_month</mat-icon>
+        Calendar View
+      </button>
+      <button mat-raised-button color="primary" (click)="createEvent()">
+        <mat-icon>add</mat-icon>
+        New Event
+      </button>
+    </div>
+  </div>
+
+  <div class="events-grid">
+    <mat-card *ngFor="let event of events" class="event-card" (click)="openEventDetail(event)">
+      <mat-card-header>
+        <div class="event-header">
+          <div class="event-title-row">
+            <h3>{{ event.title }}</h3>
+            <mat-chip [style.background-color]="getEventColor(event)" class="category-chip">
+              {{ event.categoryName || 'No Category' }}
+            </mat-chip>
+          </div>
+          <mat-chip 
+            [color]="event.status === 'SCHEDULED' ? 'primary' : event.status === 'CANCELLED' ? 'warn' : 'accent'"
+            selected>
+            {{ event.status }}
+          </mat-chip>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="event-details">
+          <div class="detail">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ formatDateTime(event.startDatetime) }}</span>
+          </div>
+          <div class="detail" *ngIf="event.location">
+            <mat-icon>place</mat-icon>
+            <span>{{ event.location }}</span>
+          </div>
+          <div class="detail">
+            <mat-icon>people</mat-icon>
+            <span>{{ event.participantCount }} participants</span>
+          </div>
+          <p class="description" *ngIf="event.description">
+            {{ event.description.substring(0, 150) }}{{ event.description.length > 150 ? '...' : '' }}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="events.length === 0 && !loading" class="no-events">
+      <mat-icon>event_busy</mat-icon>
+      <p>No events found</p>
+      <button mat-raised-button color="primary" (click)="createEvent()">
+        <mat-icon>add</mat-icon>
+        Create First Event
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-icon class="spinning">sync</mat-icon>
+    <p>Loading events...</p>
+  </div>
+
+  <div *ngIf="hasMore && !loading && events.length > 0" class="load-more">
+    <button mat-stroked-button (click)="loadMore()">
+      <mat-icon>expand_more</mat-icon>
+      Load More
+    </button>
+  </div>
+</div>

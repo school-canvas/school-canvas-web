@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
+  {{ isEdit ? 'Edit' : 'Create' }} Event Category
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="categoryForm" class="category-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Category Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter category name" required>
+      <mat-icon matSuffix>label</mat-icon>
+      <mat-error *ngIf="categoryForm.get('name')?.hasError('required')">Name is required</mat-error>
+      <mat-error *ngIf="categoryForm.get('name')?.hasError('maxlength')">Name must be less than 100 characters</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Enter category description" rows="3"></textarea>
+      <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Color</mat-label>
+      <input matInput type="color" formControlName="color">
+      <mat-icon matSuffix>palette</mat-icon>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="submitting">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="categoryForm.invalid || submitting">
+    <mat-icon *ngIf="!submitting">save</mat-icon>
+    <mat-icon *ngIf="submitting" class="spinning">sync</mat-icon>
+    {{ submitting ? 'Saving...' : 'Save Category' }}
+  </button>
+</mat-dialog-actions>

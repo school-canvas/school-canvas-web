@@ -7,6 +7,9 @@ import { TakeAttendanceComponent } from './pages/take-attendance/take-attendance
 import { GradebookComponent } from './pages/gradebook/gradebook.component';
 import { ManageAssignmentsComponent } from './pages/manage-assignments/manage-assignments.component';
 import { StudentProgressComponent } from './pages/student-progress/student-progress.component';
+import { CommunicationComponent } from './pages/communication/communication.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { NotificationSettingsComponent } from './pages/notification-settings/notification-settings.component';
 
 export const TEACHER_ROUTES: Routes = [
   {
@@ -21,6 +24,9 @@ export const TEACHER_ROUTES: Routes = [
       { path: 'gradebook/:id', component: GradebookComponent },
       { path: 'assignments', component: ManageAssignmentsComponent },
       { path: 'student-progress', component: StudentProgressComponent },
+      { path: 'communication', component: CommunicationComponent },
+      { path: 'notifications', component: NotificationsComponent },
+      { path: 'notification-settings', component: NotificationSettingsComponent },
     ]
   }
 ];

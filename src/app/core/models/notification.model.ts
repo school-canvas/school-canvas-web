@@ -1,16 +1,24 @@
 export interface Notification {
   id: string;
-  userId: string;
   title: string;
   message: string;
-  type: NotificationType;
+  notificationType: string;
   priority: NotificationPriority;
   isRead: boolean;
-  actionUrl?: string;
-  metadata?: any;
-  tenantId: string;
+  readAt?: string;
+  deliveryStatus: string;
   createdAt?: string;
-  updatedAt?: string;
+}
+
+export interface NotificationRecipient {
+  id: string;
+  notificationId: string;
+  recipientId: string;
+  isRead: boolean;
+  readAt?: string;
+  deliveryStatus: 'PENDING' | 'DELIVERED' | 'FAILED';
+  deliveredAt?: string;
+  createdAt: string;
 }
 
 export enum NotificationType {
@@ -46,9 +54,28 @@ export interface SendNotificationRequest {
 export interface NotificationSettings {
   id: string;
   userId: string;
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  smsNotifications: boolean;
-  notificationTypes: NotificationType[];
-  tenantId: string;
+  notificationCategory: string;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+  inAppEnabled: boolean;
+  pushEnabled: boolean;
+  createdAt?: string;
+}
+
+export interface DeviceToken {
+  id: string;
+  userId: string;
+  token: string;
+  deviceType: 'ANDROID' | 'IOS' | 'WEB';
+  deviceName?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastUsedAt?: string;
+}
+
+export interface RegisterDeviceRequest {
+  token: string;
+  deviceType: 'ANDROID' | 'IOS' | 'WEB';
+  deviceName?: string;
 }

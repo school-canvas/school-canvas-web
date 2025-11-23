@@ -1,0 +1,88 @@
+.settings-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.preferences-card mat-card-content {
+  padding-top: 16px;
+}
+
+.settings-list {
+  margin-bottom: 32px;
+}
+
+.settings-list:last-child {
+  margin-bottom: 0;
+}
+
+.setting-header h3 {
+  margin: 0 0 16px 0;
+  color: #2196F3;
+  font-size: 1.125rem;
+}
+
+.setting-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.toggle-info {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.toggle-info mat-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 4px;
+}
+
+.toggle-info strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.toggle-info p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.875rem;
+}
+
+.devices-actions {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.device-item {
+  padding: 16px 0;
+}
+
+mat-chip {
+  margin-left: 8px;
+}

@@ -1,0 +1,216 @@
+.communication-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Communication Content */
+.communication-content {
+  margin-top: 24px;
+}
+
+/* Tabs */
+.comm-tabs {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.unread-badge {
+  margin-left: 8px;
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+/* Messages Card */
+.messages-card,
+.announcements-card,
+.teachers-card {
+  margin: 0;
+}
+
+.message-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 16px 0;
+}
+
+.message-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.message-item.unread {
+  background-color: rgba(63, 81, 181, 0.05);
+}
+
+.message-item.unread [matListItemTitle] strong {
+  color: #3f51b5;
+}
+
+.message-preview {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 13px;
+}
+
+.message-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Announcements List */
+.announcements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.announcement-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.announcement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.announcement-card mat-card-header {
+  padding-bottom: 8px;
+}
+
+.announcement-card mat-card-content p {
+  margin: 8px 0;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Priority Classes */
+.priority-high {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}
+
+.priority-medium {
+  background-color: #fff3e0 !important;
+  color: #ef6c00 !important;
+}
+
+.priority-low {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+mat-icon.priority-high {
+  color: #c62828;
+}
+
+mat-icon.priority-medium {
+  color: #ef6c00;
+}
+
+mat-icon.priority-low {
+  color: #1565c0;
+}
+
+/* Teachers Grid */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.teacher-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.teacher-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.teacher-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+}
+
+.teacher-avatar mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #757575;
+}
+
+.teacher-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+}
+
+.detail-item mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .communication-container {
+    padding: 16px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .teachers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .message-item {
+    padding: 12px 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .teachers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

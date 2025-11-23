@@ -52,17 +52,32 @@ export interface Attachment {
   id: string;
   messageId: string;
   fileName: string;
-  fileUrl: string;
+  filePath: string;
   fileType: string;
   fileSize: number;
-  tenantId: string;
+  uploadedBy: string;
   createdAt?: string;
+}
+
+export interface FileAttachment {
+  id: string;
+  fileName: string;
+  filePath: string;
+  fileType: string;
+  fileSize: number;
 }
 
 export interface SendMessageRequest {
   threadId?: string;
   recipientIds?: string[];
   subject?: string;
+  content: string;
+  messageType?: MessageType;
+}
+
+export interface ComposeMessageRequest {
+  recipientIds: string[];
+  subject: string;
   content: string;
   attachments?: File[];
 }

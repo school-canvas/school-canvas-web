@@ -1,0 +1,154 @@
+<div class="settings-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Notification Settings'" 
+    [subtitle]="'Manage your notification preferences and devices'">
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Notifications
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading settings...</p>
+  </div>
+
+  <!-- Content -->
+  <div class="settings-content" *ngIf="!loading">
+    <!-- Notification Preferences -->
+    <mat-card class="preferences-card">
+      <mat-card-header>
+        <mat-card-title>Notification Preferences</mat-card-title>
+        <mat-card-subtitle>Configure how you want to receive notifications</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="settings-list" *ngFor="let setting of settings">
+          <div class="setting-header">
+            <h3>{{ setting.notificationCategory }}</h3>
+          </div>
+          <div class="setting-toggles">
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <mat-icon>email</mat-icon>
+                <div>
+                  <strong>Email Notifications</strong>
+                  <p>Receive notifications via email</p>
+                </div>
+              </div>
+              <mat-slide-toggle 
+                [(ngModel)]="setting.emailEnabled"
+                (change)="updateSetting(setting)"
+                [disabled]="saving">
+              </mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <mat-icon>sms</mat-icon>
+                <div>
+                  <strong>SMS Notifications</strong>
+                  <p>Receive notifications via SMS</p>
+                </div>
+              </div>
+              <mat-slide-toggle 
+                [(ngModel)]="setting.smsEnabled"
+                (change)="updateSetting(setting)"
+                [disabled]="saving">
+              </mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <mat-icon>notifications</mat-icon>
+                <div>
+                  <strong>In-App Notifications</strong>
+                  <p>Receive notifications in the application</p>
+                </div>
+              </div>
+              <mat-slide-toggle 
+                [(ngModel)]="setting.inAppEnabled"
+                (change)="updateSetting(setting)"
+                [disabled]="saving">
+              </mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <mat-icon>phone_android</mat-icon>
+                <div>
+                  <strong>Push Notifications</strong>
+                  <p>Receive push notifications on your devices</p>
+                </div>
+              </div>
+              <mat-slide-toggle 
+                [(ngModel)]="setting.pushEnabled"
+                (change)="updateSetting(setting)"
+                [disabled]="saving">
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Device Management -->
+    <mat-card class="devices-card">
+      <mat-card-header>
+        <mat-card-title>Registered Devices</mat-card-title>
+        <mat-card-subtitle>Manage devices that receive push notifications</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="devices-actions">
+          <button mat-raised-button color="primary" (click)="requestNotificationPermission()">
+            <mat-icon>add</mat-icon>
+            Register This Device
+          </button>
+          <button mat-button color="warn" *ngIf="devices.length > 0" (click)="removeAllDevices()">
+            <mat-icon>delete_sweep</mat-icon>
+            Remove All Devices
+          </button>
+        </div>
+
+        <mat-list *ngIf="devices.length > 0">
+          <mat-list-item *ngFor="let device of devices; let last = last" class="device-item">
+            <mat-icon matListItemIcon [color]="device.isActive ? 'primary' : 'basic'">
+              {{ getDeviceIcon(device.deviceType) }}
+            </mat-icon>
+            <div matListItemTitle>
+              <strong>{{ device.deviceName || 'Unknown Device' }}</strong>
+              <mat-chip [color]="device.isActive ? 'primary' : 'basic'">
+                {{ device.isActive ? 'Active' : 'Inactive' }}
+              </mat-chip>
+            </div>
+            <div matListItemLine>
+              Type: {{ device.deviceType }} | Last used: {{ formatDate(device.lastUsedAt) }}
+            </div>
+            <button 
+              mat-icon-button 
+              matListItemMeta
+              color="warn"
+              (click)="removeDevice(device.token)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <mat-divider *ngIf="!last"></mat-divider>
+          </mat-list-item>
+        </mat-list>
+
+        <app-empty-state
+          *ngIf="devices.length === 0"
+          [icon]="'devices'"
+          [title]="'No Devices Registered'"
+          [message]="'Register a device to receive push notifications'">
+        </app-empty-state>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

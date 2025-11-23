@@ -206,6 +206,6 @@ export class CommunicationComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/parent/dashboard']);
+    this.router.navigate(['/teacher/dashboard']);
   }
 }

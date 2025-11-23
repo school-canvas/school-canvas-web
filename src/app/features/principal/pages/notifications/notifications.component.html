@@ -1,0 +1,136 @@
+<div class="notifications-container">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Notifications'" 
+    [subtitle]="'View and manage your notifications'">
+    <button mat-raised-button color="primary" (click)="markAllAsRead()">
+      <mat-icon>done_all</mat-icon>
+      Mark All as Read
+    </button>
+    <button mat-button (click)="goToSettings()">
+      <mat-icon>settings</mat-icon>
+      Settings
+    </button>
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </app-page-header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading notifications...</p>
+  </div>
+
+  <!-- Content -->
+  <div class="notifications-content" *ngIf="!loading">
+    <!-- Filters -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select [(ngModel)]="filterType" (selectionChange)="onFilterChange()">
+              <mat-option *ngFor="let type of notificationTypes" [value]="type.value">
+                {{ type.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="filterStatus" (selectionChange)="onFilterChange()">
+              <mat-option value="all">All</mat-option>
+              <mat-option value="unread">Unread</mat-option>
+              <mat-option value="read">Read</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button 
+                  color="warn" 
+                  *ngIf="selectedNotifications.size > 0"
+                  (click)="deleteSelected()">
+            <mat-icon>delete</mat-icon>
+            Delete Selected ({{ selectedNotifications.size }})
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notifications List -->
+    <mat-card class="notifications-list" *ngIf="filteredNotifications.length > 0">
+      <mat-list>
+        <mat-list-item 
+          *ngFor="let notification of filteredNotifications; let last = last"
+          class="notification-item"
+          [class.unread]="notification.deliveryStatus !== 'READ'"
+          (click)="markAsRead(notification)">
+          
+          <mat-checkbox 
+            matListItemIcon
+            [checked]="isSelected(notification.id!)"
+            (click)="$event.stopPropagation()"
+            (change)="toggleSelection(notification.id!)">
+          </mat-checkbox>
+
+          <mat-icon 
+            matListItemIcon 
+            [color]="getNotificationColor(notification.notificationType)">
+            {{ getNotificationIcon(notification.notificationType) }}
+          </mat-icon>
+
+          <div matListItemTitle>
+            <strong>{{ notification.title }}</strong>
+            <mat-chip *ngIf="notification.deliveryStatus !== 'READ'" color="primary">New</mat-chip>
+          </div>
+
+          <div matListItemLine class="notification-message">
+            {{ notification.message }}
+          </div>
+
+          <div matListItemLine class="notification-meta">
+            <mat-chip>{{ notification.notificationType }}</mat-chip>
+            <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+          </div>
+
+          <button 
+            mat-icon-button 
+            matListItemMeta
+            [matMenuTriggerFor]="menu"
+            (click)="$event.stopPropagation()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="markAsRead(notification)">
+              <mat-icon>done</mat-icon>
+              <span>Mark as Read</span>
+            </button>
+            <button mat-menu-item (click)="deleteNotification(notification)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+
+          <mat-divider *ngIf="!last"></mat-divider>
+        </mat-list-item>
+      </mat-list>
+
+      <!-- Load More -->
+      <div class="load-more" *ngIf="hasMore">
+        <button mat-raised-button (click)="loadMore()">
+          Load More
+        </button>
+      </div>
+    </mat-card>
+
+    <!-- Empty State -->
+    <app-empty-state
+      *ngIf="filteredNotifications.length === 0"
+      [icon]="'notifications_none'"
+      [title]="'No Notifications'"
+      [message]="'You have no notifications to display.'">
+    </app-empty-state>
+  </div>
+</div>

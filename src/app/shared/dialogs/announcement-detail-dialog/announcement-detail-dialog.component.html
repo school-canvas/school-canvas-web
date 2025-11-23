@@ -1,0 +1,39 @@
+<div class="announcement-dialog">
+  <div mat-dialog-title>
+    <div class="dialog-header">
+      <mat-icon [ngClass]="getPriorityColor(announcement.priority || 'LOW')">campaign</mat-icon>
+      <h2>{{ announcement.title }}</h2>
+    </div>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div mat-dialog-content>
+    <div class="announcement-meta">
+      <mat-chip [color]="getPriorityColor(announcement.priority || 'LOW')">
+        {{ announcement.priority || 'LOW' }} PRIORITY
+      </mat-chip>
+      <mat-chip>
+        <mat-icon>calendar_today</mat-icon>
+        {{ formatDate(announcement.validFrom) }}
+      </mat-chip>
+      <mat-chip *ngIf="announcement.validUntil">
+        <mat-icon>event</mat-icon>
+        Valid until {{ formatDate(announcement.validUntil) }}
+      </mat-chip>
+    </div>
+
+    <div class="announcement-content">
+      <p>{{ announcement.content }}</p>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Close</button>
+  </div>
+</div>

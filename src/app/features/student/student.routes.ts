@@ -8,6 +8,9 @@ import { MyGradesComponent } from './pages/my-grades/my-grades.component';
 import { MyAttendanceComponent } from './pages/my-attendance/my-attendance.component';
 import { LibraryBooksComponent } from './pages/library-books/library-books.component';
 import { FeePaymentComponent } from './pages/fee-payment/fee-payment.component';
+import { CommunicationComponent } from './pages/communication/communication.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { NotificationSettingsComponent } from './pages/notification-settings/notification-settings.component';
 
 export const STUDENT_ROUTES: Routes = [
   {
@@ -23,6 +26,9 @@ export const STUDENT_ROUTES: Routes = [
       { path: 'attendance', component: MyAttendanceComponent },
       { path: 'library', component: LibraryBooksComponent },
       { path: 'fees', component: FeePaymentComponent },
+      { path: 'communication', component: CommunicationComponent },
+      { path: 'notifications', component: NotificationsComponent },
+      { path: 'notification-settings', component: NotificationSettingsComponent },
     ]
   }
 ];

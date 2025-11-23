@@ -155,28 +155,36 @@
       
       <ng-container *ngIf="isLoggedIn">
         <!-- Notifications Button -->
-        <button mat-icon-button [matMenuTriggerFor]="notifications">
-          <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="notificationsMenu">
+          <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">notifications</mat-icon>
         </button>
-        <mat-menu #notifications="matMenu">
+        <mat-menu #notificationsMenu="matMenu" class="notification-menu">
           <div class="notification-header">
             <h4>Notifications</h4>
+            <span class="notification-count">{{unreadCount}} unread</span>
           </div>
           <mat-divider></mat-divider>
-          <button mat-menu-item>
-            <mat-icon>assignment</mat-icon>
-            <span>New assignment posted</span>
+          
+          <div *ngIf="notifications.length === 0" class="no-notifications">
+            <mat-icon>notifications_none</mat-icon>
+            <p>No new notifications</p>
+          </div>
+          
+          <button mat-menu-item *ngFor="let notif of notifications" (click)="markAsRead(notif)">
+            <div class="notification-item">
+              <mat-icon>{{getNotificationIcon(notif.notificationType)}}</mat-icon>
+              <div class="notification-content">
+                <span class="notification-title">{{notif.title}}</span>
+                <span class="notification-message">{{notif.message}}</span>
+                <span class="notification-time">{{formatNotificationTime(notif.createdAt)}}</span>
+              </div>
+            </div>
           </button>
-          <button mat-menu-item>
-            <mat-icon>grade</mat-icon>
-            <span>Grades updated</span>
-          </button>
-          <button mat-menu-item>
-            <mat-icon>message</mat-icon>
-            <span>New message received</span>
-          </button>
+          
           <mat-divider></mat-divider>
-          <button mat-menu-item class="view-all">View All Notifications</button>
+          <button mat-menu-item class="view-all" (click)="viewAllNotifications()">
+            View All Notifications
+          </button>
         </mat-menu>
 
         <!-- User Profile Menu -->

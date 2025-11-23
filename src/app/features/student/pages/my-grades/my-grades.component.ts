@@ -52,8 +52,7 @@ interface GradeData {
     MatChipsModule,
     PageHeaderComponent,
     EmptyStateComponent,
-    StatsCardComponent,
-    ChartComponent
+    StatsCardComponent
   ],
   templateUrl: './my-grades.component.html',
   styleUrl: './my-grades.component.css'
